@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Guía: Introducción a los Triggers</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f8fb;
+      color: #2b2b2b;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .contenedor {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      color: #7b1e1e;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 35px;
+    }
+
+    h2 {
+      color: #7b1e1e;
+      border-left: 6px solid #b85c5c;
+      padding-left: 12px;
+      margin-top: 35px;
+    }
+
+    .card {
+      background: #fdf6f3;
+      border-left: 5px solid #d68b7c;
+      padding: 18px 22px;
+      border-radius: 12px;
+      margin: 18px 0;
+    }
+
+    .card.azul {
+      background: #eef7fb;
+      border-left-color: #6aa8c8;
+    }
+
+    .card.verde {
+      background: #eefbf3;
+      border-left-color: #6bbf8a;
+    }
+
+    .card.morado {
+      background: #f5f0fb;
+      border-left-color: #9a7bd1;
+    }
+
+    .resaltado {
+      background: #fff3cd;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      background: white;
+    }
+
+    th {
+      background: #7b1e1e;
+      color: white;
+      padding: 12px;
+    }
+
+    td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    code {
+      background: #f1f1f1;
+      padding: 3px 6px;
+      border-radius: 5px;
+      color: #7b1e1e;
+      font-weight: bold;
+    }
+
+    .ejemplo {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 15px;
+    }
+
+    .nota {
+      background: #fff8e8;
+      border: 1px solid #f0d58c;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .ejemplo-mini {
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      color: #1a5c8a;
+      display: block;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="contenedor">
+
+    <h1>Introducción a los Triggers en SQL Server</h1>
+    <p class="subtitulo">Guía didáctica para alumnos</p>
+
+    <h2>1. ¿Qué es un Trigger?</h2>
+
+    <div class="card">
+      <p>
+        Un <span class="resaltado">trigger</span>, también llamado
+        <strong>disparador</strong> o <strong>desencadenador</strong>,
+        es un tipo especial de procedimiento almacenado que se ejecuta
+        automáticamente cuando ocurre una acción sobre una <strong>tabla</strong> o <strong>vista</strong>.
+      </p>
+    </div>
+
+    <p>
+      En otras palabras, un trigger permite que la base de datos
+      <strong>reaccione automáticamente</strong> cuando se insertan, actualizan
+      o eliminan datos.
+    </p>
+
+    <div class="nota">
+      <strong>Idea clave:</strong>
+      Un trigger no se ejecuta manualmente. Se activa automáticamente cuando ocurre un evento.
+    </div>
+
+    <h2>2. ¿Para qué sirve un Trigger?</h2>
+
+    <div class="card azul">
+      <p>Los triggers se utilizan principalmente para:</p>
+
+      <ul>
+        <li>Registrar cambios realizados en una tabla.<span class="ejemplo-mini">// Queremos saber cada vez que el precio de un producto cambia, guardando el valor anterior y el nuevo valor.</span></li>
+        <li>Crear auditorías de datos.<span class="ejemplo-mini">// Queremos registrar quién insertó un producto y cuándo, sin modificar la tabla Productos.</span></li>
+        <li>Controlar reglas de negocio.<span class="ejemplo-mini">// Queremos asegurarnos de que ciertas condiciones se cumplan antes de permitir una operación.</span></li>
+        <li>Evitar eliminaciones o modificaciones indebidas.<span class="ejemplo-mini">// Queremos asegurarnos de que ciertos registros no se eliminen o modifiquen bajo ciertas condiciones.</span></li>
+        <li>Mantener la integridad y coherencia de la información.<span class="ejemplo-mini">// Queremos asegurarnos de que los datos permanezcan consistentes y válidos.</span></li>
+      </ul>
+    </div>
+
+    <p>
+      Por ejemplo, si un usuario modifica el precio de un producto,
+      un trigger puede guardar automáticamente el precio anterior,
+      el nuevo precio, la fecha y el usuario que realizó el cambio.
+    </p>
+
+    <h2>3. ¿Cuándo se ejecuta un Trigger?</h2>
+
+    <div class="card verde">
+      <p>
+        Un trigger se ejecuta cuando ocurre una acción específica sobre una tabla.
+        Las acciones más comunes son:
+      </p>
+
+      <ul>
+        <li><code>INSERT</code>: cuando se agrega un nuevo registro.</li>
+        <li><code>UPDATE</code>: cuando se modifica un registro existente.</li>
+        <li><code>DELETE</code>: cuando se elimina un registro.</li>
+      </ul>
+    </div>
+
+    <p>Ejemplo sencillo:</p>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#75715e;">-- Este INSERT dispara cualquier trigger AFTER INSERT sobre Productos</span><br>
+      <span style="color:#a6e22e;">INSERT INTO</span> Productos (nombre, precio)<br>
+      <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Mouse inalámbrico'</span>, 35.00);
+    </div>
+
+    <p>
+      Si la tabla <strong>Productos</strong> tiene un trigger para
+      <code>INSERT</code>, este se ejecutará automáticamente después de insertar el producto.
+    </p>
+
+    <h2>4. Diferencia entre Trigger, Stored Procedure, Constraint y Default</h2>
+
+    <table>
+      <tr>
+        <th>Elemento</th>
+        <th>¿Qué es?</th>
+        <th>¿Cuándo se ejecuta?</th>
+        <th>Ejemplo de uso</th>
+      </tr>
+
+      <tr>
+        <td><strong>Trigger</strong></td>
+        <td>Código que se ejecuta automáticamente ante un evento.</td>
+        <td>Cuando ocurre un INSERT, UPDATE o DELETE.</td>
+        <td>Guardar historial cuando cambia el precio de un producto.</td>
+      </tr>
+
+      <tr>
+        <td><strong>Stored Procedure</strong></td>
+        <td>Conjunto de instrucciones SQL guardadas en la base de datos.</td>
+        <td>Cuando el usuario o sistema lo llama manualmente.</td>
+        <td>Registrar una venta mediante un procedimiento.</td>
+      </tr>
+
+      <tr>
+        <td><strong>Constraint</strong></td>
+        <td>Regla que limita o valida los datos de una tabla.</td>
+        <td>Cuando se insertan o modifican datos.</td>
+        <td>Evitar que el precio sea menor que cero.<span class="ejemplo-mini">// CREATE TABLE Productos (..., Precio DECIMAL(10,2) CHECK (Precio >= 0), ...);</span></td>
+      </tr>
+
+      <tr>
+        <td><strong>Default</strong></td>
+        <td>Valor automático asignado a una columna si no se indica uno.</td>
+        <td>Cuando se inserta un nuevo registro.</td>
+        <td>Asignar la fecha actual a una venta. <span class="ejemplo-mini">// CREATE TABLE Productos (..., FechaRegistro DATETIME DEFAULT GETDATE(), ...);</span></td>
+      </tr>
+    </table>
+
+    <!-- ===================== SECCIÓN 5: TIPOS DE TRIGGERS ===================== -->
+    <h2>5. Tipos de Triggers</h2>
+
+    <p>
+      En SQL Server existen dos grandes tipos de triggers según <strong>cuándo</strong> se ejecutan
+      en relación con la operación que los dispara:
+    </p>
+
+    <!-- AFTER -->
+    <div class="card verde">
+      <p><strong>AFTER Trigger</strong> — se ejecuta <em>después</em> de que la operación se completa.</p>
+      <p>
+        La operación (<code>INSERT</code>, <code>UPDATE</code> o <code>DELETE</code>) ocurre primero;
+        una vez que los datos ya fueron modificados en la tabla, el trigger entra en acción.
+      </p>
+      <ul>
+        <li>
+          <code>AFTER INSERT</code>
+          <span class="ejemplo-mini">// Se activa luego de insertar un registro → útil para auditoría.</span>
+        </li>
+        <li>
+          <code>AFTER UPDATE</code>
+          <span class="ejemplo-mini">// Se activa luego de modificar un registro → útil para guardar historial de cambios.</span>
+        </li>
+        <li>
+          <code>AFTER DELETE</code>
+          <span class="ejemplo-mini">// Se activa luego de eliminar un registro → útil para limpiar datos relacionados.</span>
+        </li>
+      </ul>
+      <div class="nota" style="margin-top:12px;">
+        <strong>Analogía:</strong> Es como la alarma de una caja fuerte que suena <em>después</em>
+        de que alguien ya la abrió. El evento ya ocurrió; el trigger reacciona ante eso.
+      </div>
+    </div>
+
+    <!-- INSTEAD OF -->
+    <div class="card" style="margin-top:18px;">
+      <p><strong>INSTEAD OF Trigger</strong> — se ejecuta <em>en lugar</em> de la operación original.</p>
+      <p>
+        La operación solicitada (<code>INSERT</code>, <code>UPDATE</code> o <code>DELETE</code>)
+        <strong>no llega a ejecutarse</strong>. El trigger la intercepta y decide qué hacer.
+      </p>
+      <ul>
+        <li>
+          <code>INSTEAD OF DELETE</code>
+          <span class="ejemplo-mini">// Alguien intenta borrar un cliente activo → el trigger cancela la eliminación y muestra un mensaje.</span>
+        </li>
+        <li>
+          <code>INSTEAD OF INSERT</code>
+          <span class="ejemplo-mini">// Alguien intenta insertar datos en una vista → el trigger redirige la inserción a las tablas reales.</span>
+        </li>
+      </ul>
+      <div class="nota" style="margin-top:12px;">
+        <strong>Analogía:</strong> Es como un guardia de seguridad que intercepta a alguien antes
+        de que entre. La acción nunca ocurrió; el trigger decide si se permite o no.
+      </div>
+    </div>
+
+    <!-- TABLA COMPARATIVA -->
+    <table style="margin-top:22px;">
+      <tr>
+        <th>Tipo</th>
+        <th>¿Cuándo actúa?</th>
+        <th>¿La operación ocurre?</th>
+        <th>Uso típico</th>
+      </tr>
+      <tr>
+        <td><code>AFTER</code></td>
+        <td>Después del INSERT / UPDATE / DELETE</td>
+        <td>Sí, ya ocurrió</td>
+        <td>Auditoría, historial, limpieza de datos relacionados</td>
+      </tr>
+      <tr>
+        <td><code>INSTEAD OF</code></td>
+        <td>En lugar del INSERT / UPDATE / DELETE</td>
+        <td>No — el trigger la reemplaza</td>
+        <td>Bloquear eliminaciones, controlar inserciones en vistas</td>
+      </tr>
+    </table>
+
+    <!-- ===================== SECCIÓN 6: TABLAS ESPECIALES ===================== -->
+    <h2>6. Tablas especiales: <code>inserted</code> y <code>deleted</code></h2>
+
+    <p>
+      Dentro de cualquier trigger, SQL Server crea automáticamente dos tablas temporales
+      que solo existen mientras el trigger se está ejecutando.
+      Son la clave para entender cómo acceder a los datos que cambiaron.
+    </p>
+
+    <div class="nota">
+      <strong>Regla de oro:</strong>
+      Estas tablas tienen exactamente las mismas columnas que la tabla original.
+      No hay que crearlas — SQL Server las genera solo.
+    </div>
+
+    <!-- ── INSERTED ── -->
+    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">6.1 Tabla <code>inserted</code> — los valores nuevos</h2>
+
+    <p>
+      Contiene los registros <strong>tal como quedarán</strong> después de la operación.
+      Existe en triggers de <code>INSERT</code> y <code>UPDATE</code>.
+    </p>
+
+    <div class="card verde">
+      <strong>Operación que la genera:</strong>
+      <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:14px; margin-top:10px;">
+        INSERT INTO Clientes (nombre) VALUES ('Juan');
+      </div>
+      <p style="margin-top:14px;"><strong>Qué contiene <code>inserted</code> dentro del trigger:</strong></p>
+      <table style="margin-top:6px;">
+        <tr><th>id</th><th>nombre</th></tr>
+        <tr><td>5</td><td>Juan</td></tr>
+      </table>
+      <p style="margin-top:12px; color:#2e7d32;">
+        → El trigger puede leer <code>inserted.nombre</code> para saber qué se acaba de agregar.
+      </p>
+    </div>
+
+    <!-- ── DELETED ── -->
+    <h2 style="color:#7b1e1e; border-left-color:#b85c5c; margin-top:30px;">6.2 Tabla <code>deleted</code> — los valores anteriores</h2>
+
+    <p>
+      Contiene los registros <strong>tal como estaban antes</strong> de la operación.
+      Existe en triggers de <code>DELETE</code> y <code>UPDATE</code>.
+    </p>
+
+    <div class="card" style="background:#fdf0f0; border-left-color:#c0524a;">
+      <strong>Operación que la genera:</strong>
+      <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:14px; margin-top:10px;">
+        DELETE FROM Clientes WHERE id = 1;
+      </div>
+      <p style="margin-top:14px;"><strong>Qué contiene <code>deleted</code> dentro del trigger:</strong></p>
+      <table style="margin-top:6px;">
+        <tr><th>id</th><th>nombre</th></tr>
+        <tr><td>1</td><td>Juan</td></tr>
+      </table>
+      <p style="margin-top:12px; color:#7b1e1e;">
+        → El trigger puede leer <code>deleted.nombre</code> para saber qué se acaba de eliminar.
+      </p>
+    </div>
+
+    <!-- ── UPDATE: LAS DOS JUNTAS ── -->
+    <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:30px;">6.3 En un <code>UPDATE</code> — se usan las dos al mismo tiempo</h2>
+
+    <p>
+      Este es el caso más importante y el que más confunde al principio.
+      Un <code>UPDATE</code> es internamente un DELETE del valor viejo + un INSERT del valor nuevo,
+      por eso SQL Server llena <strong>ambas</strong> tablas:
+    </p>
+
+    <div class="card morado">
+      <strong>Operación:</strong>
+      <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:14px; margin-top:10px;">
+        UPDATE Productos SET stock = 5 WHERE id = 1;
+        <span style="color:#75715e; display:block; margin-top:6px;">-- El stock antes era 10</span>
+      </div>
+
+      <div style="display:flex; gap:30px; margin-top:18px; flex-wrap:wrap;">
+
+        <div style="flex:1; min-width:200px;">
+          <p style="margin:0 0 6px 0; color:#7b1e1e;"><strong>deleted</strong> — valor <em>anterior</em></p>
+          <table>
+            <tr><th>id</th><th>stock</th></tr>
+            <tr><td>1</td><td style="background:#ffe0e0; font-weight:bold;">10</td></tr>
+          </table>
+        </div>
+
+        <div style="display:flex; align-items:center; font-size:28px; color:#9a7bd1; padding-top:20px;">→</div>
+
+        <div style="flex:1; min-width:200px;">
+          <p style="margin:0 0 6px 0; color:#2e7d32;"><strong>inserted</strong> — valor <em>nuevo</em></p>
+          <table>
+            <tr><th>id</th><th>stock</th></tr>
+            <tr><td>1</td><td style="background:#d4f0d4; font-weight:bold;">5</td></tr>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="nota" style="margin-top:18px;">
+        <strong>¿Cómo lo usa el trigger?</strong><br>
+        <span class="ejemplo-mini" style="margin-top:6px;">// Para calcular cuánto bajó el stock:</span>
+        <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13px; margin-top:8px; line-height:1.8;">
+          SELECT d.id,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d.stock AS stock_anterior,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;i.stock AS stock_nuevo,<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;d.stock - i.stock AS diferencia<br>
+          FROM deleted d<br>
+          JOIN inserted i ON d.id = i.id;
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLA RESUMEN -->
+    <h2 style="margin-top:30px;">6.4 Resumen: ¿qué tabla existe en cada operación?</h2>
+
+    <table>
+      <tr>
+        <th>Operación</th>
+        <th><code>inserted</code></th>
+        <th><code>deleted</code></th>
+        <th>¿Qué contiene cada una?</th>
+      </tr>
+      <tr>
+        <td><code>INSERT</code></td>
+        <td style="color:green; font-weight:bold; text-align:center;">✔ Sí</td>
+        <td style="color:#aaa; text-align:center;">— No</td>
+        <td><code>inserted</code>: los registros recién agregados</td>
+      </tr>
+      <tr>
+        <td><code>DELETE</code></td>
+        <td style="color:#aaa; text-align:center;">— No</td>
+        <td style="color:green; font-weight:bold; text-align:center;">✔ Sí</td>
+        <td><code>deleted</code>: los registros que se eliminaron</td>
+      </tr>
+      <tr>
+        <td><code>UPDATE</code></td>
+        <td style="color:green; font-weight:bold; text-align:center;">✔ Sí</td>
+        <td style="color:green; font-weight:bold; text-align:center;">✔ Sí</td>
+        <td><code>deleted</code>: valores anteriores &nbsp;|&nbsp; <code>inserted</code>: valores nuevos</td>
+      </tr>
+    </table>
+
+    <div class="nota" style="margin-top:20px;">
+      <strong>Para la clase:</strong> conviene dibujar en la pizarra las dos tablas lado a lado
+      cuando se explica el <code>UPDATE</code>. Es el concepto que más cuesta visualizar
+      y el que más se usa en triggers reales de auditoría e historial.
+    </div>
+
+    <!-- ===================== SECCIÓN 7: SINTAXIS BÁSICA ===================== -->
+    <h2>7. Sintaxis básica de un Trigger</h2>
+
+    <p>
+      Todo trigger en SQL Server sigue la misma estructura. Analicémosla
+      <strong>parte por parte</strong>:
+    </p>
+
+    <!-- BLOQUE DE CÓDIGO ANOTADO -->
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:14px; line-height:2;">
+      <span style="color:#a6e22e;">CREATE TRIGGER</span> <span style="color:#e6db74;">nombre_trigger</span><br>
+      <span style="color:#a6e22e;">ON</span> <span style="color:#e6db74;">tabla</span><br>
+      <span style="color:#a6e22e;">AFTER INSERT</span><br>
+      <span style="color:#a6e22e;">AS</span><br>
+      <span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- instrucciones que se ejecutan automáticamente</span><br>
+      <span style="color:#a6e22e;">END</span><span style="color:#f8f8f2;">;</span>
+    </div>
+
+    <!-- EXPLICACIÓN PARTE POR PARTE -->
+    <table style="margin-top:22px;">
+      <tr>
+        <th>Palabra clave</th>
+        <th>¿Qué indica?</th>
+        <th>Ejemplo concreto</th>
+      </tr>
+      <tr>
+        <td><code>CREATE TRIGGER</code></td>
+        <td>Crea un nuevo trigger y le da un nombre.</td>
+        <td><code>CREATE TRIGGER trg_nuevo_producto</code></td>
+      </tr>
+      <tr>
+        <td><code>ON</code></td>
+        <td>Indica <strong>en qué tabla</strong> o vista estará vigilando.</td>
+        <td><code>ON Productos</code></td>
+      </tr>
+      <tr>
+        <td><code>AFTER / INSTEAD OF</code></td>
+        <td>Define el <strong>tipo de trigger</strong> y el evento que lo dispara.</td>
+        <td><code>AFTER INSERT</code> &nbsp;|&nbsp; <code>INSTEAD OF DELETE</code></td>
+      </tr>
+      <tr>
+        <td><code>AS</code></td>
+        <td>Marca el inicio del cuerpo del trigger (lo que hará).</td>
+        <td>Siempre va después de <code>AFTER/INSTEAD OF</code></td>
+      </tr>
+      <tr>
+        <td><code>BEGIN … END</code></td>
+        <td>Delimitadores del bloque de instrucciones. Todo lo que va entre ellos se ejecuta.</td>
+        <td>Como las llaves <code>{ }</code> en otros lenguajes</td>
+      </tr>
+    </table>
+
+    <div class="nota" style="margin-top:22px;">
+      <strong>Convención de nombres:</strong> En SQL Server es buena práctica
+      nombrar los triggers con el prefijo <code>trg_</code> seguido de la tabla y la acción,
+      por ejemplo <code>trg_productos_insert</code>. Esto facilita identificarlos en la base de datos.
+    </div>
+
+    <!-- ===================== SECCIÓN 7 (antes era 5): PRIMER EJEMPLO ===================== -->
+    <h2>8. Primer ejemplo de Trigger</h2>
+
+    <p>
+      Antes de escribir cualquier trigger necesitamos una base de datos de trabajo.
+      El siguiente script crea todo desde cero: la base de datos, las cuatro tablas
+      y algunos datos iniciales para probar.
+    </p>
+
+    <div class="nota">
+      <strong>Contexto:</strong> A lo largo de los ejemplos nos centraremos principalmente
+      en <code>Productos</code> y <code>DetalleVentas</code>, que son las tablas donde
+      ocurren los eventos más interesantes para un trigger.
+    </div>
+
+    <!-- ── PASO 1: CREAR LA BD ── -->
+    <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 1 — Crear la base de datos</h2>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#75715e;">-- Si ya existe, la eliminamos y empezamos limpio</span><br>
+      <span style="color:#a6e22e;">IF EXISTS</span> (<span style="color:#a6e22e;">SELECT</span> name <span style="color:#a6e22e;">FROM</span> sys.databases <span style="color:#a6e22e;">WHERE</span> name = <span style="color:#e6db74;">'Tienda'</span>)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DROP DATABASE</span> Tienda;<br>
+      <br>
+      <span style="color:#a6e22e;">CREATE DATABASE</span> Tienda;<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+      <span style="color:#a6e22e;">USE</span> Tienda;<br>
+      <span style="color:#a6e22e;">GO</span>
+    </div>
+
+    <!-- ── PASO 2: CREAR LAS TABLAS ── -->
+    <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 2 — Crear las cuatro tablas</h2>
+
+    <p>
+      Las relaciones entre tablas se declaran con
+      <code>REFERENCES</code> (forma corta de <code>FOREIGN KEY</code>).
+      Garantizan que no pueda existir una venta sin cliente, ni un detalle sin producto.
+    </p>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+
+      <span style="color:#75715e;">-- ① Productos — no depende de ninguna otra tabla (tabla padre)</span><br>
+      <span style="color:#a6e22e;">CREATE TABLE</span> Productos (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">IDENTITY(1,1) PRIMARY KEY</span>, <span style="color:#75715e;">-- PK: id autonumérico</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;nombre &nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(100) <span style="color:#a6e22e;">NOT NULL</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;precio &nbsp;&nbsp;<span style="color:#66d9e8;">DECIMAL</span>(10,2) <span style="color:#a6e22e;">NOT NULL</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;stock &nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">NOT NULL DEFAULT</span> 0, &nbsp;&nbsp;<span style="color:#75715e;">-- el trigger lo descontará al vender</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;activo &nbsp;&nbsp;<span style="color:#66d9e8;">BIT</span> <span style="color:#a6e22e;">NOT NULL DEFAULT</span> 1 &nbsp;&nbsp;<span style="color:#75715e;">-- 1=activo, 0=inactivo</span><br>
+      );<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+
+      <span style="color:#75715e;">-- ② Clientes — no depende de ninguna otra tabla (tabla padre)</span><br>
+      <span style="color:#a6e22e;">CREATE TABLE</span> Clientes (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">IDENTITY(1,1) PRIMARY KEY</span>, <span style="color:#75715e;">-- PK: id autonumérico</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;nombre &nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(100) <span style="color:#a6e22e;">NOT NULL</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;email &nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(150)<br>
+      );<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+
+      <span style="color:#75715e;">-- ③ Ventas — depende de Clientes (tabla hija)</span><br>
+      <span style="color:#a6e22e;">CREATE TABLE</span> Ventas (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">IDENTITY(1,1) PRIMARY KEY</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;id_cliente &nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">NOT NULL REFERENCES</span> Clientes(id), <span style="color:#75715e;">-- FK → Clientes: no puede existir venta sin cliente</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;fecha &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">DATETIME</span> <span style="color:#a6e22e;">NOT NULL DEFAULT</span> <span style="color:#66d9e8;">GETDATE</span>(), <span style="color:#75715e;">-- fecha automática al insertar</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">DECIMAL</span>(12,2) <span style="color:#a6e22e;">NOT NULL DEFAULT</span> 0 <span style="color:#75715e;">-- un trigger podría actualizarlo</span><br>
+      );<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+
+      <span style="color:#75715e;">-- ④ DetalleVentas — depende de Ventas y de Productos (tabla hija de ambas)</span><br>
+      <span style="color:#a6e22e;">CREATE TABLE</span> DetalleVentas (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">IDENTITY(1,1) PRIMARY KEY</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;id_venta &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">NOT NULL REFERENCES</span> Ventas(id), &nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- FK → Ventas: cada línea pertenece a una venta</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;id_producto &nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">NOT NULL REFERENCES</span> Productos(id), <span style="color:#75715e;">-- FK → Productos: no puede venderse un producto inexistente</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;cantidad &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">NOT NULL</span>, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- el trigger usará esto para descontar stock</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;precio_unit &nbsp;<span style="color:#66d9e8;">DECIMAL</span>(10,2) <span style="color:#a6e22e;">NOT NULL</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- precio al momento de la venta (puede cambiar después)</span><br>
+      );<br>
+      <span style="color:#a6e22e;">GO</span>
+    </div>
+
+    <!-- DIAGRAMA DE RELACIONES -->
+    <div class="card azul" style="margin-top:22px;">
+      <strong>Relación entre las tablas:</strong>
+      <div style="font-family:'Fira Code',monospace; font-size:13px; margin-top:12px; line-height:2;">
+        <span style="color:#2e7d32;">Clientes</span> (id) ←── <span style="color:#1a5c8a;">Ventas</span> (id_cliente)<br>
+        <span style="color:#1a5c8a;">Ventas</span> (id) &nbsp;&nbsp;&nbsp;←── <span style="color:#7b1e1e;">DetalleVentas</span> (id_venta)<br>
+        <span style="color:#5a3e8a;">Productos</span> (id) ←── <span style="color:#7b1e1e;">DetalleVentas</span> (id_producto)
+      </div>
+      <p style="margin-top:10px; font-size:14px;">
+        Los triggers que veremos actúan principalmente sobre
+        <code>Productos</code> (cambios de precio, stock, protección)
+        y <code>DetalleVentas</code> (descuento automático de stock al vender).
+      </p>
+    </div>
+
+    <!-- ── PASO 3: DATOS INICIALES ── -->
+    <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 3 — Insertar datos de prueba</h2>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#75715e;">-- Productos</span><br>
+      <span style="color:#a6e22e;">INSERT INTO</span> Productos (nombre, precio, stock) <span style="color:#a6e22e;">VALUES</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Teclado USB'</span>, &nbsp;&nbsp;&nbsp;25.00, 50),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Mouse inalámbrico'</span>, 35.00, 30),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Monitor 24"'</span>, &nbsp;&nbsp;320.00, 10),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Audífonos'</span>, &nbsp;&nbsp;&nbsp;&nbsp;55.00, 20);<br>
+      <br>
+      <span style="color:#75715e;">-- Clientes</span><br>
+      <span style="color:#a6e22e;">INSERT INTO</span> Clientes (nombre, email) <span style="color:#a6e22e;">VALUES</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Ana Torres'</span>, &nbsp;<span style="color:#e6db74;">'ana@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Luis Ramos'</span>, &nbsp;<span style="color:#e6db74;">'luis@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'María López'</span>, <span style="color:#e6db74;">'maria@mail.com'</span>);<br>
+      <br>
+      <span style="color:#75715e;">-- Una venta de prueba</span><br>
+      <span style="color:#a6e22e;">INSERT INTO</span> Ventas (id_cliente) <span style="color:#a6e22e;">VALUES</span> (1);<br>
+      <br>
+      <span style="color:#75715e;">-- Detalle: Ana compró 2 teclados y 1 mouse</span><br>
+      <span style="color:#a6e22e;">INSERT INTO</span> DetalleVentas (id_venta, id_producto, cantidad, precio_unit) <span style="color:#a6e22e;">VALUES</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(1, 1, 2, 25.00),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(1, 2, 1, 35.00);<br>
+      <span style="color:#a6e22e;">GO</span>
+    </div>
+
+    <!-- ── PRIMER TRIGGER ── -->
+    <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 4 — El primer trigger sobre esta base de datos</h2>
+
+    <p>
+      Con la base de datos lista, el primer trigger simplemente confirma
+      que un producto fue insertado. Es el "Hola mundo" de los triggers.
+    </p>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_producto_insertado<br>
+      <span style="color:#a6e22e;">ON</span> Productos<br>
+      <span style="color:#a6e22e;">AFTER INSERT</span><br>
+      <span style="color:#a6e22e;">AS</span><br>
+      <span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">PRINT</span> <span style="color:#e6db74;">'✔ Se ha insertado un nuevo producto en el catálogo.'</span>;<br>
+      <span style="color:#a6e22e;">END</span>;<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+      <span style="color:#75715e;">-- Prueba: este INSERT dispara el trigger automáticamente</span><br>
+      <span style="color:#a6e22e;">INSERT INTO</span> Productos (nombre, precio, stock)<br>
+      <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Webcam HD'</span>, 75.00, 15);
+    </div>
+
+    <div class="nota">
+      <strong>Para recordar:</strong>
+      Los triggers son útiles, pero deben usarse con cuidado porque se ejecutan
+      automáticamente y pueden afectar el rendimiento si contienen mucha lógica.
+      En los ejemplos de la sección 9 veremos casos reales sobre estas mismas tablas.
+    </div>
+
+    <!-- ===================== SECCIÓN 8: EJEMPLOS POR CASO DE USO ===================== -->
+
+    <h2>9. Ejemplos prácticos: un trigger para cada propósito</h2>
+
+    <p>
+      Un ejemplo práctico para cada uno de los cinco usos principales de los triggers.
+      Todos trabajan sobre la base de datos <code>Tienda</code> creada en la sección 8.
+    </p>
+
+    <!-- ── CASO 1 ── -->
+    <h2 style="color:#5a7abf; border-left-color:#6aa8c8;">9.1 Registrar cambios realizados en una tabla</h2>
+
+    <div class="card azul">
+      <p>
+        <strong>Situación:</strong> Queremos saber cada vez que el precio de un producto cambia,
+        guardando el valor anterior y el nuevo valor.
+      </p>
+    </div>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#75715e;">-- Tabla auxiliar: guarda el historial de cambios de precio</span><br>
+      <span style="color:#a6e22e;">CREATE TABLE</span> HistorialPrecios (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;id_producto &nbsp;<span style="color:#66d9e8;">INT</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;precio_antes <span style="color:#66d9e8;">DECIMAL</span>(10,2),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;precio_nuevo <span style="color:#66d9e8;">DECIMAL</span>(10,2),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;fecha &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">DATETIME</span> <span style="color:#a6e22e;">DEFAULT</span> <span style="color:#66d9e8;">GETDATE</span>() <span style="color:#75715e;">-- se llena automáticamente</span><br>
+      );<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+      <span style="color:#75715e;">-- Trigger: se dispara cada vez que se modifica un precio en Productos</span><br>
+      <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_registrar_cambio_precio<br>
+      <span style="color:#a6e22e;">ON</span> Productos<br>
+      <span style="color:#a6e22e;">AFTER UPDATE</span> <span style="color:#75715e;">-- actúa después del UPDATE, cuando los datos ya cambiaron</span><br>
+      <span style="color:#a6e22e;">AS</span><br>
+      <span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT INTO</span> HistorialPrecios (id_producto, precio_antes, precio_nuevo)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> d.id, d.precio, i.precio <span style="color:#75715e;">-- deleted = antes, inserted = después</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> deleted d<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">JOIN</span> inserted i <span style="color:#a6e22e;">ON</span> d.id = i.id<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> d.precio &lt;&gt; i.precio; <span style="color:#75715e;">-- solo guarda si el precio realmente cambió</span><br>
+      <span style="color:#a6e22e;">END</span>;<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+      <span style="color:#75715e;">-- Prueba: cambia el precio del Teclado USB de 25.00 a 29.00</span><br>
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> precio = 29.00 <span style="color:#a6e22e;">WHERE</span> id = 1;
+    </div>
+
+    <div class="nota">
+      <strong>Resultado:</strong> Si ejecutamos
+      <code>UPDATE Productos SET precio = 45.00 WHERE id = 1;</code>,
+      el trigger guarda automáticamente el precio anterior y el nuevo en <code>HistorialPrecios</code>.
+    </div>
+
+    <!-- ── CASO 2 ── -->
+    <h2 style="color:#5a7abf; border-left-color:#6aa8c8;">9.2 Crear auditorías de datos</h2>
+
+    <div class="card azul">
+      <p>
+        <strong>Situación:</strong> Queremos registrar <em>quién</em> insertó un producto y <em>cuándo</em>,
+        sin modificar la tabla <code>Productos</code>.
+      </p>
+    </div>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#75715e;">-- Tabla auxiliar: registra quién hizo qué y cuándo</span><br>
+      <span style="color:#a6e22e;">CREATE TABLE</span> AuditoriaProductos (<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;accion &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(10), &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- 'INSERT', 'UPDATE' o 'DELETE'</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;id_producto <span style="color:#66d9e8;">INT</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;nombre &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(100),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;usuario &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(100) <span style="color:#a6e22e;">DEFAULT</span> SYSTEM_USER, <span style="color:#75715e;">-- usuario de SQL Server conectado</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;fecha &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">DATETIME</span> &nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DEFAULT</span> <span style="color:#66d9e8;">GETDATE</span>() &nbsp;<span style="color:#75715e;">-- fecha y hora exacta</span><br>
+      );<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+      <span style="color:#75715e;">-- Trigger: cada vez que se agrega un producto, queda registrado en auditoría</span><br>
+      <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_auditoria_insercion<br>
+      <span style="color:#a6e22e;">ON</span> Productos<br>
+      <span style="color:#a6e22e;">AFTER INSERT</span><br>
+      <span style="color:#a6e22e;">AS</span><br>
+      <span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT INTO</span> AuditoriaProductos (accion, id_producto, nombre)<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> <span style="color:#e6db74;">'INSERT'</span>, id, nombre <span style="color:#75715e;">-- inserted tiene los datos recién agregados</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> inserted;<br>
+      <span style="color:#a6e22e;">END</span>;<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+      <span style="color:#75715e;">-- Prueba: insertar un producto nuevo dispara el trigger</span><br>
+      <span style="color:#a6e22e;">INSERT INTO</span> Productos (nombre, precio, stock)<br>
+      <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Webcam HD'</span>, 75.00, 15);<br>
+      <br>
+      <span style="color:#75715e;">-- Verificar qué quedó registrado en auditoría</span><br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> AuditoriaProductos;
+    </div>
+
+    <div class="nota">
+      <strong>Resultado:</strong> Cada producto nuevo queda registrado en <code>AuditoriaProductos</code>
+      con el nombre del usuario de base de datos y la fecha exacta de la inserción.
+      <code>SYSTEM_USER</code> devuelve el usuario conectado automáticamente.
+    </div>
+
+    <!-- ── CASO 3 ── -->
+    <h2 style="color:#5a7abf; border-left-color:#6aa8c8;">9.3 Controlar reglas de negocio</h2>
+
+    <div class="card azul">
+      <p>
+        <strong>Situación:</strong> La empresa decide que ningún producto puede tener un precio
+        mayor a 10 000. Si alguien intenta asignarlo, el trigger debe cancelar la operación.
+      </p>
+    </div>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#75715e;">-- Trigger: cancela el UPDATE si el precio nuevo supera 10 000</span><br>
+      <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_precio_maximo<br>
+      <span style="color:#a6e22e;">ON</span> Productos<br>
+      <span style="color:#a6e22e;">AFTER UPDATE</span><br>
+      <span style="color:#a6e22e;">AS</span><br>
+      <span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">IF EXISTS</span> (<span style="color:#a6e22e;">SELECT</span> 1 <span style="color:#a6e22e;">FROM</span> inserted <span style="color:#a6e22e;">WHERE</span> precio &gt; 10000) <span style="color:#75715e;">-- inserted tiene el precio nuevo</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">ROLLBACK TRANSACTION</span>; <span style="color:#75715e;">-- deshace el UPDATE completo</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">RAISERROR</span>(<span style="color:#e6db74;">'El precio no puede superar 10 000.'</span>, 16, 1); <span style="color:#75715e;">-- muestra el error</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">END</span><br>
+      <span style="color:#a6e22e;">END</span>;<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+      <span style="color:#75715e;">-- Prueba 1: precio válido → se permite</span><br>
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> precio = 350.00 <span style="color:#a6e22e;">WHERE</span> id = 3;<br>
+      <br>
+      <span style="color:#75715e;">-- Prueba 2: precio inválido → el trigger lo cancela con error</span><br>
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> precio = 99999.00 <span style="color:#a6e22e;">WHERE</span> id = 3;
+    </div>
+
+    <div class="nota">
+      <strong>Resultado:</strong> Si alguien ejecuta
+      <code>UPDATE Productos SET precio = 99999 WHERE id = 2;</code>,
+      la transacción se cancela con <code>ROLLBACK</code> y aparece el mensaje de error.
+      El precio <em>no</em> cambia en la tabla.
+    </div>
+
+    <!-- ── CASO 4 ── -->
+    <h2 style="color:#5a7abf; border-left-color:#6aa8c8;">9.4 Evitar eliminaciones o modificaciones indebidas</h2>
+
+    <div class="card azul">
+      <p>
+        <strong>Situación:</strong> Los productos marcados como activos (<code>activo = 1</code>)
+        no deben poder eliminarse mientras sigan en uso.
+      </p>
+    </div>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#75715e;">-- Trigger: intercepta el DELETE y decide si se permite o no</span><br>
+      <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_proteger_eliminacion<br>
+      <span style="color:#a6e22e;">ON</span> Productos<br>
+      <span style="color:#a6e22e;">INSTEAD OF DELETE</span> <span style="color:#75715e;">-- reemplaza al DELETE original; sin este trigger el DELETE ocurriría directamente</span><br>
+      <span style="color:#a6e22e;">AS</span><br>
+      <span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">IF EXISTS</span> (<span style="color:#a6e22e;">SELECT</span> 1 <span style="color:#a6e22e;">FROM</span> deleted <span style="color:#a6e22e;">WHERE</span> activo = 1) <span style="color:#75715e;">-- deleted tiene el registro que querían borrar</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">RAISERROR</span>(<span style="color:#e6db74;">'No se puede eliminar un producto activo.'</span>, 16, 1);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">END</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">ELSE</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- El producto está inactivo: se permite la eliminación</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE FROM</span> Productos<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> id <span style="color:#a6e22e;">IN</span> (<span style="color:#a6e22e;">SELECT</span> id <span style="color:#a6e22e;">FROM</span> deleted);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">END</span><br>
+      <span style="color:#a6e22e;">END</span>;<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+      <span style="color:#75715e;">-- Prueba 1: intentar borrar un producto activo → el trigger lo bloquea</span><br>
+      <span style="color:#a6e22e;">DELETE FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 1; <span style="color:#75715e;">-- activo = 1, se esperan error</span><br>
+      <br>
+      <span style="color:#75715e;">-- Prueba 2: desactivar primero, luego borrar → el trigger lo permite</span><br>
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> activo = 0 <span style="color:#a6e22e;">WHERE</span> id = 1;<br>
+      <span style="color:#a6e22e;">DELETE FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 1; <span style="color:#75715e;">-- ahora sí procede</span>
+    </div>
+
+    <div class="nota">
+      <strong>Nota clave:</strong> Este trigger usa <code>INSTEAD OF DELETE</code>, lo que significa
+      que <em>reemplaza</em> la operación DELETE en lugar de ejecutarse después.
+      Así tiene control total sobre si se permite o no la eliminación.
+    </div>
+
+    <!-- ── CASO 5 ── -->
+    <h2 style="color:#5a7abf; border-left-color:#6aa8c8;">9.5 Mantener la integridad y coherencia de la información</h2>
+
+    <div class="card azul">
+      <p>
+        <strong>Situación:</strong> Cuando un producto se elimina, sus registros en
+        <code>HistorialPrecios</code> también deben eliminarse para no dejar datos huérfanos.
+      </p>
+    </div>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#75715e;">-- Trigger: cuando se elimina un producto, limpia su historial automáticamente</span><br>
+      <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_limpiar_historial<br>
+      <span style="color:#a6e22e;">ON</span> Productos<br>
+      <span style="color:#a6e22e;">AFTER DELETE</span> <span style="color:#75715e;">-- se ejecuta después de que el producto ya fue eliminado</span><br>
+      <span style="color:#a6e22e;">AS</span><br>
+      <span style="color:#a6e22e;">BEGIN</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE FROM</span> HistorialPrecios<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> id_producto <span style="color:#a6e22e;">IN</span> (<span style="color:#a6e22e;">SELECT</span> id <span style="color:#a6e22e;">FROM</span> deleted); <span style="color:#75715e;">-- deleted tiene el id del producto eliminado</span><br>
+      <span style="color:#a6e22e;">END</span>;<br>
+      <span style="color:#a6e22e;">GO</span><br>
+      <br>
+      <span style="color:#75715e;">-- Prueba: eliminar el Mouse inalámbrico (id=2) borra también su historial de precios</span><br>
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> activo = 0 <span style="color:#a6e22e;">WHERE</span> id = 2; <span style="color:#75715e;">-- primero lo desactivamos</span><br>
+      <span style="color:#a6e22e;">DELETE FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 2; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- esto dispara el trigger</span><br>
+      <br>
+      <span style="color:#75715e;">-- Verificar que no quedaron registros huérfanos</span><br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> HistorialPrecios <span style="color:#a6e22e;">WHERE</span> id_producto = 2; <span style="color:#75715e;">-- debe devolver 0 filas</span>
+    </div>
+
+    <div class="nota">
+      <strong>Resultado:</strong> Al eliminar el producto con id = 3, el trigger borra automáticamente
+      todos los registros de precio que le pertenecían en <code>HistorialPrecios</code>,
+      evitando que queden datos sin dueño (huérfanos).
+    </div>
+
+    <!-- RESUMEN VISUAL -->
+    <h2>10. Resumen visual de los cinco ejemplos</h2>
+
+    <table>
+      <tr>
+        <th>Propósito</th>
+        <th>Trigger</th>
+        <th>Evento</th>
+        <th>Acción automática</th>
+      </tr>
+      <tr>
+        <td>Registrar cambios</td>
+        <td><code>trg_registrar_cambio_precio</code></td>
+        <td>AFTER UPDATE</td>
+        <td>Guarda precio anterior y nuevo en <code>HistorialPrecios</code></td>
+      </tr>
+      <tr>
+        <td>Auditoría</td>
+        <td><code>trg_auditoria_insercion</code></td>
+        <td>AFTER INSERT</td>
+        <td>Registra usuario y fecha en <code>AuditoriaProductos</code></td>
+      </tr>
+      <tr>
+        <td>Regla de negocio</td>
+        <td><code>trg_precio_maximo</code></td>
+        <td>AFTER UPDATE</td>
+        <td>Cancela la operación si el precio supera 10 000</td>
+      </tr>
+      <tr>
+        <td>Evitar eliminaciones</td>
+        <td><code>trg_proteger_eliminacion</code></td>
+        <td>INSTEAD OF DELETE</td>
+        <td>Bloquea la eliminación si el producto está activo</td>
+      </tr>
+      <tr>
+        <td>Integridad referencial</td>
+        <td><code>trg_limpiar_historial</code></td>
+        <td>AFTER DELETE</td>
+        <td>Elimina registros huérfanos en <code>HistorialPrecios</code></td>
+      </tr>
+    </table>
+
+    <div class="nota" style="margin-top:28px;">
+      <strong>Tablas especiales <code>inserted</code> y <code>deleted</code>:</strong><br>
+      Dentro de cualquier trigger, SQL Server crea automáticamente dos tablas temporales:<br>
+      &bull; <code>inserted</code>: contiene los registros nuevos (INSERT) o los valores nuevos (UPDATE).<br>
+      &bull; <code>deleted</code>: contiene los registros eliminados (DELETE) o los valores anteriores (UPDATE).
+    </div>
+
+    <div class="footer">
+      Guía básica de Triggers - SQL Server
+    </div>
+
+  </div>
+
+</body>
+</html>
