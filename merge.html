@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Guía: MERGE en SQL Server</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f8fb;
+      color: #2b2b2b;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .contenedor {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      color: #1a5c8a;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 35px;
+    }
+
+    h2 {
+      color: #1a5c8a;
+      border-left: 6px solid #4a90c4;
+      padding-left: 12px;
+      margin-top: 35px;
+    }
+
+    .card {
+      background: #eef7fb;
+      border-left: 5px solid #6aa8c8;
+      padding: 18px 22px;
+      border-radius: 12px;
+      margin: 18px 0;
+    }
+
+    .card.verde {
+      background: #eefbf3;
+      border-left-color: #6bbf8a;
+    }
+
+    .card.rojo {
+      background: #fdf0f0;
+      border-left-color: #c0524a;
+    }
+
+    .card.morado {
+      background: #f5f0fb;
+      border-left-color: #9a7bd1;
+    }
+
+    .card.amarillo {
+      background: #fffbea;
+      border-left-color: #e6c84a;
+    }
+
+    .resaltado {
+      background: #fff3cd;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      background: white;
+    }
+
+    th {
+      background: #1a5c8a;
+      color: white;
+      padding: 12px;
+    }
+
+    td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) {
+      background: #f4f9fd;
+    }
+
+    code {
+      background: #e8f4fb;
+      padding: 3px 6px;
+      border-radius: 5px;
+      color: #1a5c8a;
+      font-weight: bold;
+    }
+
+    .ejemplo {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      line-height: 1.9;
+    }
+
+    .nota {
+      background: #fff8e8;
+      border: 1px solid #f0d58c;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .ejemplo-mini {
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      color: #1a5c8a;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: bold;
+      margin-right: 6px;
+    }
+
+    .badge-verde  { background: #d4f0d4; color: #2e7d32; }
+    .badge-rojo   { background: #fde8e8; color: #7b1e1e; }
+    .badge-azul   { background: #ddeefa; color: #1a5c8a; }
+    .badge-morado { background: #ede8fb; color: #5a3e8a; }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="contenedor">
+
+  <h1>La sentencia MERGE en SQL Server</h1>
+  <p class="subtitulo">Guía didáctica para alumnos</p>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>1. ¿Qué es MERGE?</h2>
+
+  <div class="card">
+    <p>
+      <span class="resaltado">MERGE</span> es una sentencia SQL que permite realizar
+      <strong>tres operaciones en una sola instrucción</strong>:
+      insertar registros nuevos, actualizar los existentes y eliminar los que ya no corresponden.
+    </p>
+  </div>
+
+  <p>
+    La idea central es comparar una <strong>tabla origen</strong> (la fuente de datos nueva)
+    contra una <strong>tabla destino</strong> (la que queremos mantener actualizada),
+    y aplicar automáticamente lo que corresponda según el resultado de esa comparación.
+  </p>
+
+  <div class="nota">
+    <strong>Analogía:</strong> Imagina que tienes una lista de empleados en papel (origen)
+    y una lista en el sistema (destino). MERGE revisa ambas y decide:
+    si el empleado ya existe → actualiza sus datos;
+    si es nuevo → lo agrega;
+    si ya no aparece en el papel → lo elimina del sistema.
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>2. ¿Para qué sirve MERGE?</h2>
+
+  <div class="card">
+    <p>MERGE se utiliza principalmente para:</p>
+    <ul>
+      <li>Sincronizar dos tablas que deben mantenerse iguales.
+        <span class="ejemplo-mini">// Ejemplo: sincronizar inventario de una sucursal con la central.</span>
+      </li>
+      <li>Cargar datos desde un sistema externo (ETL / importaciones).
+        <span class="ejemplo-mini">// Ejemplo: importar clientes desde un archivo Excel cada semana.</span>
+      </li>
+      <li>Reemplazar combinaciones de INSERT + UPDATE + DELETE en un solo paso.
+        <span class="ejemplo-mini">// Evita escribir tres sentencias separadas con lógica condicional.</span>
+      </li>
+      <li>Actualizar un resumen o tabla de totales cuando cambia el detalle.
+        <span class="ejemplo-mini">// Ejemplo: recalcular el stock al procesar una nueva lista de productos.</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>3. Ventajas y desventajas</h2>
+
+  <div class="card verde">
+    <strong>Ventajas</strong>
+    <ul style="margin-top:10px;">
+      <li>
+        <strong>Eficiencia:</strong> realiza INSERT + UPDATE + DELETE en una sola pasada sobre los datos,
+        reduciendo el número de lecturas a la base de datos.
+      </li>
+      <li>
+        <strong>Atomicidad:</strong> toda la operación ocurre como una unidad — o todo se aplica o nada.
+        Garantiza consistencia aunque ocurra un error a mitad del proceso.
+      </li>
+      <li>
+        <strong>Legibilidad:</strong> expresa en un solo bloque lógico lo que de otra forma requeriría
+        tres sentencias separadas con condiciones <code>IF EXISTS</code>.
+      </li>
+      <li>
+        <strong>Menos bloqueos:</strong> al trabajar en una sola sentencia, el tiempo de bloqueo
+        sobre las tablas involucradas tiende a ser menor que con múltiples operaciones individuales.
+      </li>
+    </ul>
+  </div>
+
+  <div class="card rojo" style="margin-top:16px;">
+    <strong>Desventajas</strong>
+    <ul style="margin-top:10px;">
+      <li>
+        <strong>Complejidad:</strong> la sintaxis es más extensa y puede resultar difícil de leer
+        para alumnos o desarrolladores que recién comienzan.
+      </li>
+      <li>
+        <strong>Problemas de rendimiento en tablas grandes:</strong> en conjuntos de millones de filas,
+        MERGE puede ser más lento que operaciones individuales optimizadas con índices específicos.
+      </li>
+      <li>
+        <strong>Concurrencia:</strong> en entornos con muchas escrituras simultáneas,
+        puede generar bloqueos muertos (<em>deadlocks</em>) si no se configura correctamente.
+      </li>
+      <li>
+        <strong>Compatibilidad:</strong> la sintaxis varía entre motores (SQL Server, MySQL, Oracle).
+        Lo que funciona aquí puede no funcionar igual en otro sistema.
+      </li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>4. Sintaxis básica de MERGE</h2>
+
+  <p>La estructura siempre sigue el mismo patrón de cinco partes:</p>
+
+  <div class="ejemplo">
+    <span style="color:#a6e22e;">MERGE INTO</span> TablaDestino <span style="color:#a6e22e;">AS</span> destino &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- tabla que queremos actualizar</span><br>
+    <span style="color:#a6e22e;">USING</span> TablaOrigen <span style="color:#a6e22e;">AS</span> origen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- tabla con los datos nuevos</span><br>
+    <span style="color:#a6e22e;">ON</span> destino.id = origen.id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- condición de coincidencia (clave de comparación)</span><br>
+    <br>
+    <span style="color:#a6e22e;">WHEN MATCHED THEN</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- el registro existe en ambas tablas → actualizar</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span> destino.col = origen.col<br>
+    <br>
+    <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- existe en origen pero NO en destino → insertar</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (col1, col2) <span style="color:#a6e22e;">VALUES</span> (origen.col1, origen.col2)<br>
+    <br>
+    <span style="color:#a6e22e;">WHEN NOT MATCHED BY SOURCE THEN</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- existe en destino pero NO en origen → eliminar</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE</span>;<br>
+    <span style="color:#a6e22e;">GO</span>
+  </div>
+
+  <!-- TABLA EXPLICATIVA DE CADA CLÁUSULA -->
+  <table style="margin-top:22px;">
+    <tr>
+      <th>Cláusula</th>
+      <th>¿Qué pregunta?</th>
+      <th>¿Qué hace?</th>
+    </tr>
+    <tr>
+      <td><code>MERGE INTO … AS destino</code></td>
+      <td>¿Cuál es la tabla que quiero mantener actualizada?</td>
+      <td>Declara la tabla destino y le da un alias corto.</td>
+    </tr>
+    <tr>
+      <td><code>USING … AS origen</code></td>
+      <td>¿De dónde vienen los datos nuevos?</td>
+      <td>Declara la fuente — puede ser una tabla, vista o subconsulta.</td>
+    </tr>
+    <tr>
+      <td><code>ON</code></td>
+      <td>¿Cómo sé si un registro de origen ya existe en destino?</td>
+      <td>Define la condición de comparación, normalmente por clave primaria.</td>
+    </tr>
+    <tr>
+      <td><code>WHEN MATCHED</code></td>
+      <td>¿El registro existe en <strong>ambas</strong> tablas?</td>
+      <td>Ejecuta un <code>UPDATE</code> para actualizar los campos que cambiaron.</td>
+    </tr>
+    <tr>
+      <td><code>WHEN NOT MATCHED BY TARGET</code></td>
+      <td>¿El registro está en origen pero <strong>falta</strong> en destino?</td>
+      <td>Ejecuta un <code>INSERT</code> para agregarlo.</td>
+    </tr>
+    <tr>
+      <td><code>WHEN NOT MATCHED BY SOURCE</code></td>
+      <td>¿El registro está en destino pero <strong>ya no</strong> está en origen?</td>
+      <td>Ejecuta un <code>DELETE</code> para eliminarlo.</td>
+    </tr>
+  </table>
+
+  <div class="nota">
+    <strong>Importante:</strong> Las tres cláusulas <code>WHEN</code> son opcionales.
+    Puedes usar solo las que necesites. Por ejemplo, si solo quieres insertar y actualizar
+    pero nunca eliminar, simplemente omites el <code>WHEN NOT MATCHED BY SOURCE</code>.
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>5. Las tres situaciones posibles — visualizadas</h2>
+
+  <p>
+    La clave para entender MERGE es visualizar qué puede pasar al comparar cada fila
+    de la tabla origen con la tabla destino:
+  </p>
+
+  <div style="display:flex; gap:20px; flex-wrap:wrap; margin-top:16px;">
+
+    <div class="card verde" style="flex:1; min-width:260px;">
+      <span class="badge badge-verde">MATCHED</span><br><br>
+      El registro <strong>existe en ambas tablas</strong>.<br>
+      El <code>id</code> aparece en origen Y en destino.<br><br>
+      → Se ejecuta <code>UPDATE</code>
+      <span class="ejemplo-mini">// Los datos del origen reemplazan a los del destino.</span>
+    </div>
+
+    <div class="card" style="flex:1; min-width:260px;">
+      <span class="badge badge-azul">NOT MATCHED BY TARGET</span><br><br>
+      El registro <strong>es nuevo</strong> — solo existe en origen.<br>
+      El <code>id</code> NO aparece en destino todavía.<br><br>
+      → Se ejecuta <code>INSERT</code>
+      <span class="ejemplo-mini">// Se agrega el registro a la tabla destino.</span>
+    </div>
+
+    <div class="card rojo" style="flex:1; min-width:260px;">
+      <span class="badge badge-rojo">NOT MATCHED BY SOURCE</span><br><br>
+      El registro <strong>ya no existe</strong> en origen.<br>
+      El <code>id</code> está en destino pero desapareció del origen.<br><br>
+      → Se ejecuta <code>DELETE</code>
+      <span class="ejemplo-mini">// Se elimina de la tabla destino.</span>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>6. Base de datos de trabajo</h2>
+
+  <p>
+    Usaremos un escenario de <strong>inventario de una tienda</strong> con dos tablas:
+    <code>Inventario_Central</code> (el destino — lo que tiene el sistema) y
+    <code>Inventario_Nuevo</code> (el origen — la lista actualizada que llega cada semana).
+    El objetivo de MERGE es dejar <code>Inventario_Central</code> igual a <code>Inventario_Nuevo</code>.
+  </p>
+
+  <!-- PASO 1 -->
+  <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 1 — Crear la base de datos</h2>
+
+  <div class="ejemplo">
+    <span style="color:#75715e;">-- Si ya existe, la eliminamos y empezamos limpio</span><br>
+    <span style="color:#a6e22e;">IF EXISTS</span> (<span style="color:#a6e22e;">SELECT</span> name <span style="color:#a6e22e;">FROM</span> sys.databases <span style="color:#a6e22e;">WHERE</span> name = <span style="color:#e6db74;">'TiendaMERGE'</span>)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DROP DATABASE</span> TiendaMERGE;<br>
+    <br>
+    <span style="color:#a6e22e;">CREATE DATABASE</span> TiendaMERGE;<br>
+    <span style="color:#a6e22e;">GO</span><br>
+    <br>
+    <span style="color:#a6e22e;">USE</span> TiendaMERGE;<br>
+    <span style="color:#a6e22e;">GO</span>
+  </div>
+
+  <!-- PASO 2 -->
+  <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 2 — Crear las tablas</h2>
+
+  <div class="ejemplo">
+    <span style="color:#75715e;">-- Tabla DESTINO: lo que el sistema tiene registrado actualmente</span><br>
+    <span style="color:#a6e22e;">CREATE TABLE</span> Inventario_Central (<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">PRIMARY KEY</span>, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- PK manual (sin IDENTITY, para que origen la controle)</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;nombre &nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(100) <span style="color:#a6e22e;">NOT NULL</span>,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;precio &nbsp;&nbsp;<span style="color:#66d9e8;">DECIMAL</span>(10,2) <span style="color:#a6e22e;">NOT NULL</span>,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;stock &nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">NOT NULL DEFAULT</span> 0,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;activo &nbsp;&nbsp;<span style="color:#66d9e8;">BIT</span> <span style="color:#a6e22e;">NOT NULL DEFAULT</span> 1<br>
+    );<br>
+    <span style="color:#a6e22e;">GO</span><br>
+    <br>
+    <span style="color:#75715e;">-- Tabla ORIGEN: la lista nueva que llega cada semana (puede venir de un archivo, otro sistema, etc.)</span><br>
+    <span style="color:#a6e22e;">CREATE TABLE</span> Inventario_Nuevo (<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">PRIMARY KEY</span>,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;nombre &nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(100) <span style="color:#a6e22e;">NOT NULL</span>,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;precio &nbsp;&nbsp;<span style="color:#66d9e8;">DECIMAL</span>(10,2) <span style="color:#a6e22e;">NOT NULL</span>,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;stock &nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">NOT NULL DEFAULT</span> 0<br>
+    );<br>
+    <span style="color:#a6e22e;">GO</span>
+  </div>
+
+  <!-- PASO 3 -->
+  <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 3 — Datos de prueba</h2>
+
+  <p>
+    Cargamos el estado <em>actual</em> del inventario central y la lista nueva que llegó esta semana.
+    Observa las diferencias intencionales para que MERGE tenga trabajo que hacer:
+  </p>
+
+  <div class="ejemplo">
+    <span style="color:#75715e;">-- Estado actual del sistema (Inventario_Central — DESTINO)</span><br>
+    <span style="color:#a6e22e;">INSERT INTO</span> Inventario_Central (id, nombre, precio, stock) <span style="color:#a6e22e;">VALUES</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(1,  <span style="color:#e6db74;">'Teclado USB'</span>,           25.00,  50), <span style="color:#75715e;">-- precio cambiará</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(2,  <span style="color:#e6db74;">'Mouse inalámbrico'</span>,     35.00,  30), <span style="color:#75715e;">-- stock cambiará</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(3,  <span style="color:#e6db74;">'Monitor 24"'</span>,           320.00, 10), <span style="color:#75715e;">-- sin cambios</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(4,  <span style="color:#e6db74;">'Audífonos Bluetooth'</span>,   55.00,  20), <span style="color:#75715e;">-- sin cambios</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(5,  <span style="color:#e6db74;">'Webcam HD'</span>,             75.00,  15), <span style="color:#75715e;">-- sin cambios</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(6,  <span style="color:#e6db74;">'Micrófono USB'</span>,         48.00,  25), <span style="color:#75715e;">-- sin cambios</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(7,  <span style="color:#e6db74;">'Silla ergonómica'</span>,      190.00,  8), <span style="color:#75715e;">-- será ELIMINADO: ya no está en la lista nueva</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(8,  <span style="color:#e6db74;">'Escritorio de pie'</span>,     250.00,  5), <span style="color:#75715e;">-- será ELIMINADO: descontinuado</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(9,  <span style="color:#e6db74;">'Lámpara LED escritorio'</span>, 22.00, 40), <span style="color:#75715e;">-- precio y stock cambiarán</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(10, <span style="color:#e6db74;">'Hub USB 7 puertos'</span>,     18.00,  60); <span style="color:#75715e;">-- sin cambios</span><br>
+    <span style="color:#a6e22e;">GO</span><br>
+    <br>
+    <span style="color:#75715e;">-- Lista nueva que llega esta semana (Inventario_Nuevo — ORIGEN)</span><br>
+    <span style="color:#a6e22e;">INSERT INTO</span> Inventario_Nuevo (id, nombre, precio, stock) <span style="color:#a6e22e;">VALUES</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(1,  <span style="color:#e6db74;">'Teclado USB'</span>,           29.00,  50), <span style="color:#75715e;">-- precio subió de 25 a 29</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(2,  <span style="color:#e6db74;">'Mouse inalámbrico'</span>,     35.00,  45), <span style="color:#75715e;">-- stock reabastecido: 30 → 45</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(3,  <span style="color:#e6db74;">'Monitor 24"'</span>,           320.00, 10), <span style="color:#75715e;">-- sin cambios</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(4,  <span style="color:#e6db74;">'Audífonos Bluetooth'</span>,   55.00,  20), <span style="color:#75715e;">-- sin cambios</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(5,  <span style="color:#e6db74;">'Webcam HD'</span>,             75.00,  15), <span style="color:#75715e;">-- sin cambios</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(6,  <span style="color:#e6db74;">'Micrófono USB'</span>,         48.00,  25), <span style="color:#75715e;">-- sin cambios</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(9,  <span style="color:#e6db74;">'Lámpara LED escritorio'</span>, 19.00, 55), <span style="color:#75715e;">-- precio bajó y stock aumentó</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(10, <span style="color:#e6db74;">'Hub USB 7 puertos'</span>,     18.00,  60), <span style="color:#75715e;">-- sin cambios</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(11, <span style="color:#e6db74;">'Disco SSD 1TB'</span>,         89.00,  12), <span style="color:#75715e;">-- NUEVO: no estaba en el sistema</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(12, <span style="color:#e6db74;">'Memoria RAM 16GB'</span>,      45.00,  18), <span style="color:#75715e;">-- NUEVO: no estaba en el sistema</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(13, <span style="color:#e6db74;">'Router WiFi 6'</span>,         65.00,  22); <span style="color:#75715e;">-- NUEVO: no estaba en el sistema</span><br>
+    <span style="color:#a6e22e;">GO</span>
+  </div>
+
+  <!-- TABLA COMPARATIVA ANTES/DESPUÉS -->
+  <div class="card amarillo" style="margin-top:22px;">
+    <strong>¿Qué debería hacer MERGE con cada registro?</strong>
+    <table style="margin-top:12px;">
+      <tr>
+        <th>id</th>
+        <th>Producto</th>
+        <th>En Central</th>
+        <th>En Nuevo</th>
+        <th>Acción esperada</th>
+      </tr>
+      <tr><td>1</td><td>Teclado USB</td><td>precio 25.00</td><td>precio 29.00</td><td><span class="badge badge-azul">UPDATE</span> precio cambió</td></tr>
+      <tr><td>2</td><td>Mouse inalámbrico</td><td>stock 30</td><td>stock 45</td><td><span class="badge badge-azul">UPDATE</span> stock reabastecido</td></tr>
+      <tr><td>3–6,10</td><td>Varios</td><td>iguales</td><td>iguales</td><td><span class="badge badge-azul">UPDATE</span> sin cambio real</td></tr>
+      <tr><td>7</td><td>Silla ergonómica</td><td>existe</td><td>no está</td><td><span class="badge badge-rojo">DELETE</span> descontinuado</td></tr>
+      <tr><td>8</td><td>Escritorio de pie</td><td>existe</td><td>no está</td><td><span class="badge badge-rojo">DELETE</span> descontinuado</td></tr>
+      <tr><td>9</td><td>Lámpara LED</td><td>precio 22, stock 40</td><td>precio 19, stock 55</td><td><span class="badge badge-azul">UPDATE</span> ambos cambios</td></tr>
+      <tr><td>11</td><td>Disco SSD 1TB</td><td>no está</td><td>existe</td><td><span class="badge badge-verde">INSERT</span> producto nuevo</td></tr>
+      <tr><td>12</td><td>Memoria RAM 16GB</td><td>no está</td><td>existe</td><td><span class="badge badge-verde">INSERT</span> producto nuevo</td></tr>
+      <tr><td>13</td><td>Router WiFi 6</td><td>no está</td><td>existe</td><td><span class="badge badge-verde">INSERT</span> producto nuevo</td></tr>
+    </table>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>7. El MERGE completo — las tres cláusulas</h2>
+
+  <p>
+    Con los datos cargados, ejecutamos MERGE para que
+    <code>Inventario_Central</code> quede sincronizado con <code>Inventario_Nuevo</code>:
+  </p>
+
+  <div class="ejemplo">
+    <span style="color:#75715e;">-- MERGE completo: actualiza, inserta y elimina en un solo paso</span><br>
+    <span style="color:#a6e22e;">MERGE INTO</span> Inventario_Central <span style="color:#a6e22e;">AS</span> destino &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- tabla que queremos actualizar</span><br>
+    <span style="color:#a6e22e;">USING</span> Inventario_Nuevo <span style="color:#a6e22e;">AS</span> origen &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- tabla con los datos nuevos</span><br>
+    <span style="color:#a6e22e;">ON</span> destino.id = origen.id &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- comparamos por id (clave primaria)</span><br>
+    <br>
+    <span style="color:#75715e;">-- ① El id existe en ambas tablas → actualizar precio y stock</span><br>
+    <span style="color:#a6e22e;">WHEN MATCHED THEN</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.nombre = origen.nombre,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.precio = origen.precio,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.stock  = origen.stock<br>
+    <br>
+    <span style="color:#75715e;">-- ② El id está en origen pero no en destino → insertar como nuevo</span><br>
+    <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (id, nombre, precio, stock)<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">VALUES</span> (origen.id, origen.nombre, origen.precio, origen.stock)<br>
+    <br>
+    <span style="color:#75715e;">-- ③ El id está en destino pero ya no aparece en origen → eliminar</span><br>
+    <span style="color:#a6e22e;">WHEN NOT MATCHED BY SOURCE THEN</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE</span>;<br>
+    <span style="color:#a6e22e;">GO</span><br>
+    <br>
+    <span style="color:#75715e;">-- Verificar el resultado final</span><br>
+    <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Inventario_Central <span style="color:#a6e22e;">ORDER BY</span> id; <span style="color:#75715e;">-- debe tener ids 1-6, 9-13 (7 y 8 eliminados)</span>
+  </div>
+
+  <div class="nota">
+    <strong>Resultado esperado:</strong> Después del MERGE, <code>Inventario_Central</code>
+    debe tener 11 filas (ids 1–6, 9–13). Los ids 7 y 8 desaparecieron,
+    los ids 11, 12 y 13 se agregaron, y los precios/stocks de 1, 2 y 9 se actualizaron.
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>8. MERGE parcial — solo algunas cláusulas</h2>
+
+  <p>
+    No siempre se necesitan las tres cláusulas. MERGE es flexible:
+    puedes usar solo las que la situación requiera.
+  </p>
+
+  <!-- 8.1 Solo INSERT y UPDATE -->
+  <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:24px;">8.1 Solo INSERT y UPDATE (sin eliminar)</h2>
+
+  <div class="card verde">
+    <p>
+      <strong>Situación:</strong> Llega una lista de productos nuevos y actualizados,
+      pero <em>no queremos eliminar</em> ninguno del sistema aunque ya no aparezca en la lista.
+    </p>
+  </div>
+
+  <div class="ejemplo">
+    <span style="color:#75715e;">-- MERGE sin DELETE: agrega nuevos y actualiza existentes, pero nunca borra</span><br>
+    <span style="color:#a6e22e;">MERGE INTO</span> Inventario_Central <span style="color:#a6e22e;">AS</span> destino<br>
+    <span style="color:#a6e22e;">USING</span> Inventario_Nuevo <span style="color:#a6e22e;">AS</span> origen<br>
+    <span style="color:#a6e22e;">ON</span> destino.id = origen.id<br>
+    <br>
+    <span style="color:#a6e22e;">WHEN MATCHED THEN</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- actualiza si ya existe</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span> destino.precio = origen.precio, destino.stock = origen.stock<br>
+    <br>
+    <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- inserta si es nuevo</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (id, nombre, precio, stock) <span style="color:#a6e22e;">VALUES</span> (origen.id, origen.nombre, origen.precio, origen.stock);<br>
+    <span style="color:#75715e;">-- sin WHEN NOT MATCHED BY SOURCE → los registros que no están en origen se conservan</span><br>
+    <span style="color:#a6e22e;">GO</span>
+  </div>
+
+  <!-- 8.2 Solo UPDATE condicional -->
+  <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:24px;">8.2 UPDATE solo cuando algo realmente cambió</h2>
+
+  <div class="card verde">
+    <p>
+      <strong>Situación:</strong> Queremos evitar actualizar registros que no cambiaron,
+      para no disparar triggers innecesarios ni generar entradas falsas en el historial de cambios.
+    </p>
+  </div>
+
+  <div class="ejemplo">
+    <span style="color:#75715e;">-- WHEN MATCHED AND ... → agrega una condición extra antes de actualizar</span><br>
+    <span style="color:#a6e22e;">MERGE INTO</span> Inventario_Central <span style="color:#a6e22e;">AS</span> destino<br>
+    <span style="color:#a6e22e;">USING</span> Inventario_Nuevo <span style="color:#a6e22e;">AS</span> origen<br>
+    <span style="color:#a6e22e;">ON</span> destino.id = origen.id<br>
+    <br>
+    <span style="color:#a6e22e;">WHEN MATCHED AND</span> <span style="color:#75715e;">-- solo actúa si precio O stock realmente cambiaron</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;(destino.precio &lt;&gt; origen.precio <span style="color:#a6e22e;">OR</span> destino.stock &lt;&gt; origen.stock) <span style="color:#a6e22e;">THEN</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span> destino.precio = origen.precio, destino.stock = origen.stock<br>
+    <br>
+    <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (id, nombre, precio, stock) <span style="color:#a6e22e;">VALUES</span> (origen.id, origen.nombre, origen.precio, origen.stock);<br>
+    <span style="color:#a6e22e;">GO</span>
+  </div>
+
+  <div class="nota">
+    <strong>¿Por qué es útil el <code>AND</code>?</strong>
+    Sin esa condición, MERGE ejecuta el UPDATE aunque los valores sean idénticos,
+    lo que genera escrituras innecesarias y puede disparar triggers de auditoría para filas que no cambiaron.
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>9. Capturar qué hizo MERGE con <code>OUTPUT</code></h2>
+
+  <p>
+    MERGE puede reportar exactamente qué acción tomó con cada fila usando la cláusula
+    <code>OUTPUT</code>. Es muy útil para auditoría o para verificar resultados en clase.
+  </p>
+
+  <div class="ejemplo">
+    <span style="color:#75715e;">-- OUTPUT muestra qué acción tomó MERGE con cada fila</span><br>
+    <span style="color:#a6e22e;">MERGE INTO</span> Inventario_Central <span style="color:#a6e22e;">AS</span> destino<br>
+    <span style="color:#a6e22e;">USING</span> Inventario_Nuevo <span style="color:#a6e22e;">AS</span> origen<br>
+    <span style="color:#a6e22e;">ON</span> destino.id = origen.id<br>
+    <br>
+    <span style="color:#a6e22e;">WHEN MATCHED AND</span> (destino.precio &lt;&gt; origen.precio <span style="color:#a6e22e;">OR</span> destino.stock &lt;&gt; origen.stock) <span style="color:#a6e22e;">THEN</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span> destino.precio = origen.precio, destino.stock = origen.stock<br>
+    <br>
+    <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (id, nombre, precio, stock) <span style="color:#a6e22e;">VALUES</span> (origen.id, origen.nombre, origen.precio, origen.stock)<br>
+    <br>
+    <span style="color:#a6e22e;">WHEN NOT MATCHED BY SOURCE THEN</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE</span><br>
+    <br>
+    <span style="color:#75715e;">-- OUTPUT: $action dice si fue INSERT, UPDATE o DELETE</span><br>
+    <span style="color:#a6e22e;">OUTPUT</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;$action <span style="color:#a6e22e;">AS</span> accion, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- 'INSERT', 'UPDATE' o 'DELETE'</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;COALESCE(deleted.id, inserted.id) <span style="color:#a6e22e;">AS</span> id,<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;deleted.precio <span style="color:#a6e22e;">AS</span> precio_antes, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- NULL si fue INSERT</span><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;inserted.precio <span style="color:#a6e22e;">AS</span> precio_despues &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- NULL si fue DELETE</span><br>
+    <span style="color:#a6e22e;">ORDER BY</span> accion, id;<br>
+    <span style="color:#a6e22e;">GO</span>
+  </div>
+
+  <div class="nota">
+    <strong>Resultado esperado de OUTPUT:</strong><br>
+    Las filas aparecerán agrupadas por acción.
+    Las eliminadas mostrarán <code>precio_antes</code> y <code>precio_despues = NULL</code>.
+    Las insertadas mostrarán <code>precio_antes = NULL</code> y el nuevo precio.
+    Las actualizadas mostrarán ambos precios para comparar.
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>10. MERGE vs INSERT + UPDATE + DELETE por separado</h2>
+
+  <p>¿Cuándo conviene usar MERGE y cuándo es mejor hacerlo por separado?</p>
+
+  <table>
+    <tr>
+      <th>Criterio</th>
+      <th>MERGE</th>
+      <th>Sentencias separadas</th>
+    </tr>
+    <tr>
+      <td>Código más corto</td>
+      <td style="color:green; text-align:center;">✔ Sí</td>
+      <td>Requiere tres bloques con condiciones <code>IF EXISTS</code></td>
+    </tr>
+    <tr>
+      <td>Atomicidad</td>
+      <td style="color:green; text-align:center;">✔ Una sola transacción</td>
+      <td>Hay que envolverlas en <code>BEGIN TRANSACTION</code> manualmente</td>
+    </tr>
+    <tr>
+      <td>Rendimiento en tablas pequeñas</td>
+      <td style="color:green; text-align:center;">✔ Mejor o igual</td>
+      <td>Similar</td>
+    </tr>
+    <tr>
+      <td>Rendimiento en tablas muy grandes</td>
+      <td>Puede ser más lento sin índices adecuados</td>
+      <td style="color:green; text-align:center;">✔ Más controlable</td>
+    </tr>
+    <tr>
+      <td>Facilidad de depuración</td>
+      <td>Más difícil de aislar errores</td>
+      <td style="color:green; text-align:center;">✔ Más fácil: se prueba cada operación</td>
+    </tr>
+    <tr>
+      <td>Uso con OUTPUT / auditoría</td>
+      <td style="color:green; text-align:center;">✔ Nativo con <code>OUTPUT $action</code></td>
+      <td>Requiere lógica adicional en cada sentencia</td>
+    </tr>
+  </table>
+
+  <div class="nota">
+    <strong>Recomendación práctica:</strong>
+    Usa MERGE cuando necesitas sincronizar dos tablas o cargar datos externos
+    y quieres hacerlo limpio en un solo bloque.
+    Usa sentencias separadas cuando el volumen de datos es muy grande
+    o cuando cada operación necesita lógica muy específica y diferente.
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <h2>11. Resumen visual</h2>
+
+  <table>
+    <tr>
+      <th>Situación al comparar</th>
+      <th>Cláusula WHEN</th>
+      <th>Acción</th>
+      <th>¿Qué tablas existen dentro?</th>
+    </tr>
+    <tr>
+      <td>id en origen Y en destino</td>
+      <td><code>WHEN MATCHED</code></td>
+      <td><code>UPDATE</code></td>
+      <td><code>inserted</code> (nuevo) y <code>deleted</code> (anterior)</td>
+    </tr>
+    <tr>
+      <td>id en origen, NO en destino</td>
+      <td><code>WHEN NOT MATCHED BY TARGET</code></td>
+      <td><code>INSERT</code></td>
+      <td>Solo <code>inserted</code></td>
+    </tr>
+    <tr>
+      <td>id en destino, NO en origen</td>
+      <td><code>WHEN NOT MATCHED BY SOURCE</code></td>
+      <td><code>DELETE</code></td>
+      <td>Solo <code>deleted</code></td>
+    </tr>
+  </table>
+
+  <div class="nota" style="margin-top:22px;">
+    <strong>Conexión con Triggers:</strong>
+    Cuando MERGE actúa sobre una tabla que tiene triggers,
+    cada acción individual (INSERT, UPDATE, DELETE) dispara su trigger correspondiente.
+    Las tablas <code>inserted</code> y <code>deleted</code> dentro de esos triggers
+    funcionan exactamente igual que con sentencias separadas.
+  </div>
+
+  <div class="footer">
+    Guía de MERGE - SQL Server
+  </div>
+
+</div>
+</body>
+</html>
