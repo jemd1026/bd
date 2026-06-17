@@ -753,45 +753,6 @@
     </ul>
   </div>
 
-  <details style="margin-top:14px;">
-    <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
-      Ver solución
-    </summary>
-    <div class="ejemplo" style="margin-top:12px;">
-      <span style="color:#a6e22e;">USE</span> TiendaMERGE;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- MERGE sin DELETE y con filtro de cambios reales</span><br>
-      <span style="color:#a6e22e;">MERGE INTO</span> Inventario_Central <span style="color:#a6e22e;">AS</span> destino<br>
-      <span style="color:#a6e22e;">USING</span> Inventario_Nuevo <span style="color:#a6e22e;">AS</span> origen<br>
-      <span style="color:#a6e22e;">ON</span> destino.id = origen.id<br>
-      <br>
-      <span style="color:#75715e;">-- Solo actualiza si algo realmente cambió</span><br>
-      <span style="color:#a6e22e;">WHEN MATCHED AND</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(destino.precio &lt;&gt; origen.precio <span style="color:#a6e22e;">OR</span> destino.stock &lt;&gt; origen.stock) <span style="color:#a6e22e;">THEN</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.nombre = origen.nombre,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.precio = origen.precio,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.stock &nbsp;= origen.stock<br>
-      <br>
-      <span style="color:#75715e;">-- Producto nuevo → insertar</span><br>
-      <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (id, nombre, precio, stock)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">VALUES</span> (origen.id, origen.nombre, origen.precio, origen.stock)<br>
-      <br>
-      <span style="color:#75715e;">-- Sin WHEN NOT MATCHED BY SOURCE → no se elimina nada</span><br>
-      <br>
-      <span style="color:#a6e22e;">OUTPUT</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;$action <span style="color:#a6e22e;">AS</span> accion,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;COALESCE(inserted.id, deleted.id) <span style="color:#a6e22e;">AS</span> id,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;deleted.precio <span style="color:#a6e22e;">AS</span> precio_antes,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;inserted.precio <span style="color:#a6e22e;">AS</span> precio_despues;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- Verificar: los ids 7 y 8 deben seguir existiendo (no se eliminaron)</span><br>
-      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Inventario_Central <span style="color:#a6e22e;">ORDER BY</span> id;
-    </div>
-  </details>
 
   <!-- ═══════════════════ EJERCICIO 2 ═══════════════════ -->
   <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 2 — Desactivar en vez de eliminar</h2>
@@ -820,47 +781,6 @@
     </ul>
   </div>
 
-  <details style="margin-top:14px;">
-    <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
-      Ver solución
-    </summary>
-    <div class="ejemplo" style="margin-top:12px;">
-      <span style="color:#a6e22e;">USE</span> TiendaMERGE;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- Primero recargar datos limpios (ejecutar sección 6 de nuevo si es necesario)</span><br>
-      <br>
-      <span style="color:#a6e22e;">MERGE INTO</span> Inventario_Central <span style="color:#a6e22e;">AS</span> destino<br>
-      <span style="color:#a6e22e;">USING</span> Inventario_Nuevo <span style="color:#a6e22e;">AS</span> origen<br>
-      <span style="color:#a6e22e;">ON</span> destino.id = origen.id<br>
-      <br>
-      <span style="color:#75715e;">-- Coinciden → actualizar y asegurar que quede activo</span><br>
-      <span style="color:#a6e22e;">WHEN MATCHED THEN</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.nombre = origen.nombre,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.precio = origen.precio,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.stock  = origen.stock,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.activo = 1 <span style="color:#75715e;">-- reactivar si estaba inactivo</span><br>
-      <br>
-      <span style="color:#75715e;">-- Nuevo → insertar como activo</span><br>
-      <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (id, nombre, precio, stock, activo)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">VALUES</span> (origen.id, origen.nombre, origen.precio, origen.stock, 1)<br>
-      <br>
-      <span style="color:#75715e;">-- Ya no está en origen → desactivar en vez de eliminar</span><br>
-      <span style="color:#a6e22e;">WHEN NOT MATCHED BY SOURCE AND</span> destino.activo = 1 <span style="color:#a6e22e;">THEN</span> <span style="color:#75715e;">-- solo si aún está activo</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span> destino.activo = 0 <span style="color:#75715e;">-- marcar como inactivo (no eliminar)</span><br>
-      <br>
-      <span style="color:#a6e22e;">OUTPUT</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;$action <span style="color:#a6e22e;">AS</span> accion,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;COALESCE(inserted.id, deleted.id) <span style="color:#a6e22e;">AS</span> id,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;inserted.activo <span style="color:#a6e22e;">AS</span> activo_despues;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- Verificar: ids 7 y 8 deben tener activo = 0 (no fueron borrados)</span><br>
-      <span style="color:#a6e22e;">SELECT</span> id, nombre, activo <span style="color:#a6e22e;">FROM</span> Inventario_Central <span style="color:#a6e22e;">ORDER BY</span> id;
-    </div>
-  </details>
 
   <!-- ═════════════════════════════════════════════════════════════════════ -->
   <h2 style="color:#1a5c8a; border-left-color:#4a90c4; margin-top:40px;">Ejercicios con Northwind</h2>
@@ -909,60 +829,6 @@
     </ul>
   </div>
 
-  <details style="margin-top:14px;">
-    <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
-      Ver solución
-    </summary>
-    <div class="ejemplo" style="margin-top:12px;">
-      <span style="color:#a6e22e;">USE</span> Northwind;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- Crear tabla temporal con la lista nueva de precios</span><br>
-      <span style="color:#a6e22e;">CREATE TABLE</span> #ListaPrecios (<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;ProductID &nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">PRIMARY KEY</span>,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;ProductName <span style="color:#66d9e8;">NVARCHAR</span>(40) <span style="color:#a6e22e;">NOT NULL</span>,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;UnitPrice &nbsp;&nbsp;<span style="color:#66d9e8;">MONEY</span> <span style="color:#a6e22e;">NOT NULL</span>,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;CategoryID &nbsp;<span style="color:#66d9e8;">INT</span>,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;SupplierID &nbsp;<span style="color:#66d9e8;">INT</span><br>
-      );<br>
-      <br>
-      <span style="color:#75715e;">-- Algunos productos existentes con precios modificados + uno nuevo</span><br>
-      <span style="color:#a6e22e;">INSERT INTO</span> #ListaPrecios <span style="color:#a6e22e;">VALUES</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(1,  <span style="color:#e6db74;">'Chai'</span>, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;20.00, 1, 1), <span style="color:#75715e;">-- precio original: 18.00 → sube a 20</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(2,  <span style="color:#e6db74;">'Chang'</span>, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;19.00, 1, 1), <span style="color:#75715e;">-- precio original: 19.00 → sin cambio</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(11, <span style="color:#e6db74;">'Queso Cabrales'</span>, &nbsp;25.00, 4, 5), <span style="color:#75715e;">-- precio original: 21.00 → sube a 25</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(17, <span style="color:#e6db74;">'Alice Mutton'</span>, &nbsp;&nbsp;&nbsp;42.00, 6, 7), <span style="color:#75715e;">-- precio original: 39.00 → sube a 42</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(999,<span style="color:#e6db74;">'Café Venezolano'</span>, 15.50, 1, 1); <span style="color:#75715e;">-- producto nuevo: no existe en Products</span><br>
-      <br>
-      <span style="color:#75715e;">-- MERGE: actualizar precios e insertar nuevos, sin eliminar</span><br>
-      <span style="color:#a6e22e;">MERGE INTO</span> Products <span style="color:#a6e22e;">AS</span> destino<br>
-      <span style="color:#a6e22e;">USING</span> #ListaPrecios <span style="color:#a6e22e;">AS</span> origen<br>
-      <span style="color:#a6e22e;">ON</span> destino.ProductID = origen.ProductID<br>
-      <br>
-      <span style="color:#a6e22e;">WHEN MATCHED AND</span> destino.UnitPrice &lt;&gt; origen.UnitPrice <span style="color:#a6e22e;">THEN</span> <span style="color:#75715e;">-- solo si el precio cambió</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span> destino.UnitPrice = origen.UnitPrice<br>
-      <br>
-      <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span> <span style="color:#75715e;">-- producto nuevo</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (ProductName, UnitPrice, CategoryID, SupplierID, Discontinued)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">VALUES</span> (origen.ProductName, origen.UnitPrice, origen.CategoryID, origen.SupplierID, 0)<br>
-      <br>
-      <span style="color:#a6e22e;">OUTPUT</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;$action <span style="color:#a6e22e;">AS</span> accion,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;COALESCE(inserted.ProductID, deleted.ProductID) <span style="color:#a6e22e;">AS</span> ProductID,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;inserted.ProductName,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;deleted.UnitPrice <span style="color:#a6e22e;">AS</span> precio_antes,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;inserted.UnitPrice <span style="color:#a6e22e;">AS</span> precio_despues;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- Limpiar: eliminar la tabla temporal</span><br>
-      <span style="color:#a6e22e;">DROP TABLE</span> #ListaPrecios;<br>
-      <br>
-      <span style="color:#75715e;">-- Verificar los cambios</span><br>
-      <span style="color:#a6e22e;">SELECT</span> ProductID, ProductName, UnitPrice<br>
-      <span style="color:#a6e22e;">FROM</span> Products<br>
-      <span style="color:#a6e22e;">WHERE</span> ProductID <span style="color:#a6e22e;">IN</span> (1, 2, 11, 17) <span style="color:#a6e22e;">OR</span> ProductName = <span style="color:#e6db74;">'Café Venezolano'</span>;
-    </div>
-  </details>
 
   <!-- ═══════════════════ EJERCICIO 4 ═══════════════════ -->
   <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 4 — Actualizar catálogo de categorías (Northwind)</h2>
@@ -993,62 +859,6 @@
     </ul>
   </div>
 
-  <details style="margin-top:14px;">
-    <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
-      Ver solución
-    </summary>
-    <div class="ejemplo" style="margin-top:12px;">
-      <span style="color:#a6e22e;">USE</span> Northwind;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- Catálogo nuevo: incluye las originales (algunas con descripción modificada) + 2 nuevas</span><br>
-      <span style="color:#a6e22e;">CREATE TABLE</span> #CategoriasNuevas (<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;CategoryID &nbsp;&nbsp;<span style="color:#66d9e8;">INT</span> <span style="color:#a6e22e;">PRIMARY KEY</span>,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;CategoryName <span style="color:#66d9e8;">NVARCHAR</span>(15) <span style="color:#a6e22e;">NOT NULL</span>,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;Description &nbsp;<span style="color:#66d9e8;">NTEXT</span><br>
-      );<br>
-      <br>
-      <span style="color:#a6e22e;">INSERT INTO</span> #CategoriasNuevas <span style="color:#a6e22e;">VALUES</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(1, <span style="color:#e6db74;">'Beverages'</span>, &nbsp;&nbsp;&nbsp;<span style="color:#e6db74;">'Soft drinks, coffees, teas, beers, and ales (updated)'</span>), <span style="color:#75715e;">-- descripción cambia</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(2, <span style="color:#e6db74;">'Condiments'</span>, &nbsp;&nbsp;<span style="color:#e6db74;">'Sweet and savory sauces, relishes, spreads, and seasonings'</span>), <span style="color:#75715e;">-- sin cambio</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(3, <span style="color:#e6db74;">'Confections'</span>, &nbsp;<span style="color:#e6db74;">'Desserts, candies, and sweet breads'</span>), <span style="color:#75715e;">-- sin cambio</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(4, <span style="color:#e6db74;">'Dairy Products'</span>,<span style="color:#e6db74;">'Cheeses and dairy-based products'</span>), <span style="color:#75715e;">-- sin cambio</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(5, <span style="color:#e6db74;">'Grains/Cereals'</span>,<span style="color:#e6db74;">'Breads, crackers, pasta, and cereal (updated)'</span>), <span style="color:#75715e;">-- descripción cambia</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(6, <span style="color:#e6db74;">'Meat/Poultry'</span>, &nbsp;<span style="color:#e6db74;">'Prepared meats'</span>), <span style="color:#75715e;">-- sin cambio</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(7, <span style="color:#e6db74;">'Produce'</span>, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#e6db74;">'Dried fruit and bean curd'</span>), <span style="color:#75715e;">-- sin cambio</span><br>
-      <span style="color:#75715e;">-- ¡Categoría 8 (Seafood) NO está! → se debería eliminar si no tiene productos</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(9,  <span style="color:#e6db74;">'Technology'</span>, &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#e6db74;">'Electronic devices and accessories'</span>), <span style="color:#75715e;">-- nueva</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(10, <span style="color:#e6db74;">'Personal Care'</span>, &nbsp;<span style="color:#e6db74;">'Health and beauty products'</span>); &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- nueva</span><br>
-      <br>
-      <span style="color:#a6e22e;">MERGE INTO</span> Categories <span style="color:#a6e22e;">AS</span> destino<br>
-      <span style="color:#a6e22e;">USING</span> #CategoriasNuevas <span style="color:#a6e22e;">AS</span> origen<br>
-      <span style="color:#a6e22e;">ON</span> destino.CategoryID = origen.CategoryID<br>
-      <br>
-      <span style="color:#a6e22e;">WHEN MATCHED AND</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;CAST(destino.Description AS NVARCHAR(MAX)) &lt;&gt; CAST(origen.Description AS NVARCHAR(MAX)) <span style="color:#a6e22e;">THEN</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span> destino.Description = origen.Description<br>
-      <br>
-      <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (CategoryName, Description)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">VALUES</span> (origen.CategoryName, origen.Description)<br>
-      <br>
-      <span style="color:#75715e;">-- Solo elimina si la categoría no tiene productos asociados</span><br>
-      <span style="color:#a6e22e;">WHEN NOT MATCHED BY SOURCE AND</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">NOT EXISTS</span> (<span style="color:#a6e22e;">SELECT</span> 1 <span style="color:#a6e22e;">FROM</span> Products <span style="color:#a6e22e;">WHERE</span> CategoryID = destino.CategoryID) <span style="color:#a6e22e;">THEN</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE</span><br>
-      <br>
-      <span style="color:#a6e22e;">OUTPUT</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;$action <span style="color:#a6e22e;">AS</span> accion,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;COALESCE(inserted.CategoryID, deleted.CategoryID) <span style="color:#a6e22e;">AS</span> CategoryID,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;COALESCE(inserted.CategoryName, deleted.CategoryName) <span style="color:#a6e22e;">AS</span> CategoryName;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- Seafood (id 8) tiene productos → NO se eliminó (verificar)</span><br>
-      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Categories <span style="color:#a6e22e;">ORDER BY</span> CategoryID;<br>
-      <br>
-      <span style="color:#a6e22e;">DROP TABLE</span> #CategoriasNuevas;
-    </div>
-  </details>
 
   <!-- ═══════════════════ EJERCICIO 5 ═══════════════════ -->
   <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 5 — Sincronizar directorio de clientes (Northwind)</h2>
@@ -1079,69 +889,6 @@
       <li>El campo <code>CompanyName</code> es <code>NOT NULL</code> — no olvides incluirlo en el INSERT.</li>
     </ul>
   </div>
-
-  <details style="margin-top:14px;">
-    <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
-      Ver solución
-    </summary>
-    <div class="ejemplo" style="margin-top:12px;">
-      <span style="color:#a6e22e;">USE</span> Northwind;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- Simular el archivo CSV con una tabla temporal</span><br>
-      <span style="color:#a6e22e;">CREATE TABLE</span> #ClientesActualizados (<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;CustomerID &nbsp;<span style="color:#66d9e8;">NCHAR</span>(5) <span style="color:#a6e22e;">PRIMARY KEY</span>,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;CompanyName <span style="color:#66d9e8;">NVARCHAR</span>(40) <span style="color:#a6e22e;">NOT NULL</span>,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;ContactName <span style="color:#66d9e8;">NVARCHAR</span>(30),<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;City &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">NVARCHAR</span>(15),<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;Country &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">NVARCHAR</span>(15)<br>
-      );<br>
-      <br>
-      <span style="color:#a6e22e;">INSERT INTO</span> #ClientesActualizados <span style="color:#a6e22e;">VALUES</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'ALFKI'</span>, <span style="color:#e6db74;">'Alfreds Futterkiste'</span>, &nbsp;&nbsp;<span style="color:#e6db74;">'Maria Hernández'</span>, <span style="color:#e6db74;">'Munich'</span>, &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#e6db74;">'Germany'</span>), <span style="color:#75715e;">-- ContactName y City cambian</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'ANATR'</span>, <span style="color:#e6db74;">'Ana Trujillo Emparedados'</span>, <span style="color:#e6db74;">'Ana Trujillo'</span>, &nbsp;&nbsp;&nbsp;<span style="color:#e6db74;">'México D.F.'</span>, <span style="color:#e6db74;">'Mexico'</span>),  <span style="color:#75715e;">-- sin cambio</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'BLONP'</span>, <span style="color:#e6db74;">'Blondel père et fils'</span>, &nbsp;&nbsp;<span style="color:#e6db74;">'Frédérique Citeaux'</span>, <span style="color:#e6db74;">'Paris'</span>, <span style="color:#e6db74;">'France'</span>), <span style="color:#75715e;">-- City cambia (Strasbourg→Paris)</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'VENZL'</span>, <span style="color:#e6db74;">'Venezolana de Alimentos'</span>,  <span style="color:#e6db74;">'José Martínez'</span>, &nbsp;&nbsp;<span style="color:#e6db74;">'Caracas'</span>, &nbsp;&nbsp;<span style="color:#e6db74;">'Venezuela'</span>); <span style="color:#75715e;">-- cliente nuevo</span><br>
-      <br>
-      <span style="color:#a6e22e;">MERGE INTO</span> Customers <span style="color:#a6e22e;">AS</span> destino<br>
-      <span style="color:#a6e22e;">USING</span> #ClientesActualizados <span style="color:#a6e22e;">AS</span> origen<br>
-      <span style="color:#a6e22e;">ON</span> destino.CustomerID = origen.CustomerID<br>
-      <br>
-      <span style="color:#75715e;">-- Actualizar solo si algún campo cambió</span><br>
-      <span style="color:#a6e22e;">WHEN MATCHED AND</span> (<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;ISNULL(destino.ContactName, <span style="color:#e6db74;">''</span>) &lt;&gt; ISNULL(origen.ContactName, <span style="color:#e6db74;">''</span>) <span style="color:#a6e22e;">OR</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;ISNULL(destino.City, <span style="color:#e6db74;">''</span>) &lt;&gt; ISNULL(origen.City, <span style="color:#e6db74;">''</span>) <span style="color:#a6e22e;">OR</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;ISNULL(destino.Country, <span style="color:#e6db74;">''</span>) &lt;&gt; ISNULL(origen.Country, <span style="color:#e6db74;">''</span>)<br>
-      ) <span style="color:#a6e22e;">THEN</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE SET</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.ContactName = origen.ContactName,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.City &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= origen.City,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;destino.Country &nbsp;&nbsp;&nbsp;&nbsp;= origen.Country<br>
-      <br>
-      <span style="color:#75715e;">-- Cliente nuevo → insertar</span><br>
-      <span style="color:#a6e22e;">WHEN NOT MATCHED BY TARGET THEN</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT</span> (CustomerID, CompanyName, ContactName, City, Country)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">VALUES</span> (origen.CustomerID, origen.CompanyName, origen.ContactName, origen.City, origen.Country)<br>
-      <br>
-      <span style="color:#75715e;">-- Sin WHEN NOT MATCHED BY SOURCE → no se elimina ningún cliente</span><br>
-      <br>
-      <span style="color:#a6e22e;">OUTPUT</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;$action <span style="color:#a6e22e;">AS</span> accion,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;COALESCE(inserted.CustomerID, deleted.CustomerID) <span style="color:#a6e22e;">AS</span> CustomerID,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;deleted.ContactName <span style="color:#a6e22e;">AS</span> contacto_antes,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;inserted.ContactName <span style="color:#a6e22e;">AS</span> contacto_despues,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;deleted.City <span style="color:#a6e22e;">AS</span> ciudad_antes,<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;inserted.City <span style="color:#a6e22e;">AS</span> ciudad_despues;<br>
-      <span style="color:#a6e22e;">GO</span><br>
-      <br>
-      <span style="color:#75715e;">-- Verificar resultados</span><br>
-      <span style="color:#a6e22e;">SELECT</span> CustomerID, CompanyName, ContactName, City, Country<br>
-      <span style="color:#a6e22e;">FROM</span> Customers<br>
-      <span style="color:#a6e22e;">WHERE</span> CustomerID <span style="color:#a6e22e;">IN</span> (<span style="color:#e6db74;">'ALFKI'</span>, <span style="color:#e6db74;">'ANATR'</span>, <span style="color:#e6db74;">'BLONP'</span>, <span style="color:#e6db74;">'VENZL'</span>);<br>
-      <br>
-      <span style="color:#a6e22e;">DROP TABLE</span> #ClientesActualizados;
-    </div>
-  </details>
 
   <!-- RESUMEN DE EJERCICIOS -->
   <div class="nota" style="margin-top:28px;">
