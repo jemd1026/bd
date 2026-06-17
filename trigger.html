@@ -14,7 +14,7 @@
       padding: 0;
       line-height: 1.6;
     }
- 
+
     .contenedor {
       max-width: 1000px;
       margin: 30px auto;
@@ -644,26 +644,93 @@
     <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 3 — Insertar datos de prueba</h2>
 
     <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
-      <span style="color:#75715e;">-- Productos</span><br>
+
+      <span style="color:#75715e;">-- ① 15 Productos (id 1–15 generados por IDENTITY)</span><br>
       <span style="color:#a6e22e;">INSERT INTO</span> Productos (nombre, precio, stock) <span style="color:#a6e22e;">VALUES</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Teclado USB'</span>, &nbsp;&nbsp;&nbsp;25.00, 50),<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Mouse inalámbrico'</span>, 35.00, 30),<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Monitor 24"'</span>, &nbsp;&nbsp;320.00, 10),<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Audífonos'</span>, &nbsp;&nbsp;&nbsp;&nbsp;55.00, 20);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Teclado USB'</span>,          &nbsp;25.00,  50),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Mouse inalámbrico'</span>,    &nbsp;35.00,  30),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Monitor 24"'</span>,          320.00,  10),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Audífonos Bluetooth'</span>,  &nbsp;55.00,  20),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Webcam HD'</span>,            &nbsp;75.00,  15),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Micrófono USB'</span>,        &nbsp;48.00,  25),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Silla ergonómica'</span>,     190.00,   8),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Escritorio de pie'</span>,    250.00,   5),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Lámpara LED escritorio'</span>, 22.00,  40),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Hub USB 7 puertos'</span>,    &nbsp;18.00,  60),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Disco SSD 1TB'</span>,        &nbsp;89.00,  12),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Memoria RAM 16GB'</span>,     &nbsp;45.00,  18),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Tarjeta gráfica RTX'</span>,  450.00,   4),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Impresora láser'</span>,      180.00,   7),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Router WiFi 6'</span>,        &nbsp;65.00,  22);<br>
+      <span style="color:#a6e22e;">GO</span><br>
       <br>
-      <span style="color:#75715e;">-- Clientes</span><br>
+
+      <span style="color:#75715e;">-- ② 10 Clientes (id 1–10)</span><br>
       <span style="color:#a6e22e;">INSERT INTO</span> Clientes (nombre, email) <span style="color:#a6e22e;">VALUES</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Ana Torres'</span>, &nbsp;<span style="color:#e6db74;">'ana@mail.com'</span>),<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Luis Ramos'</span>, &nbsp;<span style="color:#e6db74;">'luis@mail.com'</span>),<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'María López'</span>, <span style="color:#e6db74;">'maria@mail.com'</span>);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Ana Torres'</span>,     <span style="color:#e6db74;">'ana@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Luis Ramos'</span>,     <span style="color:#e6db74;">'luis@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'María López'</span>,    <span style="color:#e6db74;">'maria@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Carlos Pérez'</span>,   <span style="color:#e6db74;">'carlos@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Sofía Martínez'</span>, <span style="color:#e6db74;">'sofia@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Pedro Gómez'</span>,    <span style="color:#e6db74;">'pedro@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Laura Jiménez'</span>,  <span style="color:#e6db74;">'laura@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Diego Herrera'</span>,  <span style="color:#e6db74;">'diego@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Valentina Cruz'</span>, <span style="color:#e6db74;">'vale@mail.com'</span>),<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(<span style="color:#e6db74;">'Andrés Molina'</span>,  <span style="color:#e6db74;">'andres@mail.com'</span>);<br>
+      <span style="color:#a6e22e;">GO</span><br>
       <br>
-      <span style="color:#75715e;">-- Una venta de prueba</span><br>
-      <span style="color:#a6e22e;">INSERT INTO</span> Ventas (id_cliente) <span style="color:#a6e22e;">VALUES</span> (1);<br>
+
+      <span style="color:#75715e;">-- ③ 20 Ventas — distribuidas entre los 10 clientes (id 1–20)</span><br>
+      <span style="color:#a6e22e;">INSERT INTO</span> Ventas (id_cliente) <span style="color:#a6e22e;">VALUES</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(1),(2),(3),(4),(5),   <span style="color:#75715e;">-- ventas 1–5</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(6),(7),(8),(9),(10),  <span style="color:#75715e;">-- ventas 6–10</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(1),(3),(5),(7),(9),   <span style="color:#75715e;">-- ventas 11–15 (clientes repetidos, es normal)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(2),(4),(6),(8),(10);  <span style="color:#75715e;">-- ventas 16–20</span><br>
+      <span style="color:#a6e22e;">GO</span><br>
       <br>
-      <span style="color:#75715e;">-- Detalle: Ana compró 2 teclados y 1 mouse</span><br>
+
+      <span style="color:#75715e;">-- ④ DetalleVentas — mínimo 4 ítems por venta (80 filas en total)</span><br>
       <span style="color:#a6e22e;">INSERT INTO</span> DetalleVentas (id_venta, id_producto, cantidad, precio_unit) <span style="color:#a6e22e;">VALUES</span><br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(1, 1, 2, 25.00),<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;(1, 2, 1, 35.00);<br>
+      <span style="color:#75715e;">-- Venta 1 · Ana Torres</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(1,  1, 2, 25.00), (1,  2, 1, 35.00), (1,  5, 1, 75.00), (1, 10, 3, 18.00),<br>
+      <span style="color:#75715e;">-- Venta 2 · Luis Ramos</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(2,  3, 1,320.00), (2, 12, 2, 45.00), (2, 11, 1, 89.00), (2,  1, 1, 25.00),<br>
+      <span style="color:#75715e;">-- Venta 3 · María López</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(3,  4, 1, 55.00), (3,  6, 1, 48.00), (3,  9, 2, 22.00), (3,  2, 2, 35.00),<br>
+      <span style="color:#75715e;">-- Venta 4 · Carlos Pérez</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(4,  7, 1,190.00), (4,  8, 1,250.00), (4,  1, 3, 25.00), (4, 10, 2, 18.00),<br>
+      <span style="color:#75715e;">-- Venta 5 · Sofía Martínez</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(5, 13, 1,450.00), (5, 12, 1, 45.00), (5, 11, 1, 89.00), (5,  5, 1, 75.00),<br>
+      <span style="color:#75715e;">-- Venta 6 · Pedro Gómez</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(6,  2, 2, 35.00), (6,  6, 1, 48.00), (6,  4, 1, 55.00), (6,  9, 1, 22.00),<br>
+      <span style="color:#75715e;">-- Venta 7 · Laura Jiménez</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(7, 14, 1,180.00), (7,  1, 1, 25.00), (7, 10, 4, 18.00), (7,  2, 1, 35.00),<br>
+      <span style="color:#75715e;">-- Venta 8 · Diego Herrera</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(8, 15, 1, 65.00), (8,  3, 1,320.00), (8,  5, 2, 75.00), (8, 12, 1, 45.00),<br>
+      <span style="color:#75715e;">-- Venta 9 · Valentina Cruz</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(9,  4, 2, 55.00), (9,  6, 1, 48.00), (9,  7, 1,190.00), (9,  9, 3, 22.00),<br>
+      <span style="color:#75715e;">-- Venta 10 · Andrés Molina</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(10, 1, 1, 25.00), (10, 2, 2, 35.00), (10,11, 1, 89.00), (10,13, 1,450.00),<br>
+      <span style="color:#75715e;">-- Venta 11 · Ana Torres (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(11, 8, 1,250.00), (11, 9, 2, 22.00), (11, 3, 1,320.00), (11, 6, 1, 48.00),<br>
+      <span style="color:#75715e;">-- Venta 12 · María López (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(12, 5, 1, 75.00), (12,10, 5, 18.00), (12, 1, 2, 25.00), (12, 4, 1, 55.00),<br>
+      <span style="color:#75715e;">-- Venta 13 · Sofía Martínez (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(13,15, 2, 65.00), (13, 2, 1, 35.00), (13,12, 2, 45.00), (13, 9, 1, 22.00),<br>
+      <span style="color:#75715e;">-- Venta 14 · Laura Jiménez (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(14, 7, 1,190.00), (14,14, 1,180.00), (14, 5, 1, 75.00), (14,10, 2, 18.00),<br>
+      <span style="color:#75715e;">-- Venta 15 · Valentina Cruz (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(15,11, 2, 89.00), (15, 3, 1,320.00), (15, 1, 1, 25.00), (15, 6, 2, 48.00),<br>
+      <span style="color:#75715e;">-- Venta 16 · Luis Ramos (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(16, 4, 1, 55.00), (16,13, 1,450.00), (16, 2, 3, 35.00), (16, 9, 2, 22.00),<br>
+      <span style="color:#75715e;">-- Venta 17 · Carlos Pérez (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(17,15, 1, 65.00), (17,12, 1, 45.00), (17, 8, 1,250.00), (17, 1, 2, 25.00),<br>
+      <span style="color:#75715e;">-- Venta 18 · Pedro Gómez (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(18, 5, 2, 75.00), (18,11, 1, 89.00), (18,14, 1,180.00), (18, 2, 1, 35.00),<br>
+      <span style="color:#75715e;">-- Venta 19 · Diego Herrera (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(19, 6, 2, 48.00), (19, 7, 1,190.00), (19,10, 3, 18.00), (19, 4, 1, 55.00),<br>
+      <span style="color:#75715e;">-- Venta 20 · Andrés Molina (2da compra)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;(20, 3, 1,320.00), (20,15, 1, 65.00), (20, 5, 1, 75.00), (20,12, 2, 45.00);<br>
       <span style="color:#a6e22e;">GO</span>
     </div>
 
@@ -963,6 +1030,334 @@
       Dentro de cualquier trigger, SQL Server crea automáticamente dos tablas temporales:<br>
       &bull; <code>inserted</code>: contiene los registros nuevos (INSERT) o los valores nuevos (UPDATE).<br>
       &bull; <code>deleted</code>: contiene los registros eliminados (DELETE) o los valores anteriores (UPDATE).
+    </div>
+
+    <!-- ═══════════════════ SECCIÓN 11: EJERCICIOS DE CLASE ═══════════════════ -->
+    <h2>11. Ejercicios prácticos para clase</h2>
+
+    <p>
+      Los siguientes ejercicios usan <strong>las cuatro tablas</strong> de la base de datos <code>Tienda</code>
+      creada en la sección 8 (<code>Productos</code>, <code>Clientes</code>, <code>Ventas</code> y <code>DetalleVentas</code>).
+      Cada ejercicio incluye: el enunciado, pistas para guiar al alumno y la solución completa.
+    </p>
+
+    <div class="nota">
+      <strong>Recomendación:</strong> intentar resolver cada ejercicio
+      antes de ver la solución. Consultar las secciones 5, 6 y 7
+      si no se recuerda la sintaxis o el uso de <code>inserted</code> / <code>deleted</code>.
+    </div>
+
+    <!-- ═══════════════════ EJERCICIO 1 ═══════════════════ -->
+    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 1 — Descontar stock automáticamente al vender</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear un trigger sobre la tabla <code>DetalleVentas</code> que,
+        cada vez que se inserte una nueva línea de venta,
+        descuente automáticamente la <strong>cantidad vendida</strong> del <strong>stock</strong>
+        del producto correspondiente en la tabla <code>Productos</code>.
+      </p>
+      <p>
+        Además, si la cantidad solicitada es mayor al stock disponible,
+        el trigger debe <strong>cancelar la operación</strong> con un mensaje de error.
+      </p>
+      <strong>Tablas involucradas:</strong> <code>DetalleVentas</code> y <code>Productos</code>
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>El trigger va sobre <code>DetalleVentas</code> con <code>AFTER INSERT</code>.</li>
+        <li>La tabla <code>inserted</code> contiene las líneas recién insertadas con <code>id_producto</code> y <code>cantidad</code>.</li>
+        <li>Primero verifica si hay stock suficiente con <code>IF EXISTS</code> + un <code>JOIN</code>.</li>
+        <li>Si no hay stock, usa <code>ROLLBACK TRANSACTION</code> + <code>RAISERROR</code>.</li>
+        <li>Si hay stock, usa <code>UPDATE … SET stock = stock - i.cantidad</code>.</li>
+      </ul>
+    </div>
+
+    <details style="margin-top:14px;">
+      <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
+        Ver solución
+      </summary>
+      <div class="ejemplo" style="margin-top:12px;">
+        <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_descontar_stock<br>
+        <span style="color:#a6e22e;">ON</span> DetalleVentas<br>
+        <span style="color:#a6e22e;">AFTER INSERT</span><br>
+        <span style="color:#a6e22e;">AS</span><br>
+        <span style="color:#a6e22e;">BEGIN</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- Verificar si algún producto no tiene stock suficiente</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">IF EXISTS</span> (<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> 1<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> inserted i<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">JOIN</span> Productos p <span style="color:#a6e22e;">ON</span> i.id_producto = p.id<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> p.stock &lt; i.cantidad <span style="color:#75715e;">-- stock insuficiente</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">BEGIN</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">ROLLBACK TRANSACTION</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">RAISERROR</span>(<span style="color:#e6db74;">'Stock insuficiente para completar la venta.'</span>, 16, 1);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">RETURN</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">END</span><br>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- Stock suficiente: descontar la cantidad vendida</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE</span> p<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SET</span> p.stock = p.stock - i.cantidad<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> Productos p<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">JOIN</span> inserted i <span style="color:#a6e22e;">ON</span> p.id = i.id_producto;<br>
+        <span style="color:#a6e22e;">END</span>;<br>
+        <span style="color:#a6e22e;">GO</span><br>
+        <br>
+        <span style="color:#75715e;">-- Prueba exitosa: vender 2 Teclados USB (stock 50 → debe quedar 48)</span><br>
+        <span style="color:#a6e22e;">INSERT INTO</span> Ventas (id_cliente) <span style="color:#a6e22e;">VALUES</span> (1);<br>
+        <span style="color:#a6e22e;">INSERT INTO</span> DetalleVentas (id_venta, id_producto, cantidad, precio_unit)<br>
+        <span style="color:#a6e22e;">VALUES</span> (21, 1, 2, 25.00);<br>
+        <span style="color:#a6e22e;">SELECT</span> id, nombre, stock <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 1; <span style="color:#75715e;">-- debe mostrar stock = 48</span><br>
+        <br>
+        <span style="color:#75715e;">-- Prueba fallida: intentar vender 999 Monitores (solo hay 10)</span><br>
+        <span style="color:#a6e22e;">INSERT INTO</span> DetalleVentas (id_venta, id_producto, cantidad, precio_unit)<br>
+        <span style="color:#a6e22e;">VALUES</span> (21, 3, 999, 320.00); <span style="color:#75715e;">-- debe generar error: stock insuficiente</span>
+      </div>
+    </details>
+
+    <!-- ═══════════════════ EJERCICIO 2 ═══════════════════ -->
+    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 2 — Actualizar total de la venta automáticamente</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear un trigger sobre la tabla <code>DetalleVentas</code> que,
+        cada vez que se inserte una nueva línea de detalle,
+        <strong>recalcule el total</strong> de la venta correspondiente en la tabla <code>Ventas</code>.
+      </p>
+      <p>
+        El total se calcula como la suma de <code>cantidad * precio_unit</code>
+        de todos los detalles que pertenecen a esa venta.
+      </p>
+      <strong>Tablas involucradas:</strong> <code>DetalleVentas</code> y <code>Ventas</code>
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>El trigger va sobre <code>DetalleVentas</code> con <code>AFTER INSERT</code>.</li>
+        <li>Obtén los <code>id_venta</code> afectados desde <code>inserted</code>.</li>
+        <li>Usa un <code>UPDATE</code> con subconsulta <code>SELECT SUM(cantidad * precio_unit)</code> agrupado por <code>id_venta</code>.</li>
+        <li>Solo actualiza las ventas cuyos ids aparecen en <code>inserted</code>.</li>
+      </ul>
+    </div>
+
+    <details style="margin-top:14px;">
+      <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
+        Ver solución
+      </summary>
+      <div class="ejemplo" style="margin-top:12px;">
+        <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_actualizar_total_venta<br>
+        <span style="color:#a6e22e;">ON</span> DetalleVentas<br>
+        <span style="color:#a6e22e;">AFTER INSERT</span><br>
+        <span style="color:#a6e22e;">AS</span><br>
+        <span style="color:#a6e22e;">BEGIN</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- Recalcular el total para cada venta afectada</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE</span> v<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SET</span> v.total = (<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> SUM(d.cantidad * d.precio_unit) <span style="color:#75715e;">-- total = suma de cada línea</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> DetalleVentas d<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> d.id_venta = v.id<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> Ventas v<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> v.id <span style="color:#a6e22e;">IN</span> (<span style="color:#a6e22e;">SELECT DISTINCT</span> id_venta <span style="color:#a6e22e;">FROM</span> inserted); <span style="color:#75715e;">-- solo ventas que tuvieron inserciones</span><br>
+        <span style="color:#a6e22e;">END</span>;<br>
+        <span style="color:#a6e22e;">GO</span><br>
+        <br>
+        <span style="color:#75715e;">-- Prueba: insertar un detalle a la venta 1 y verificar que el total se actualiza</span><br>
+        <span style="color:#a6e22e;">INSERT INTO</span> DetalleVentas (id_venta, id_producto, cantidad, precio_unit)<br>
+        <span style="color:#a6e22e;">VALUES</span> (1, 6, 1, 48.00); <span style="color:#75715e;">-- 1 micrófono a 48.00</span><br>
+        <br>
+        <span style="color:#a6e22e;">SELECT</span> id, total <span style="color:#a6e22e;">FROM</span> Ventas <span style="color:#a6e22e;">WHERE</span> id = 1; <span style="color:#75715e;">-- total debe reflejar la suma de todos los detalles</span><br>
+        <span style="color:#a6e22e;">SELECT</span> id_venta, cantidad, precio_unit, cantidad * precio_unit <span style="color:#a6e22e;">AS</span> subtotal<br>
+        <span style="color:#a6e22e;">FROM</span> DetalleVentas <span style="color:#a6e22e;">WHERE</span> id_venta = 1; <span style="color:#75715e;">-- para verificar manualmente la suma</span>
+      </div>
+    </details>
+
+    <!-- ═══════════════════ EJERCICIO 3 ═══════════════════ -->
+    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 3 — Impedir que un cliente sin email registre ventas</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear un trigger sobre la tabla <code>Ventas</code> que
+        <strong>impida registrar una nueva venta</strong> si el cliente asociado
+        no tiene email registrado en la tabla <code>Clientes</code>
+        (es decir, su campo <code>email</code> es <code>NULL</code>).
+      </p>
+      <p>
+        Si el email es <code>NULL</code>, la venta debe cancelarse con un mensaje de error.
+      </p>
+      <strong>Tablas involucradas:</strong> <code>Ventas</code> y <code>Clientes</code>
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>El trigger va sobre <code>Ventas</code> con <code>AFTER INSERT</code>.</li>
+        <li>Haz un <code>JOIN</code> entre <code>inserted</code> y <code>Clientes</code> usando <code>id_cliente</code>.</li>
+        <li>Verifica si <code>Clientes.email IS NULL</code>.</li>
+        <li>Si existe al menos un cliente sin email, haz <code>ROLLBACK</code>.</li>
+      </ul>
+    </div>
+
+    <details style="margin-top:14px;">
+      <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
+        Ver solución
+      </summary>
+      <div class="ejemplo" style="margin-top:12px;">
+        <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_validar_email_cliente<br>
+        <span style="color:#a6e22e;">ON</span> Ventas<br>
+        <span style="color:#a6e22e;">AFTER INSERT</span><br>
+        <span style="color:#a6e22e;">AS</span><br>
+        <span style="color:#a6e22e;">BEGIN</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- Buscar si algún cliente de las ventas insertadas no tiene email</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">IF EXISTS</span> (<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> 1<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> inserted i<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">JOIN</span> Clientes c <span style="color:#a6e22e;">ON</span> i.id_cliente = c.id<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> c.email <span style="color:#a6e22e;">IS NULL</span> <span style="color:#75715e;">-- el cliente no tiene email registrado</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">BEGIN</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">ROLLBACK TRANSACTION</span>;<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">RAISERROR</span>(<span style="color:#e6db74;">'No se puede registrar la venta: el cliente no tiene email.'</span>, 16, 1);<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">END</span><br>
+        <span style="color:#a6e22e;">END</span>;<br>
+        <span style="color:#a6e22e;">GO</span><br>
+        <br>
+        <span style="color:#75715e;">-- Preparar prueba: crear un cliente sin email</span><br>
+        <span style="color:#a6e22e;">INSERT INTO</span> Clientes (nombre, email) <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Roberto Sin Email'</span>, <span style="color:#a6e22e;">NULL</span>);<br>
+        <span style="color:#75715e;">-- Supongamos que Roberto queda con id = 11</span><br>
+        <br>
+        <span style="color:#75715e;">-- Prueba fallida: intentar una venta con Roberto → el trigger la cancela</span><br>
+        <span style="color:#a6e22e;">INSERT INTO</span> Ventas (id_cliente) <span style="color:#a6e22e;">VALUES</span> (11); <span style="color:#75715e;">-- debe generar error</span><br>
+        <br>
+        <span style="color:#75715e;">-- Prueba exitosa: una venta con Ana Torres (tiene email) → se permite</span><br>
+        <span style="color:#a6e22e;">INSERT INTO</span> Ventas (id_cliente) <span style="color:#a6e22e;">VALUES</span> (1); <span style="color:#75715e;">-- debe funcionar sin problemas</span>
+      </div>
+    </details>
+
+    <!-- ═══════════════════ EJERCICIO 4 ═══════════════════ -->
+    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 4 — Auditoría completa de eliminación de ventas</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear una tabla <code>AuditoriaVentas</code> y un trigger sobre <code>Ventas</code>
+        que, cada vez que se <strong>elimine una venta</strong>, registre en la auditoría:
+        el id de la venta eliminada, el id del cliente, el total que tenía, quién la eliminó
+        (<code>SYSTEM_USER</code>) y cuándo (<code>GETDATE()</code>).
+      </p>
+      <p>
+        Además, antes de eliminar la venta, el trigger debe borrar primero todos sus registros
+        de <code>DetalleVentas</code> para no violar la llave foránea.
+      </p>
+      <strong>Tablas involucradas:</strong> <code>Ventas</code>, <code>DetalleVentas</code> y <code>AuditoriaVentas</code> (nueva)
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Primero crea la tabla <code>AuditoriaVentas</code> con las columnas: <code>id_venta</code>, <code>id_cliente</code>, <code>total</code>, <code>usuario</code> y <code>fecha</code>.</li>
+        <li>El trigger va sobre <code>Ventas</code> con <code>INSTEAD OF DELETE</code> (necesitamos intervenir antes).</li>
+        <li>Paso 1 dentro del trigger: guardar la auditoría leyendo de <code>deleted</code>.</li>
+        <li>Paso 2: borrar los detalles con <code>DELETE FROM DetalleVentas WHERE id_venta IN (SELECT id FROM deleted)</code>.</li>
+        <li>Paso 3: borrar la venta con <code>DELETE FROM Ventas WHERE id IN (SELECT id FROM deleted)</code>.</li>
+      </ul>
+    </div>
+
+    <details style="margin-top:14px;">
+      <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
+        Ver solución
+      </summary>
+      <div class="ejemplo" style="margin-top:12px;">
+        <span style="color:#75715e;">-- Paso previo: crear la tabla de auditoría</span><br>
+        <span style="color:#a6e22e;">CREATE TABLE</span> AuditoriaVentas (<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;id_venta &nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;id_cliente &nbsp;<span style="color:#66d9e8;">INT</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">DECIMAL</span>(12,2),<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;usuario &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(100) <span style="color:#a6e22e;">DEFAULT</span> SYSTEM_USER, <span style="color:#75715e;">-- quién lo eliminó</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;fecha &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">DATETIME</span> <span style="color:#a6e22e;">DEFAULT</span> <span style="color:#66d9e8;">GETDATE</span>() &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- cuándo se eliminó</span><br>
+        );<br>
+        <span style="color:#a6e22e;">GO</span><br>
+        <br>
+        <span style="color:#75715e;">-- Trigger: intercepta la eliminación, audita y luego borra limpiamente</span><br>
+        <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_auditoria_eliminar_venta<br>
+        <span style="color:#a6e22e;">ON</span> Ventas<br>
+        <span style="color:#a6e22e;">INSTEAD OF DELETE</span> <span style="color:#75715e;">-- intercepta el DELETE para poder actuar antes</span><br>
+        <span style="color:#a6e22e;">AS</span><br>
+        <span style="color:#a6e22e;">BEGIN</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- ① Registrar en auditoría antes de borrar</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT INTO</span> AuditoriaVentas (id_venta, id_cliente, total)<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> id, id_cliente, total<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> deleted; <span style="color:#75715e;">-- deleted tiene los datos de la venta que se quiere eliminar</span><br>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- ② Eliminar primero los detalles (hijos) para no violar la FK</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE FROM</span> DetalleVentas<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> id_venta <span style="color:#a6e22e;">IN</span> (<span style="color:#a6e22e;">SELECT</span> id <span style="color:#a6e22e;">FROM</span> deleted);<br>
+        <br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- ③ Ahora sí eliminar la venta (padre)</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE FROM</span> Ventas<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> id <span style="color:#a6e22e;">IN</span> (<span style="color:#a6e22e;">SELECT</span> id <span style="color:#a6e22e;">FROM</span> deleted);<br>
+        <span style="color:#a6e22e;">END</span>;<br>
+        <span style="color:#a6e22e;">GO</span><br>
+        <br>
+        <span style="color:#75715e;">-- Prueba: eliminar la venta 5</span><br>
+        <span style="color:#a6e22e;">DELETE FROM</span> Ventas <span style="color:#a6e22e;">WHERE</span> id = 5;<br>
+        <br>
+        <span style="color:#75715e;">-- Verificar la auditoría</span><br>
+        <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> AuditoriaVentas; <span style="color:#75715e;">-- debe mostrar la venta 5 con el usuario y la fecha</span><br>
+        <br>
+        <span style="color:#75715e;">-- Verificar que la venta y sus detalles ya no existen</span><br>
+        <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Ventas <span style="color:#a6e22e;">WHERE</span> id = 5; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- 0 filas</span><br>
+        <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> DetalleVentas <span style="color:#a6e22e;">WHERE</span> id_venta = 5; <span style="color:#75715e;">-- 0 filas</span>
+      </div>
+    </details>
+
+    <!-- RESUMEN DE EJERCICIOS -->
+    <div class="nota" style="margin-top:28px;">
+      <strong>Resumen de los 4 ejercicios:</strong>
+      <table style="margin-top:10px;">
+        <tr>
+          <th>#</th>
+          <th>Trigger</th>
+          <th>Tabla</th>
+          <th>Tipo</th>
+          <th>Concepto practicado</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td><code>trg_descontar_stock</code></td>
+          <td>DetalleVentas</td>
+          <td>AFTER INSERT</td>
+          <td>Regla de negocio + <code>inserted</code> con JOIN + ROLLBACK</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td><code>trg_actualizar_total_venta</code></td>
+          <td>DetalleVentas</td>
+          <td>AFTER INSERT</td>
+          <td>Cálculo automático + UPDATE con subconsulta SUM</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td><code>trg_validar_email_cliente</code></td>
+          <td>Ventas</td>
+          <td>AFTER INSERT</td>
+          <td>Validación cruzada entre tablas + JOIN con <code>inserted</code></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td><code>trg_auditoria_eliminar_venta</code></td>
+          <td>Ventas</td>
+          <td>INSTEAD OF DELETE</td>
+          <td>Auditoría + eliminación en cascada manual + <code>deleted</code></td>
+        </tr>
+      </table>
     </div>
 
     <div class="footer">
