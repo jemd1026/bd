@@ -1038,12 +1038,11 @@
     <p>
       Los siguientes ejercicios usan <strong>las cuatro tablas</strong> de la base de datos <code>Tienda</code>
       creada en la sección 8 (<code>Productos</code>, <code>Clientes</code>, <code>Ventas</code> y <code>DetalleVentas</code>).
-      Cada ejercicio incluye: el enunciado, pistas para guiar al alumno y la solución completa.
+      Cada ejercicio incluye el enunciado y pistas para guiar al alumno.
     </p>
 
     <div class="nota">
-      <strong>Recomendación:</strong> intentar resolver cada ejercicio
-      antes de ver la solución. Consultar las secciones 5, 6 y 7
+      <strong>Recomendación:</strong> consultar las secciones 5, 6 y 7
       si no se recuerda la sintaxis o el uso de <code>inserted</code> / <code>deleted</code>.
     </div>
 
@@ -1053,14 +1052,9 @@
     <div class="card verde">
       <strong>Enunciado:</strong>
       <p>
-        Crear un trigger sobre la tabla <code>DetalleVentas</code> que,
-        cada vez que se inserte una nueva línea de venta,
-        descuente automáticamente la <strong>cantidad vendida</strong> del <strong>stock</strong>
-        del producto correspondiente en la tabla <code>Productos</code>.
-      </p>
-      <p>
-        Además, si la cantidad solicitada es mayor al stock disponible,
-        el trigger debe <strong>cancelar la operación</strong> con un mensaje de error.
+        Crear un trigger sobre <code>DetalleVentas</code> que, al insertar una línea de venta,
+        <strong>descuente la cantidad vendida</strong> del stock del producto en <code>Productos</code>.
+        Si la cantidad supera el stock disponible, debe <strong>cancelar la operación</strong> con un mensaje de error.
       </p>
       <strong>Tablas involucradas:</strong> <code>DetalleVentas</code> y <code>Productos</code>
     </div>
@@ -1068,70 +1062,23 @@
     <div class="card morado" style="margin-top:12px;">
       <strong>Pistas:</strong>
       <ul>
-        <li>El trigger va sobre <code>DetalleVentas</code> con <code>AFTER INSERT</code>.</li>
-        <li>La tabla <code>inserted</code> contiene las líneas recién insertadas con <code>id_producto</code> y <code>cantidad</code>.</li>
-        <li>Primero verifica si hay stock suficiente con <code>IF EXISTS</code> + un <code>JOIN</code>.</li>
-        <li>Si no hay stock, usa <code>ROLLBACK TRANSACTION</code> + <code>RAISERROR</code>.</li>
-        <li>Si hay stock, usa <code>UPDATE … SET stock = stock - i.cantidad</code>.</li>
+        <li>Tipo: <code>AFTER INSERT</code> sobre <code>DetalleVentas</code>.</li>
+        <li><code>inserted</code> contiene <code>id_producto</code> y <code>cantidad</code>.</li>
+        <li>Primero validar con <code>IF EXISTS</code> + <code>JOIN</code> si <code>p.stock &lt; i.cantidad</code>.</li>
+        <li>Si falla: <code>ROLLBACK TRANSACTION</code> + <code>RAISERROR</code>.</li>
+        <li>Si pasa: <code>UPDATE Productos SET stock = stock - i.cantidad</code>.</li>
       </ul>
     </div>
 
-    <details style="margin-top:14px;">
-      <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
-        Ver solución
-      </summary>
-      <div class="ejemplo" style="margin-top:12px;">
-        <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_descontar_stock<br>
-        <span style="color:#a6e22e;">ON</span> DetalleVentas<br>
-        <span style="color:#a6e22e;">AFTER INSERT</span><br>
-        <span style="color:#a6e22e;">AS</span><br>
-        <span style="color:#a6e22e;">BEGIN</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- Verificar si algún producto no tiene stock suficiente</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">IF EXISTS</span> (<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> 1<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> inserted i<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">JOIN</span> Productos p <span style="color:#a6e22e;">ON</span> i.id_producto = p.id<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> p.stock &lt; i.cantidad <span style="color:#75715e;">-- stock insuficiente</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;)<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">BEGIN</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">ROLLBACK TRANSACTION</span>;<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">RAISERROR</span>(<span style="color:#e6db74;">'Stock insuficiente para completar la venta.'</span>, 16, 1);<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">RETURN</span>;<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">END</span><br>
-        <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- Stock suficiente: descontar la cantidad vendida</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE</span> p<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SET</span> p.stock = p.stock - i.cantidad<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> Productos p<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">JOIN</span> inserted i <span style="color:#a6e22e;">ON</span> p.id = i.id_producto;<br>
-        <span style="color:#a6e22e;">END</span>;<br>
-        <span style="color:#a6e22e;">GO</span><br>
-        <br>
-        <span style="color:#75715e;">-- Prueba exitosa: vender 2 Teclados USB (stock 50 → debe quedar 48)</span><br>
-        <span style="color:#a6e22e;">INSERT INTO</span> Ventas (id_cliente) <span style="color:#a6e22e;">VALUES</span> (1);<br>
-        <span style="color:#a6e22e;">INSERT INTO</span> DetalleVentas (id_venta, id_producto, cantidad, precio_unit)<br>
-        <span style="color:#a6e22e;">VALUES</span> (21, 1, 2, 25.00);<br>
-        <span style="color:#a6e22e;">SELECT</span> id, nombre, stock <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 1; <span style="color:#75715e;">-- debe mostrar stock = 48</span><br>
-        <br>
-        <span style="color:#75715e;">-- Prueba fallida: intentar vender 999 Monitores (solo hay 10)</span><br>
-        <span style="color:#a6e22e;">INSERT INTO</span> DetalleVentas (id_venta, id_producto, cantidad, precio_unit)<br>
-        <span style="color:#a6e22e;">VALUES</span> (21, 3, 999, 320.00); <span style="color:#75715e;">-- debe generar error: stock insuficiente</span>
-      </div>
-    </details>
-
     <!-- ═══════════════════ EJERCICIO 2 ═══════════════════ -->
-    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 2 — Actualizar total de la venta automáticamente</h2>
+    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 2 — Recalcular el total de la venta</h2>
 
     <div class="card verde">
       <strong>Enunciado:</strong>
       <p>
-        Crear un trigger sobre la tabla <code>DetalleVentas</code> que,
-        cada vez que se inserte una nueva línea de detalle,
-        <strong>recalcule el total</strong> de la venta correspondiente en la tabla <code>Ventas</code>.
-      </p>
-      <p>
-        El total se calcula como la suma de <code>cantidad * precio_unit</code>
-        de todos los detalles que pertenecen a esa venta.
+        Crear un trigger sobre <code>DetalleVentas</code> que, al insertar una nueva línea,
+        <strong>recalcule el campo <code>total</code></strong> de la venta correspondiente en <code>Ventas</code>.
+        El total es la suma de <code>cantidad * precio_unit</code> de todos los detalles de esa venta.
       </p>
       <strong>Tablas involucradas:</strong> <code>DetalleVentas</code> y <code>Ventas</code>
     </div>
@@ -1139,58 +1086,52 @@
     <div class="card morado" style="margin-top:12px;">
       <strong>Pistas:</strong>
       <ul>
-        <li>El trigger va sobre <code>DetalleVentas</code> con <code>AFTER INSERT</code>.</li>
+        <li>Tipo: <code>AFTER INSERT</code> sobre <code>DetalleVentas</code>.</li>
         <li>Obtén los <code>id_venta</code> afectados desde <code>inserted</code>.</li>
-        <li>Usa un <code>UPDATE</code> con subconsulta <code>SELECT SUM(cantidad * precio_unit)</code> agrupado por <code>id_venta</code>.</li>
-        <li>Solo actualiza las ventas cuyos ids aparecen en <code>inserted</code>.</li>
+        <li>Usa <code>UPDATE</code> con subconsulta <code>SELECT SUM(cantidad * precio_unit)</code>.</li>
+        <li>Filtra con <code>WHERE v.id IN (SELECT DISTINCT id_venta FROM inserted)</code>.</li>
       </ul>
     </div>
 
-    <details style="margin-top:14px;">
-      <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
-        Ver solución
-      </summary>
-      <div class="ejemplo" style="margin-top:12px;">
-        <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_actualizar_total_venta<br>
-        <span style="color:#a6e22e;">ON</span> DetalleVentas<br>
-        <span style="color:#a6e22e;">AFTER INSERT</span><br>
-        <span style="color:#a6e22e;">AS</span><br>
-        <span style="color:#a6e22e;">BEGIN</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- Recalcular el total para cada venta afectada</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">UPDATE</span> v<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SET</span> v.total = (<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> SUM(d.cantidad * d.precio_unit) <span style="color:#75715e;">-- total = suma de cada línea</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> DetalleVentas d<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> d.id_venta = v.id<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;)<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> Ventas v<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> v.id <span style="color:#a6e22e;">IN</span> (<span style="color:#a6e22e;">SELECT DISTINCT</span> id_venta <span style="color:#a6e22e;">FROM</span> inserted); <span style="color:#75715e;">-- solo ventas que tuvieron inserciones</span><br>
-        <span style="color:#a6e22e;">END</span>;<br>
-        <span style="color:#a6e22e;">GO</span><br>
-        <br>
-        <span style="color:#75715e;">-- Prueba: insertar un detalle a la venta 1 y verificar que el total se actualiza</span><br>
-        <span style="color:#a6e22e;">INSERT INTO</span> DetalleVentas (id_venta, id_producto, cantidad, precio_unit)<br>
-        <span style="color:#a6e22e;">VALUES</span> (1, 6, 1, 48.00); <span style="color:#75715e;">-- 1 micrófono a 48.00</span><br>
-        <br>
-        <span style="color:#a6e22e;">SELECT</span> id, total <span style="color:#a6e22e;">FROM</span> Ventas <span style="color:#a6e22e;">WHERE</span> id = 1; <span style="color:#75715e;">-- total debe reflejar la suma de todos los detalles</span><br>
-        <span style="color:#a6e22e;">SELECT</span> id_venta, cantidad, precio_unit, cantidad * precio_unit <span style="color:#a6e22e;">AS</span> subtotal<br>
-        <span style="color:#a6e22e;">FROM</span> DetalleVentas <span style="color:#a6e22e;">WHERE</span> id_venta = 1; <span style="color:#75715e;">-- para verificar manualmente la suma</span>
-      </div>
-    </details>
-
     <!-- ═══════════════════ EJERCICIO 3 ═══════════════════ -->
-    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 3 — Impedir que un cliente sin email registre ventas</h2>
+    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 3 — Registrar auditoría completa de cambios en Productos</h2>
 
     <div class="card verde">
       <strong>Enunciado:</strong>
       <p>
-        Crear un trigger sobre la tabla <code>Ventas</code> que
-        <strong>impida registrar una nueva venta</strong> si el cliente asociado
-        no tiene email registrado en la tabla <code>Clientes</code>
-        (es decir, su campo <code>email</code> es <code>NULL</code>).
+        Crear una tabla <code>LogCambiosProductos</code> y un trigger sobre <code>Productos</code> que,
+        ante cualquier <code>UPDATE</code>, registre en esa tabla:
+        el <code>id</code> del producto, el nombre del campo que cambió (<code>'precio'</code> o <code>'stock'</code>),
+        el valor anterior, el valor nuevo, el usuario (<code>SYSTEM_USER</code>) y la fecha (<code>GETDATE()</code>).
       </p>
       <p>
-        Si el email es <code>NULL</code>, la venta debe cancelarse con un mensaje de error.
+        Si se modificaron precio <em>y</em> stock a la vez, deben insertarse <strong>dos filas</strong> en el log
+        (una por cada campo).
+      </p>
+      <strong>Tablas involucradas:</strong> <code>Productos</code> y <code>LogCambiosProductos</code> (nueva)
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Tipo: <code>AFTER UPDATE</code> sobre <code>Productos</code>.</li>
+        <li>Crea la tabla con columnas: <code>id_producto</code>, <code>campo</code> (VARCHAR), <code>valor_anterior</code> (VARCHAR), <code>valor_nuevo</code> (VARCHAR), <code>usuario</code>, <code>fecha</code>.</li>
+        <li>Haz <code>JOIN</code> entre <code>deleted</code> e <code>inserted</code> por <code>id</code>.</li>
+        <li>Usa dos <code>INSERT</code> separados con <code>WHERE</code>: uno para <code>d.precio &lt;&gt; i.precio</code> y otro para <code>d.stock &lt;&gt; i.stock</code>.</li>
+        <li>Convierte los valores numéricos a <code>VARCHAR</code> con <code>CAST</code> o <code>CONVERT</code>.</li>
+      </ul>
+    </div>
+
+    <!-- ═══════════════════ EJERCICIO 4 ═══════════════════ -->
+    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 4 — Impedir que un mismo cliente tenga más de 5 ventas en un día</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear un trigger sobre <code>Ventas</code> que, al insertar una nueva venta,
+        verifique cuántas ventas tiene el cliente <strong>en el mismo día</strong>.
+        Si con la nueva venta superaría las 5, el trigger debe <strong>cancelar la operación</strong>
+        con un mensaje indicando el límite diario.
       </p>
       <strong>Tablas involucradas:</strong> <code>Ventas</code> y <code>Clientes</code>
     </div>
@@ -1198,164 +1139,82 @@
     <div class="card morado" style="margin-top:12px;">
       <strong>Pistas:</strong>
       <ul>
-        <li>El trigger va sobre <code>Ventas</code> con <code>AFTER INSERT</code>.</li>
-        <li>Haz un <code>JOIN</code> entre <code>inserted</code> y <code>Clientes</code> usando <code>id_cliente</code>.</li>
-        <li>Verifica si <code>Clientes.email IS NULL</code>.</li>
-        <li>Si existe al menos un cliente sin email, haz <code>ROLLBACK</code>.</li>
+        <li>Tipo: <code>AFTER INSERT</code> sobre <code>Ventas</code>.</li>
+        <li>De <code>inserted</code> obtén <code>id_cliente</code> y <code>fecha</code>.</li>
+        <li>Cuenta con <code>SELECT COUNT(*) FROM Ventas WHERE id_cliente = i.id_cliente AND CAST(fecha AS DATE) = CAST(i.fecha AS DATE)</code>.</li>
+        <li>Si el conteo > 5 → <code>ROLLBACK</code> + <code>RAISERROR</code>.</li>
+        <li>El conteo debe incluir la fila recién insertada (ya está en la tabla cuando se ejecuta <code>AFTER</code>).</li>
       </ul>
     </div>
 
-    <details style="margin-top:14px;">
-      <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
-        Ver solución
-      </summary>
-      <div class="ejemplo" style="margin-top:12px;">
-        <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_validar_email_cliente<br>
-        <span style="color:#a6e22e;">ON</span> Ventas<br>
-        <span style="color:#a6e22e;">AFTER INSERT</span><br>
-        <span style="color:#a6e22e;">AS</span><br>
-        <span style="color:#a6e22e;">BEGIN</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- Buscar si algún cliente de las ventas insertadas no tiene email</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">IF EXISTS</span> (<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> 1<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> inserted i<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">JOIN</span> Clientes c <span style="color:#a6e22e;">ON</span> i.id_cliente = c.id<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> c.email <span style="color:#a6e22e;">IS NULL</span> <span style="color:#75715e;">-- el cliente no tiene email registrado</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;)<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">BEGIN</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">ROLLBACK TRANSACTION</span>;<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">RAISERROR</span>(<span style="color:#e6db74;">'No se puede registrar la venta: el cliente no tiene email.'</span>, 16, 1);<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">END</span><br>
-        <span style="color:#a6e22e;">END</span>;<br>
-        <span style="color:#a6e22e;">GO</span><br>
-        <br>
-        <span style="color:#75715e;">-- Preparar prueba: crear un cliente sin email</span><br>
-        <span style="color:#a6e22e;">INSERT INTO</span> Clientes (nombre, email) <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Roberto Sin Email'</span>, <span style="color:#a6e22e;">NULL</span>);<br>
-        <span style="color:#75715e;">-- Supongamos que Roberto queda con id = 11</span><br>
-        <br>
-        <span style="color:#75715e;">-- Prueba fallida: intentar una venta con Roberto → el trigger la cancela</span><br>
-        <span style="color:#a6e22e;">INSERT INTO</span> Ventas (id_cliente) <span style="color:#a6e22e;">VALUES</span> (11); <span style="color:#75715e;">-- debe generar error</span><br>
-        <br>
-        <span style="color:#75715e;">-- Prueba exitosa: una venta con Ana Torres (tiene email) → se permite</span><br>
-        <span style="color:#a6e22e;">INSERT INTO</span> Ventas (id_cliente) <span style="color:#a6e22e;">VALUES</span> (1); <span style="color:#75715e;">-- debe funcionar sin problemas</span>
-      </div>
-    </details>
-
-    <!-- ═══════════════════ EJERCICIO 4 ═══════════════════ -->
-    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 4 — Auditoría completa de eliminación de ventas</h2>
+    <!-- ═══════════════════ EJERCICIO 5 ═══════════════════ -->
+    <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">Ejercicio 5 — Eliminación segura de ventas con auditoría</h2>
 
     <div class="card verde">
       <strong>Enunciado:</strong>
       <p>
-        Crear una tabla <code>AuditoriaVentas</code> y un trigger sobre <code>Ventas</code>
-        que, cada vez que se <strong>elimine una venta</strong>, registre en la auditoría:
-        el id de la venta eliminada, el id del cliente, el total que tenía, quién la eliminó
-        (<code>SYSTEM_USER</code>) y cuándo (<code>GETDATE()</code>).
+        Crear una tabla <code>AuditoriaVentas</code> y un trigger sobre <code>Ventas</code> que,
+        al intentar <strong>eliminar una venta</strong>:
       </p>
-      <p>
-        Además, antes de eliminar la venta, el trigger debe borrar primero todos sus registros
-        de <code>DetalleVentas</code> para no violar la llave foránea.
-      </p>
+      <ul>
+        <li>Registre en <code>AuditoriaVentas</code> el id de la venta, el id del cliente,
+            el total, el usuario (<code>SYSTEM_USER</code>) y la fecha (<code>GETDATE()</code>).</li>
+        <li>Elimine primero los registros de <code>DetalleVentas</code> asociados (para no violar la FK).</li>
+        <li>Luego elimine la venta de <code>Ventas</code>.</li>
+      </ul>
       <strong>Tablas involucradas:</strong> <code>Ventas</code>, <code>DetalleVentas</code> y <code>AuditoriaVentas</code> (nueva)
     </div>
 
     <div class="card morado" style="margin-top:12px;">
       <strong>Pistas:</strong>
       <ul>
-        <li>Primero crea la tabla <code>AuditoriaVentas</code> con las columnas: <code>id_venta</code>, <code>id_cliente</code>, <code>total</code>, <code>usuario</code> y <code>fecha</code>.</li>
-        <li>El trigger va sobre <code>Ventas</code> con <code>INSTEAD OF DELETE</code> (necesitamos intervenir antes).</li>
-        <li>Paso 1 dentro del trigger: guardar la auditoría leyendo de <code>deleted</code>.</li>
-        <li>Paso 2: borrar los detalles con <code>DELETE FROM DetalleVentas WHERE id_venta IN (SELECT id FROM deleted)</code>.</li>
-        <li>Paso 3: borrar la venta con <code>DELETE FROM Ventas WHERE id IN (SELECT id FROM deleted)</code>.</li>
+        <li>Tipo: <code>INSTEAD OF DELETE</code> sobre <code>Ventas</code> (intercepta antes de borrar).</li>
+        <li>Dentro del trigger, <code>deleted</code> tiene las ventas que se quieren eliminar.</li>
+        <li>Paso 1: <code>INSERT INTO AuditoriaVentas SELECT ... FROM deleted</code>.</li>
+        <li>Paso 2: <code>DELETE FROM DetalleVentas WHERE id_venta IN (SELECT id FROM deleted)</code>.</li>
+        <li>Paso 3: <code>DELETE FROM Ventas WHERE id IN (SELECT id FROM deleted)</code>.</li>
       </ul>
     </div>
 
-    <details style="margin-top:14px;">
-      <summary style="cursor:pointer; font-weight:bold; color:#1a5c8a; font-size:16px;">
-        Ver solución
-      </summary>
-      <div class="ejemplo" style="margin-top:12px;">
-        <span style="color:#75715e;">-- Paso previo: crear la tabla de auditoría</span><br>
-        <span style="color:#a6e22e;">CREATE TABLE</span> AuditoriaVentas (<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;id_venta &nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">INT</span>,<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;id_cliente &nbsp;<span style="color:#66d9e8;">INT</span>,<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;total &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">DECIMAL</span>(12,2),<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;usuario &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">VARCHAR</span>(100) <span style="color:#a6e22e;">DEFAULT</span> SYSTEM_USER, <span style="color:#75715e;">-- quién lo eliminó</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;fecha &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#66d9e8;">DATETIME</span> <span style="color:#a6e22e;">DEFAULT</span> <span style="color:#66d9e8;">GETDATE</span>() &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- cuándo se eliminó</span><br>
-        );<br>
-        <span style="color:#a6e22e;">GO</span><br>
-        <br>
-        <span style="color:#75715e;">-- Trigger: intercepta la eliminación, audita y luego borra limpiamente</span><br>
-        <span style="color:#a6e22e;">CREATE TRIGGER</span> trg_auditoria_eliminar_venta<br>
-        <span style="color:#a6e22e;">ON</span> Ventas<br>
-        <span style="color:#a6e22e;">INSTEAD OF DELETE</span> <span style="color:#75715e;">-- intercepta el DELETE para poder actuar antes</span><br>
-        <span style="color:#a6e22e;">AS</span><br>
-        <span style="color:#a6e22e;">BEGIN</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- ① Registrar en auditoría antes de borrar</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">INSERT INTO</span> AuditoriaVentas (id_venta, id_cliente, total)<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">SELECT</span> id, id_cliente, total<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">FROM</span> deleted; <span style="color:#75715e;">-- deleted tiene los datos de la venta que se quiere eliminar</span><br>
-        <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- ② Eliminar primero los detalles (hijos) para no violar la FK</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE FROM</span> DetalleVentas<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> id_venta <span style="color:#a6e22e;">IN</span> (<span style="color:#a6e22e;">SELECT</span> id <span style="color:#a6e22e;">FROM</span> deleted);<br>
-        <br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- ③ Ahora sí eliminar la venta (padre)</span><br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DELETE FROM</span> Ventas<br>
-        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">WHERE</span> id <span style="color:#a6e22e;">IN</span> (<span style="color:#a6e22e;">SELECT</span> id <span style="color:#a6e22e;">FROM</span> deleted);<br>
-        <span style="color:#a6e22e;">END</span>;<br>
-        <span style="color:#a6e22e;">GO</span><br>
-        <br>
-        <span style="color:#75715e;">-- Prueba: eliminar la venta 5</span><br>
-        <span style="color:#a6e22e;">DELETE FROM</span> Ventas <span style="color:#a6e22e;">WHERE</span> id = 5;<br>
-        <br>
-        <span style="color:#75715e;">-- Verificar la auditoría</span><br>
-        <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> AuditoriaVentas; <span style="color:#75715e;">-- debe mostrar la venta 5 con el usuario y la fecha</span><br>
-        <br>
-        <span style="color:#75715e;">-- Verificar que la venta y sus detalles ya no existen</span><br>
-        <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Ventas <span style="color:#a6e22e;">WHERE</span> id = 5; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- 0 filas</span><br>
-        <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> DetalleVentas <span style="color:#a6e22e;">WHERE</span> id_venta = 5; <span style="color:#75715e;">-- 0 filas</span>
-      </div>
-    </details>
-
     <!-- RESUMEN DE EJERCICIOS -->
     <div class="nota" style="margin-top:28px;">
-      <strong>Resumen de los 4 ejercicios:</strong>
+      <strong>Resumen de los 5 ejercicios:</strong>
       <table style="margin-top:10px;">
         <tr>
           <th>#</th>
-          <th>Trigger</th>
-          <th>Tabla</th>
+          <th>Tabla del trigger</th>
           <th>Tipo</th>
           <th>Concepto practicado</th>
         </tr>
         <tr>
           <td>1</td>
-          <td><code>trg_descontar_stock</code></td>
           <td>DetalleVentas</td>
           <td>AFTER INSERT</td>
-          <td>Regla de negocio + <code>inserted</code> con JOIN + ROLLBACK</td>
+          <td>Validación de stock + descuento automático + <code>ROLLBACK</code></td>
         </tr>
         <tr>
           <td>2</td>
-          <td><code>trg_actualizar_total_venta</code></td>
           <td>DetalleVentas</td>
           <td>AFTER INSERT</td>
-          <td>Cálculo automático + UPDATE con subconsulta SUM</td>
+          <td>Cálculo automático de totales con <code>SUM</code></td>
         </tr>
         <tr>
           <td>3</td>
-          <td><code>trg_validar_email_cliente</code></td>
-          <td>Ventas</td>
-          <td>AFTER INSERT</td>
-          <td>Validación cruzada entre tablas + JOIN con <code>inserted</code></td>
+          <td>Productos</td>
+          <td>AFTER UPDATE</td>
+          <td>Log detallado campo por campo + <code>deleted</code> vs <code>inserted</code></td>
         </tr>
         <tr>
           <td>4</td>
-          <td><code>trg_auditoria_eliminar_venta</code></td>
+          <td>Ventas</td>
+          <td>AFTER INSERT</td>
+          <td>Límite de operaciones por día + <code>COUNT</code> + <code>CAST(fecha AS DATE)</code></td>
+        </tr>
+        <tr>
+          <td>5</td>
           <td>Ventas</td>
           <td>INSTEAD OF DELETE</td>
-          <td>Auditoría + eliminación en cascada manual + <code>deleted</code></td>
+          <td>Auditoría + eliminación en cascada manual</td>
         </tr>
       </table>
     </div>
