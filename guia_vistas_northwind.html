@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guía de Clase | Vistas en SQL Server - Northwind</title>
+<style>
+:root{--bg:#f3f6fb;--panel:#fff;--ink:#192b43;--muted:#607287;--navy:#0e315b;--blue:#2466ad;--teal:#087c83;--gold:#efab41;--line:#dce5ef;--code:#111d30;--green:#167658;--red:#a7353a}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font-family:Segoe UI,Arial,sans-serif;line-height:1.65}header{background:linear-gradient(120deg,#08284e,#165a8c);color:white;padding:52px max(24px,calc((100vw - 1100px)/2));}header h1{font-size:clamp(2rem,4vw,3.4rem);margin:8px 0}header p{max-width:760px;color:#deebf9;font-size:1.12rem}.eyebrow{letter-spacing:.12em;text-transform:uppercase;font-size:.8rem;font-weight:800;color:#a4e1e1}.chips{display:flex;gap:10px;flex-wrap:wrap}.chip{border:1px solid #ffffff55;border-radius:24px;padding:5px 13px;font-size:.83rem}nav{position:sticky;top:0;z-index:5;background:#ffffffed;backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}nav .inner{max-width:1100px;margin:auto;display:flex;gap:9px;overflow:auto;padding:12px 20px}nav a{flex:none;color:var(--navy);font-size:.86rem;text-decoration:none;padding:6px 10px;border-radius:7px;font-weight:650}nav a:hover{background:#e5eef7}main{max-width:1100px;margin:auto;padding:24px 20px 80px}section{background:var(--panel);padding:30px;margin:22px 0;border:1px solid var(--line);border-radius:17px;box-shadow:0 5px 22px #15365508}h2{font-size:1.62rem;color:var(--navy);margin:0 0 18px;border-left:5px solid var(--teal);padding-left:14px}h3{color:#15507d;margin:30px 0 10px;font-size:1.13rem}p{margin:10px 0}ul,ol{padding-left:24px}.lead{font-size:1.05rem;color:#3a5269}.callout{border-left:4px solid var(--teal);background:#edf9f9;border-radius:8px;padding:13px 18px;margin:20px 0}.warning{border-color:#d99a31;background:#fff7e8}.example{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin:20px 0}.example-head{padding:13px 17px;background:#eef4fb;display:flex;gap:14px;justify-content:space-between;align-items:center;flex-wrap:wrap;font-weight:700}.level{background:#dcefeb;color:#056557;padding:2px 10px;border-radius:20px;font-size:.74rem}.code-wrap{position:relative;background:var(--code)}pre{margin:0;padding:22px 18px;overflow-x:auto;color:#e6f2ff;font-size:.93rem;line-height:1.65;tab-size:4}code{font-family:Cascadia Code,Consolas,monospace}.kw{color:#82bdff;font-weight:700}.st{color:#ffd18a}.cm{color:#8294aa}.copy{position:absolute;right:10px;top:9px;border:1px solid #55708b;background:#273f5d;color:#fff;border-radius:7px;padding:5px 11px;cursor:pointer}.copy:hover{background:#385678}.note{padding:13px 17px;font-size:.91rem;color:#485c72;background:#fbfcfe;border-top:1px solid var(--line)}table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.94rem}th{background:#eaf1f9;color:#123f6d;text-align:left}th,td{padding:10px 12px;border:1px solid #dce5ee;vertical-align:top}.diagram{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:22px 0}.mini{background:#e9f2fb;border:1px solid #bdd5e7;border-radius:12px;padding:15px;text-align:center}.mini b{display:block;color:#174c79}.arrow{text-align:center;color:var(--teal);font-size:1.6rem;font-weight:900}.output{background:#f3f8fa;border:1px dashed #a9c9cc;border-radius:9px;padding:12px;margin:12px 0}details{border:1px solid var(--line);border-radius:9px;margin:10px 0;padding:12px 16px}summary{cursor:pointer;font-weight:700;color:#18507d}.exercise{padding:14px 18px;margin:12px 0;border:1px solid var(--line);border-radius:9px;background:#fcfdff}.exercise strong{color:var(--navy)}footer{text-align:center;color:var(--muted);padding:25px}.progress{position:fixed;top:0;left:0;height:4px;background:#25afa9;z-index:10;width:0}.pill{display:inline-block;background:#dbeafa;color:#194d83;border-radius:6px;padding:2px 9px;font-size:.82rem;font-weight:700}body.presentation main{max-width:1250px}body.presentation section{min-height:75vh;font-size:1.2rem;padding:55px}body.presentation h2{font-size:2.3rem}body.presentation pre{font-size:1.05rem}.tools{position:fixed;bottom:18px;right:18px;display:flex;gap:8px;z-index:6}.tools button{border:0;background:#123e6d;color:white;box-shadow:0 4px 18px #0002;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:700}@media(max-width:700px){header{padding:36px 20px}.diagram{grid-template-columns:1fr}section{padding:20px}th,td{padding:8px 6px;font-size:.85rem}.tools button{font-size:.8rem;padding:8px}}@media print{nav,.tools,.copy,.progress{display:none!important}body{background:white}header{padding:25px;background:#123b69!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}section{box-shadow:none;break-inside:avoid;margin:12px 0;padding:18px}pre{white-space:pre-wrap;overflow-wrap:anywhere}details>*{display:block}main{padding:0}}
+</style></head>
+<body><div id="progress" class="progress"></div>
+<header><div class="eyebrow">Guía de aprendizaje • Base de datos Northwind</div><h1>Vistas en SQL Server</h1><p>Aprende a crear, consultar, modificar y eliminar vistas SQL mediante casos prácticos de clientes, productos y pedidos de una empresa comercial.</p><div class="chips"><span class="chip">SQL Server / SSMS</span><span class="chip">Nivel básico a intermedio</span><span class="chip">Teoría + ejemplos + práctica</span><span class="chip">120 minutos sugeridos</span></div></header>
+<nav><div class="inner"><a href="#objetivos">Objetivos</a><a href="#conceptos">Conceptos</a><a href="#sintaxis">Sintaxis</a><a href="#ejemplos">Ejemplos</a><a href="#administracion">Administración</a><a href="#seguridad">Seguridad</a><a href="#retos">Ejercicios</a><a href="#evaluacion">Evaluación</a></div></nav>
+<main>
+<section id="objetivos"><h2>01. Objetivos de aprendizaje</h2><p>Al finalizar la sesión, el estudiante será capaz de:</p><ol><li>Explicar qué es una vista y en qué se diferencia de una tabla.</li><li>Crear vistas simples y filtradas usando <code>CREATE VIEW</code>.</li><li>Combinar tablas mediante <code>JOIN</code> dentro de una vista.</li><li>Crear reportes resumidos con <code>COUNT</code>, <code>SUM</code> y <code>GROUP BY</code>.</li><li>Consultar, modificar y eliminar vistas en SQL Server.</li></ol><div class="callout"><b>Requisito previo:</b> haber instalado la base de datos <b>Northwind</b> y conocer <code>SELECT</code>, <code>WHERE</code> y conceptos básicos de <code>JOIN</code>.</div><h3>Antes de comenzar: comprobar la base de datos</h3><div class="example"><div class="example-head">Verificación inicial <span class="level">Preparación</span></div><div class="code-wrap"><button class="copy">Copiar</button><pre><code>USE Northwind;
+GO
+SELECT TOP (5) CustomerID, CompanyName, Country
+FROM dbo.Customers;
+
+SELECT TOP (5) ProductID, ProductName, UnitPrice
+FROM dbo.Products;</code></pre></div><div class="note">Si estas consultas devuelven filas, la base de datos está lista para la práctica.</div></div></section>
+<section id="conceptos"><h2>02. ¿Qué es una vista?</h2><p class="lead">Una <b>vista (VIEW)</b> es una consulta SQL guardada en la base de datos que se puede consultar como si fuera una tabla.</p><div class="diagram"><div class="mini"><b>dbo.Customers</b>Clientes</div><div class="mini"><b>dbo.Orders</b>Pedidos</div><div class="mini"><b>dbo.Employees</b>Empleados</div></div><div class="arrow">↓ SELECT / JOIN ↓</div><div class="mini" style="max-width:510px;margin:12px auto;background:#e1f5ef;border-color:#95cdc0"><b>dbo.vw_ReportePedidos</b>Vista para consultar la información combinada</div><div class="callout"><b>Idea central:</b> una vista normal no guarda una segunda copia de los datos. Al consultarla, SQL Server obtiene los datos desde sus tablas de origen. Existen excepciones avanzadas, como las vistas indexadas.</div><table><tr><th>Tabla</th><th>Vista</th></tr><tr><td>Almacena registros físicamente.</td><td>Habitualmente almacena la definición de una consulta.</td></tr><tr><td>Se crea con <code>CREATE TABLE</code>.</td><td>Se crea con <code>CREATE VIEW</code>.</td></tr><tr><td>Puede consultarse con <code>SELECT</code>.</td><td>También puede consultarse con <code>SELECT</code>.</td></tr></table><h3>¿Para qué sirven las vistas?</h3><ul><li><b>Simplificar:</b> evitar repetir consultas con múltiples tablas.</li><li><b>Organizar:</b> ofrecer conjuntos de datos útiles para reportes.</li><li><b>Controlar acceso:</b> exponer columnas o filas seleccionadas junto con permisos adecuados.</li><li><b>Reutilizar:</b> consultar una misma definición desde diferentes aplicaciones.</li></ul></section>
+<section id="sintaxis"><h2>03. Sintaxis de CREATE VIEW</h2><div class="example"><div class="example-head">Estructura general</div><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE VIEW dbo.NombreVista
+AS
+SELECT columna1, columna2
+FROM dbo.NombreTabla
+WHERE condicion;
+GO</code></pre></div></div><table><tr><th>Elemento</th><th>Significado</th></tr><tr><td><code>CREATE VIEW</code></td><td>Crea una nueva vista.</td></tr><tr><td><code>dbo.NombreVista</code></td><td>Esquema y nombre de la vista.</td></tr><tr><td><code>AS SELECT</code></td><td>Define la consulta que representa la vista.</td></tr><tr><td><code>GO</code></td><td>Separa lotes de instrucciones en SSMS.</td></tr></table><div class="callout warning"><b>Atención:</b> <code>CREATE VIEW</code> debe ser la primera instrucción de su lote. Por eso se coloca <code>GO</code> después de <code>USE Northwind</code> y al terminar la vista. <code>GO</code> es un separador reconocido por SSMS, no una instrucción del motor SQL.</div></section>
+<section id="ejemplos"><h2>04. Ejemplos resueltos con Northwind</h2><p>Ejecuta cada ejemplo por separado en una ventana de consultas de SSMS. Los nombres de las vistas tienen el prefijo <code>vw_</code> para distinguirlas fácilmente.</p>
+<div class="example"><div class="example-head">Ejemplo 1. Vista simple: listado de clientes <span class="level">Básico</span></div><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE VIEW dbo.vw_Clientes
+AS
+SELECT CustomerID, CompanyName, City, Country
+FROM dbo.Customers;
+GO
+
+SELECT * FROM dbo.vw_Clientes;</code></pre></div><div class="note"><b>Aprendizaje:</b> una vista se consulta mediante <code>SELECT</code>, igual que una tabla. <b>Pregunta:</b> ¿qué columnas contiene esta vista?</div></div>
+<div class="example"><div class="example-head">Ejemplo 2. Filtrar clientes de Alemania <span class="level">Básico</span></div><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE VIEW dbo.vw_ClientesAlemania
+AS
+SELECT CustomerID, CompanyName, City, Country
+FROM dbo.Customers
+WHERE Country = 'Germany';
+GO
+
+SELECT * FROM dbo.vw_ClientesAlemania;</code></pre></div><div class="note"><b>Aprendizaje:</b> la vista puede contener un filtro fijo. <b>Reto oral:</b> ¿cómo sería una vista de clientes de México?</div></div>
+<div class="example"><div class="example-head">Ejemplo 3. Vista de productos y categorías <span class="level">Intermedio</span></div><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE VIEW dbo.vw_ProductosCategorias
+AS
+SELECT
+    p.ProductID,
+    p.ProductName,
+    c.CategoryName,
+    p.UnitPrice,
+    p.UnitsInStock
+FROM dbo.Products AS p
+INNER JOIN dbo.Categories AS c
+    ON p.CategoryID = c.CategoryID;
+GO
+
+SELECT * FROM dbo.vw_ProductosCategorias;</code></pre></div><div class="note"><b>Aprendizaje:</b> los <code>JOIN</code> se guardan dentro de la vista para no reescribirlos cada vez.</div></div>
+<div class="example"><div class="example-head">Ejemplo 4. Vista con tres tablas: reporte de pedidos <span class="level">Intermedio</span></div><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE VIEW dbo.vw_ReportePedidos
+AS
+SELECT
+    o.OrderID,
+    o.OrderDate,
+    c.CompanyName AS Cliente,
+    e.FirstName + ' ' + e.LastName AS Empleado,
+    o.Freight
+FROM dbo.Orders AS o
+INNER JOIN dbo.Customers AS c
+    ON o.CustomerID = c.CustomerID
+INNER JOIN dbo.Employees AS e
+    ON o.EmployeeID = e.EmployeeID;
+GO
+
+SELECT TOP (10) *
+FROM dbo.vw_ReportePedidos
+ORDER BY OrderDate DESC, OrderID DESC;</code></pre></div><div class="note"><b>Aprendizaje:</b> el <code>ORDER BY</code> se aplica al consultar la vista. Una vista no garantiza el orden de las filas por sí sola.</div></div>
+<div class="example"><div class="example-head">Ejemplo 5. Contar pedidos por cliente <span class="level">Intermedio</span></div><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE VIEW dbo.vw_TotalPedidosCliente
+AS
+SELECT
+    c.CustomerID,
+    c.CompanyName,
+    COUNT(o.OrderID) AS TotalPedidos
+FROM dbo.Customers AS c
+LEFT JOIN dbo.Orders AS o
+    ON c.CustomerID = o.CustomerID
+GROUP BY c.CustomerID, c.CompanyName;
+GO
+
+SELECT TOP (10) *
+FROM dbo.vw_TotalPedidosCliente
+ORDER BY TotalPedidos DESC;</code></pre></div><div class="note"><b>Aprendizaje:</b> <code>COUNT</code> resume información y <code>LEFT JOIN</code> también permite incluir clientes sin pedidos.</div></div>
+<div class="example"><div class="example-head">Ejemplo 6. Importe vendido por producto <span class="level">Intermedio</span></div><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE VIEW dbo.vw_VentasPorProducto
+AS
+SELECT
+    p.ProductID,
+    p.ProductName,
+    SUM(od.UnitPrice * od.Quantity * (1 - od.Discount))
+        AS ImporteVendido
+FROM dbo.Products AS p
+INNER JOIN dbo.[Order Details] AS od
+    ON p.ProductID = od.ProductID
+GROUP BY p.ProductID, p.ProductName;
+GO
+
+SELECT TOP (10) *
+FROM dbo.vw_VentasPorProducto
+ORDER BY ImporteVendido DESC;</code></pre></div><div class="note"><b>Aprendizaje:</b> el importe de cada línea considera precio, cantidad y descuento; el <code>SUM</code> agrupa las ventas por producto.</div></div>
+</section>
+<section id="administracion"><h2>05. Consultar, modificar y eliminar vistas</h2><h3>A. Mostrar la definición con sp_helptext</h3><div class="example"><div class="code-wrap"><button class="copy">Copiar</button><pre><code>EXEC sp_helptext 'dbo.vw_Clientes';</code></pre></div><div class="note">Muestra el texto de definición de la vista si el usuario tiene permiso y la definición no está oculta.</div></div><h3>B. Modificar la vista con ALTER VIEW</h3><div class="example"><div class="code-wrap"><button class="copy">Copiar</button><pre><code>ALTER VIEW dbo.vw_Clientes
+AS
+SELECT
+    CustomerID,
+    CompanyName,
+    ContactName,
+    City,
+    Country,
+    Phone
+FROM dbo.Customers;
+GO
+
+SELECT * FROM dbo.vw_Clientes;</code></pre></div><div class="note">Ahora la vista también devuelve <code>ContactName</code> y <code>Phone</code>.</div></div><h3>C. Crear o modificar en una sola instrucción</h3><div class="example"><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE OR ALTER VIEW dbo.vw_Clientes
+AS
+SELECT CustomerID, CompanyName, City, Country
+FROM dbo.Customers;
+GO</code></pre></div><div class="note">Disponible desde SQL Server 2016 SP1. Útil para repetir scripts sin recibir el error “la vista ya existe”.</div></div><h3>D. Eliminar una vista</h3><div class="example"><div class="code-wrap"><button class="copy">Copiar</button><pre><code>DROP VIEW IF EXISTS dbo.vw_ClientesAlemania;
+GO</code></pre></div><div class="note">Se elimina la vista, <b>no</b> los registros de <code>dbo.Customers</code>.</div></div></section>
+<section id="seguridad"><h2>06. Acceso a datos y WITH ENCRYPTION</h2><h3>Vista que expone únicamente ciertos campos</h3><p>Supongamos que un área solo necesita consultar nombres y países de clientes, pero no teléfonos ni direcciones:</p><div class="example"><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE VIEW dbo.vw_ClientesPublicos
+AS
+SELECT CustomerID, CompanyName, Country
+FROM dbo.Customers;
+GO
+
+SELECT * FROM dbo.vw_ClientesPublicos;</code></pre></div></div><div class="callout warning"><b>Importante:</b> ocultar columnas en una vista no impide el acceso directo a la tabla si el usuario ya tiene permisos sobre ella. El control real se implementa con permisos adecuados y una configuración de seguridad correcta.</div><h3>Vista con definición ofuscada (WITH ENCRYPTION)</h3><div class="example"><div class="code-wrap"><button class="copy">Copiar</button><pre><code>CREATE VIEW dbo.vw_ProductosPrecios
+WITH ENCRYPTION
+AS
+SELECT ProductID, ProductName, UnitPrice
+FROM dbo.Products;
+GO
+
+EXEC sp_helptext 'dbo.vw_ProductosPrecios';</code></pre></div><div class="note">La definición deja de mostrarse mediante <code>sp_helptext</code>. No cifra los datos ni sustituye permisos, copias de seguridad o controles de acceso. Guarda el script original antes de ejecutarlo.</div></div><h3>Limitaciones fundamentales</h3><ul><li>Las vistas normales no aceptan parámetros; se filtran mediante una consulta externa (<code>SELECT ... WHERE ...</code>).</li><li>No se garantiza el orden de los registros sin <code>ORDER BY</code> en la consulta que lee la vista.</li><li>No todas las vistas son actualizables; aquellas que incluyen agregaciones o combinaciones complejas suelen tener restricciones.</li><li>Una vista puede basarse en otras vistas, pero demasiadas capas pueden dificultar el mantenimiento y rendimiento.</li></ul></section>
+<section id="retos"><h2>07. Taller práctico para estudiantes</h2><p>Resuelve los casos con <code>CREATE VIEW</code>. Después de cada creación, demuestra que funciona mediante un <code>SELECT</code> sobre la vista.</p>
+<div class="exercise"><strong>Reto 1 — Clientes de Estados Unidos.</strong> Crea <code>vw_ClientesUSA</code> que muestre código, nombre, ciudad y país de los clientes cuyo país es <code>USA</code>.</div>
+<div class="exercise"><strong>Reto 2 — Productos costosos.</strong> Crea <code>vw_ProductosCaros</code> con nombre, precio y stock de productos cuyo precio sea mayor a 50.</div>
+<div class="exercise"><strong>Reto 3 — Inventario bajo.</strong> Crea <code>vw_StockBajo</code> que muestre productos con menos de 10 unidades en stock.</div>
+<div class="exercise"><strong>Reto 4 — Productos y proveedores.</strong> Une <code>Products</code> y <code>Suppliers</code> para mostrar producto, proveedor, país del proveedor y precio.</div>
+<div class="exercise"><strong>Reto 5 — Clientes y pedidos.</strong> Crea una vista que muestre número de pedido, fecha, empresa cliente y país.</div>
+<div class="exercise"><strong>Reto 6 — Productos por categoría.</strong> Crea una vista con nombre de categoría y cantidad de productos, usando <code>COUNT</code>.</div>
+<div class="exercise"><strong>Reto 7 — Precio promedio.</strong> Crea una vista que muestre el precio promedio de los productos por categoría, con <code>AVG</code>.</div>
+<div class="exercise"><strong>Reto 8 — Clientes frecuentes.</strong> Crea una vista que cuente pedidos por cliente y luego consulta solo los que tengan más de cinco pedidos.</div>
+<div class="exercise"><strong>Reto 9 — Administración.</strong> Modifica una vista para agregar una columna, consulta su definición y luego elimina una vista de prueba.</div>
+<h3>Preguntas de comprobación</h3><details><summary>¿Se pueden consultar las vistas con SELECT?</summary><p>Sí. Por ejemplo: <code>SELECT * FROM dbo.vw_Clientes;</code></p></details><details><summary>¿La vista contiene una copia física de los datos?</summary><p>Una vista normal no; contiene una definición de consulta. Las vistas indexadas son una excepción que se estudia en un nivel avanzado.</p></details><details><summary>¿Qué ocurre si eliminamos una vista?</summary><p>Se elimina el objeto vista, pero las tablas que utilizaba no se eliminan.</p></details><details><summary>¿Las vistas aceptan parámetros como los procedimientos almacenados?</summary><p>No directamente. Puedes aplicar filtros al consultarlas o utilizar procedimientos almacenados para recibir parámetros.</p></details></section>
+<section id="evaluacion"><h2>08. Entregable y evaluación</h2><p><b>Entregable:</b> un archivo <code>ApellidoNombre_Vistas_Northwind.sql</code> con los ejercicios desarrollados, más capturas de la ejecución de sus consultas.</p><table><tr><th>Criterio</th><th>Puntos</th></tr><tr><td>Vistas simples con filtros (retos 1, 2, 3)</td><td>6</td></tr><tr><td>Vistas con JOIN (retos 4 y 5)</td><td>4</td></tr><tr><td>Vistas con funciones de agregación (retos 6, 7 y 8)</td><td>6</td></tr><tr><td>Administración de vistas (reto 9)</td><td>2</td></tr><tr><td>Consultas de comprobación y orden del script</td><td>2</td></tr><tr><th>Total</th><th>20</th></tr></table><div class="callout"><b>Desafío final:</b> la gerencia de Northwind necesita identificar los diez productos que generan mayor importe de ventas. ¿Qué tablas necesitarías, qué cálculos realizarías y cómo construirías una vista reutilizable para ese reporte?</div><h3>Secuencia sugerida (120 minutos)</h3><table><tr><th>Actividad</th><th>Minutos</th></tr><tr><td>Conceptos, estructura y demostración básica</td><td>20</td></tr><tr><td>Vistas con WHERE y columnas seleccionadas</td><td>20</td></tr><tr><td>JOIN y funciones de agregación</td><td>30</td></tr><tr><td>ALTER, DROP, sp_helptext y WITH ENCRYPTION</td><td>20</td></tr><tr><td>Taller y retroalimentación</td><td>30</td></tr></table></section>
+</main><footer>Guía de clase · SQL Server y base de datos de ejemplo Northwind · Material educativo</footer><div class="tools"><button id="present">⛶ Proyectar</button><button onclick="window.print()">⎙ Imprimir / PDF</button></div>
+<script>
+document.querySelectorAll('.copy').forEach(btn=>btn.addEventListener('click',async()=>{let txt=btn.parentElement.querySelector('code').innerText;try{await navigator.clipboard.writeText(txt);btn.textContent='¡Copiado!'}catch(e){let t=document.createElement('textarea');t.value=txt;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();btn.textContent='¡Copiado!'}setTimeout(()=>btn.textContent='Copiar',1700)}));document.getElementById('present').addEventListener('click',()=>{document.body.classList.toggle('presentation');document.getElementById('present').textContent=document.body.classList.contains('presentation')?'◱ Vista normal':'⛶ Proyectar'});window.addEventListener('scroll',()=>{const d=document.documentElement;document.getElementById('progress').style.width=(100*d.scrollTop/(d.scrollHeight-d.clientHeight))+'%'});
+</script></body></html>
