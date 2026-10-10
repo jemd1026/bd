@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guía de clase | Procedimientos almacenados | Northwind</title>
+<style>
+:root{--bg:#f4f7fb;--paper:#fff;--ink:#15263c;--muted:#63758a;--navy:#122e50;--accent:#087d84;--gold:#e6aa45;--line:#dce5ef;--code:#10233a;--shadow:0 12px 35px #18365913;font-size:16px}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.65}a{color:#087d84}button{font:inherit;cursor:pointer}header{background:linear-gradient(115deg,#102b4b,#17476a 65%,#076b76);color:#fff;padding:58px 5vw 48px}header .wrap{max-width:1130px;margin:auto}.eyebrow{letter-spacing:.13em;text-transform:uppercase;font-weight:800;font-size:.8rem;color:#b4f1e9}h1{font-size:clamp(2rem,4.4vw,3.6rem);line-height:1.13;margin:12px 0 16px;max-width:850px}header p{color:#d5e8ef;font-size:1.1rem;max-width:760px}.pills{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}.pill{border:1px solid #ffffff61;background:#ffffff18;border-radius:100px;padding:5px 14px;font-size:.85rem}nav{position:sticky;top:0;background:#fffefef5;border-bottom:1px solid var(--line);z-index:20;backdrop-filter:blur(12px)}nav .inner{max-width:1130px;margin:auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px}nav a{text-decoration:none;color:#36526a;font-weight:700;font-size:.83rem;padding:7px 8px}nav a:hover{color:#007e80}nav .space{flex:1}.btn{border:1px solid #b9cbd8;background:white;color:#17364f;border-radius:9px;padding:7px 12px;font-weight:700;font-size:.83rem}.btn:hover{background:#eaf6f5}.btn.main{background:#097e80;color:white;border-color:#097e80}main{max-width:1130px;margin:auto;padding:24px 18px 70px}.section{background:var(--paper);box-shadow:var(--shadow);border:1px solid var(--line);border-radius:18px;margin:24px 0;padding:clamp(22px,3.4vw,42px)}.section h2{margin:0 0 18px;font-size:1.85rem;letter-spacing:-.025em;color:var(--navy)}.section h3{margin:27px 0 12px;color:#0d5668;font-size:1.24rem}.section p{margin:10px 0 14px}.kicker{font-size:.73rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)}.note{padding:15px 18px;border-left:4px solid var(--accent);background:#effaf8;border-radius:0 10px 10px 0;margin:16px 0}.warning{border-left-color:#d38a16;background:#fff8eb}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}.tile{padding:18px;border:1px solid var(--line);border-radius:12px;background:#f9fbfe}.tile strong{display:block;color:#103653;font-size:1.08rem}.tile small{display:block;color:var(--muted);margin-top:5px}.flow{display:flex;align-items:center;justify-content:space-around;gap:10px;flex-wrap:wrap;margin:20px 0}.flow span{padding:16px 22px;background:#e9f4f6;border:1px solid #a6d5da;border-radius:12px;text-align:center;font-weight:700}.arrow{color:var(--accent);font-size:1.6rem;font-weight:900}.codebox{border-radius:12px;overflow:hidden;margin:16px 0 19px;border:1px solid #243b57;background:var(--code)}.codehead{display:flex;align-items:center;justify-content:space-between;gap:8px;background:#1c3a56;color:#e4f0fb;padding:9px 13px;font-size:.8rem;font-weight:700}.copy{background:#ffffff13;color:white;border:1px solid #ffffff54;border-radius:7px;padding:5px 11px;font-size:.79rem}.copy:hover{background:#ffffff25}pre{white-space:pre;overflow:auto;margin:0;padding:19px 22px;color:#dceafe;font: .91rem/1.65 Consolas,'Cascadia Code',monospace;tab-size:4}code{font-family:Consolas,'Cascadia Code',monospace}p code,td code,li code{background:#e9f0f5;color:#16486b;border-radius:4px;padding:2px 5px;font-size:.91em}.kw{color:#87bfff;font-weight:700}.str{color:#bcf5ac}.com{color:#91a5b6;font-style:italic}.num{color:#f5c589}.question{border:1px solid #b3d7d7;background:#f7fcfb;border-radius:12px;padding:17px;margin:16px 0}.question .numlabel{font-weight:800;color:#087d84}.challenge{background:#fcfdfd;border:1px solid var(--line);border-radius:12px;padding:15px 18px;margin:12px 0}.challenge b{color:#123e60}details{border:1px dashed #a7bfcc;padding:11px 14px;border-radius:10px;margin-top:10px}summary{cursor:pointer;font-weight:700;color:#0e6a76}table{border-collapse:collapse;width:100%;margin:16px 0;font-size:.95rem}th,td{border:1px solid var(--line);padding:11px 13px;text-align:left;vertical-align:top}th{background:#eaf2f7;color:#153b57}tr:nth-child(even) td{background:#fcfdff}.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}.timebar{display:flex;border-radius:11px;overflow:hidden;margin:12px 0 16px;height:24px}.timebar span:nth-child(1){background:#23639a;flex:15}.timebar span:nth-child(2){background:#168b87;flex:30}.timebar span:nth-child(3){background:#dfa047;flex:20}.timebar span:nth-child(4){background:#735bab;flex:30}.timebar span:nth-child(5){background:#c66f67;flex:25}.tag{font-size:.74rem;display:inline-block;background:#e4f4f3;color:#0c6769;border-radius:8px;padding:3px 9px;font-weight:800;margin-bottom:9px}.checklist label{display:block;border-bottom:1px solid #e9edf2;padding:9px 0}.checklist input{accent-color:#078387;margin-right:10px;transform:scale(1.12)}footer{text-align:center;color:#61758a;padding:20px 20px 55px}body.presentation{font-size:20px}body.presentation main{max-width:1300px}body.presentation pre{font-size:1.02rem}body.presentation .section{padding:50px}body.presentation nav a{font-size:1rem}@media(max-width:710px){.two{grid-template-columns:1fr}nav .inner{gap:2px}nav a{font-size:.74rem}.flow{flex-direction:column}.arrow{transform:rotate(90deg)}}@media print{nav,.copy,.screen-only{display:none!important}body{background:white}.section{box-shadow:none;break-inside:avoid;border:1px solid #ccc;margin:16px 0;padding:20px}header{padding:30px;background:#143b58!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}pre{white-space:pre-wrap;word-break:break-word}.codebox{break-inside:avoid}details> :not(summary){display:block}body{font-size:11pt}}
+</style>
+</head>
+<body>
+<header><div class="wrap"><div class="eyebrow">Guía práctica · Administración de bases de datos</div><h1>Procedimientos almacenados<br>en SQL Server</h1><p>Aprende a crear, ejecutar y administrar procedimientos almacenados con ejemplos progresivos sobre <strong>Northwind</strong> y una tabla segura de prácticas.</p><div class="pills"><span class="pill">Nivel: básico</span><span class="pill">Duración: 120 minutos</span><span class="pill">SQL Server / SSMS</span><span class="pill">Ejemplos + práctica evaluada</span></div></div></header>
+<nav><div class="inner"><a href="#objetivos">Inicio</a><a href="#sintaxis">Sintaxis</a><a href="#consultas">SELECT</a><a href="#parametros">Parámetros</a><a href="#condiciones">IF / ELSE</a><a href="#crud">CRUD</a><a href="#administrar">Administrar</a><a href="#practica">Práctica</a><span class="space"></span><button class="btn screen-only" id="projector">⊞ Proyectar</button><button class="btn main screen-only" onclick="window.print()">⎙ Imprimir / PDF</button></div></nav>
+<main>
+<section class="section" id="objetivos"><div class="kicker">01 · Conceptos</div><h2>¿Qué aprenderemos hoy?</h2><div class="grid"><div class="tile"><strong>Crear y ejecutar</strong><small>Usar CREATE PROCEDURE y EXEC.</small></div><div class="tile"><strong>Enviar valores</strong><small>Trabajar con parámetros de entrada.</small></div><div class="tile"><strong>Tomar decisiones</strong><small>Utilizar variables e IF...ELSE.</small></div><div class="tile"><strong>Gestionar datos</strong><small>Insertar, actualizar y eliminar registros.</small></div></div><h3>¿Qué es un procedimiento almacenado?</h3><p>Un <strong>procedimiento almacenado</strong> es un conjunto de instrucciones SQL guardadas en una base de datos, que se puede ejecutar por su nombre. Puede recibir parámetros, realizar consultas y modificar registros.</p><div class="flow"><span>Usuario<br><small>EXEC dbo.usp_ListarClientes</small></span><span class="arrow">→</span><span>Procedimiento<br><small>Contiene SELECT</small></span><span class="arrow">→</span><span>Northwind<br><small>Devuelve clientes</small></span></div><div class="note"><strong>Comparación con las vistas:</strong> una vista se consulta con <code>SELECT</code> y representa una consulta; un procedimiento se invoca con <code>EXEC</code> y puede contener parámetros, condiciones y varias instrucciones.</div><h3>Preparación</h3><p>Abre SQL Server Management Studio (SSMS), conéctate y ejecuta:</p><div class="codebox"><div class="codehead">SQL · Seleccionar Northwind <button class="copy">Copiar SQL</button></div><pre><code>USE Northwind;
+GO
+
+SELECT TOP (5) ProductID, ProductName, UnitPrice
+FROM dbo.Products;</code></pre></div><p>Si no aparece <code>Northwind</code>, primero instala la base de ejemplo. Cada <code>CREATE PROCEDURE</code> debe ejecutarse en su propio lote; por eso incluimos <code>GO</code>.</p></section>
+<section class="section" id="sintaxis"><div class="kicker">02 · Estructura</div><h2>Sintaxis de un procedimiento almacenado</h2><div class="codebox"><div class="codehead">SQL · Estructura general <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.NombreProcedimiento
+    @Parametro INT  -- opcional
+AS
+BEGIN
+    -- Instrucciones SQL
+END;
+GO
+
+EXEC dbo.NombreProcedimiento @Parametro = 1;</code></pre></div><table><thead><tr><th>Elemento</th><th>Significado</th></tr></thead><tbody><tr><td><code>CREATE PROCEDURE</code></td><td>Guarda el procedimiento en la base de datos.</td></tr><tr><td><code>@Parametro</code></td><td>Dato que se recibe al ejecutar el procedimiento.</td></tr><tr><td><code>AS BEGIN ... END</code></td><td>Delimita las instrucciones que ejecutará.</td></tr><tr><td><code>EXEC</code></td><td>Invoca el procedimiento.</td></tr><tr><td><code>GO</code></td><td>Separa lotes en SSMS; no es una instrucción T-SQL.</td></tr></tbody></table><div class="note warning"><strong>Convención:</strong> usa <code>usp_</code> como prefijo para tus procedimientos. Evita <code>sp_</code> para procedimientos propios porque SQL Server lo utiliza para procedimientos del sistema.</div></section>
+<section class="section" id="consultas"><div class="kicker">03 · Práctica guiada</div><h2>Procedimientos sin parámetros</h2><span class="tag">Ejemplo 1 · Listado de clientes</span><p><strong>Situación:</strong> una oficina consulta frecuentemente sus clientes. En lugar de repetir la consulta, la guardará como un procedimiento.</p><div class="codebox"><div class="codehead">SQL · Crear y ejecutar <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.usp_ListarClientes
+AS
+BEGIN
+    SELECT CustomerID, CompanyName, City, Country
+    FROM dbo.Customers;
+END;
+GO
+
+EXEC dbo.usp_ListarClientes;</code></pre></div><div class="question"><span class="numlabel">Pregunta en clase:</span> ¿Qué diferencia existe entre escribir directamente <code>SELECT ... FROM dbo.Customers</code> y ejecutar <code>dbo.usp_ListarClientes</code>?</div><span class="tag">Ejemplo 2 · Contar productos</span><p><strong>Situación:</strong> la gerencia necesita conocer el total de productos registrados.</p><div class="codebox"><div class="codehead">SQL · COUNT <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.usp_ContarProductos
+AS
+BEGIN
+    SELECT COUNT(*) AS TotalProductos
+    FROM dbo.Products;
+END;
+GO
+
+EXEC dbo.usp_ContarProductos;</code></pre></div></section>
+<section class="section" id="parametros"><div class="kicker">04 · Parámetros de entrada</div><h2>Procedimientos que reciben valores</h2><span class="tag">Ejemplo 3 · Clientes por país</span><p><strong>Situación:</strong> el vendedor quiere consultar los clientes de un país indicado al ejecutar el procedimiento.</p><div class="codebox"><div class="codehead">SQL · Un parámetro <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.usp_ClientesPorPais
+    @Pais NVARCHAR(50)
+AS
+BEGIN
+    SELECT CustomerID, CompanyName, City, Country
+    FROM dbo.Customers
+    WHERE Country = @Pais;
+END;
+GO
+
+EXEC dbo.usp_ClientesPorPais @Pais = N'Germany';
+EXEC dbo.usp_ClientesPorPais @Pais = N'Mexico';
+EXEC dbo.usp_ClientesPorPais @Pais = N'Brazil';</code></pre></div><div class="note"><strong>Observa:</strong> se crea una sola vez. Después puedes ejecutarlo con distintos países. <code>@Pais</code> es un parámetro de entrada, no una columna de la tabla.</div><span class="tag">Ejemplo 4 · Productos por rango de precios</span><p><strong>Situación:</strong> necesitamos productos entre dos precios ingresados.</p><div class="codebox"><div class="codehead">SQL · Dos parámetros <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.usp_ProductosPorPrecio
+    @PrecioMinimo MONEY,
+    @PrecioMaximo MONEY
+AS
+BEGIN
+    SELECT ProductID, ProductName, UnitPrice
+    FROM dbo.Products
+    WHERE UnitPrice BETWEEN @PrecioMinimo AND @PrecioMaximo;
+END;
+GO
+
+EXEC dbo.usp_ProductosPorPrecio
+    @PrecioMinimo = 10,
+    @PrecioMaximo = 50;</code></pre></div><div class="question"><span class="numlabel">Reto oral:</span> ¿Qué pasaría si enviamos el mínimo como 100 y el máximo como 10? ¿Cómo lo validarías?</div></section>
+<section class="section" id="condiciones"><div class="kicker">05 · Lógica de decisión</div><h2>Variables e IF...ELSE</h2><span class="tag">Ejemplo 5 · Verificar stock</span><p><strong>Situación:</strong> se desea comprobar si un producto está disponible, agotado o no existe.</p><div class="codebox"><div class="codehead">SQL · DECLARE + IF + ELSE <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.usp_VerificarStock
+    @IdProducto INT
+AS
+BEGIN
+    DECLARE @Stock INT;
+
+    SELECT @Stock = UnitsInStock
+    FROM dbo.Products
+    WHERE ProductID = @IdProducto;
+
+    IF @Stock IS NULL
+        PRINT 'Producto inexistente o sin stock informado';
+    ELSE IF @Stock > 0
+        PRINT 'Producto disponible';
+    ELSE
+        PRINT 'Producto agotado';
+END;
+GO
+
+EXEC dbo.usp_VerificarStock @IdProducto = 1;
+EXEC dbo.usp_VerificarStock @IdProducto = 99999;</code></pre></div><p>Explica que <code>PRINT</code> aparece en la pestaña <strong>Messages / Mensajes</strong> de SSMS. En producción sería conveniente distinguir entre un producto inexistente y un valor <code>NULL</code> de inventario.</p><span class="tag">Ejemplo 6 · Validar mínimo y máximo</span><div class="codebox"><div class="codehead">SQL · Validación sencilla <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.usp_ValidarRangoPrecios
+    @Minimo MONEY,
+    @Maximo MONEY
+AS
+BEGIN
+    IF @Minimo > @Maximo
+    BEGIN
+        PRINT 'Error: el mínimo supera al máximo';
+    END
+    ELSE
+    BEGIN
+        SELECT ProductName, UnitPrice
+        FROM dbo.Products
+        WHERE UnitPrice BETWEEN @Minimo AND @Maximo;
+    END
+END;
+GO
+
+EXEC dbo.usp_ValidarRangoPrecios @Minimo = 100, @Maximo = 10;
+EXEC dbo.usp_ValidarRangoPrecios @Minimo = 10, @Maximo = 100;</code></pre></div></section>
+<section class="section" id="crud"><div class="kicker">06 · Operaciones sobre datos</div><h2>INSERT, UPDATE y DELETE desde procedimientos</h2><div class="note warning"><strong>Trabajaremos en una tabla de práctica.</strong> No modifiques ni elimines los registros originales de <code>Products</code> de Northwind. Ejecuta los ejemplos en orden.</div><h3>Paso 1. Crear la tabla para los estudiantes</h3><div class="codebox"><div class="codehead">SQL · Tabla de práctica <button class="copy">Copiar SQL</button></div><pre><code>CREATE TABLE dbo.ProductosPractica
+(
+    IdProducto INT IDENTITY(1,1) PRIMARY KEY,
+    Nombre VARCHAR(100) NOT NULL,
+    Precio DECIMAL(10,2) NOT NULL,
+    Stock INT NOT NULL
+);
+GO</code></pre></div><span class="tag">Ejemplo 7 · INSERT</span><p><strong>Situación:</strong> registrar un producto con los datos ingresados por el usuario.</p><div class="codebox"><div class="codehead">SQL · Registrar producto <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.usp_RegistrarProducto
+    @Nombre VARCHAR(100),
+    @Precio DECIMAL(10,2),
+    @Stock INT
+AS
+BEGIN
+    INSERT INTO dbo.ProductosPractica
+        (Nombre, Precio, Stock)
+    VALUES (@Nombre, @Precio, @Stock);
+END;
+GO
+
+EXEC dbo.usp_RegistrarProducto
+    @Nombre = 'Mouse Logitech',
+    @Precio = 45.50,
+    @Stock = 20;
+
+SELECT * FROM dbo.ProductosPractica;</code></pre></div><span class="tag">Ejemplo 8 · UPDATE</span><p><strong>Situación:</strong> modificar el precio y stock de un producto existente.</p><div class="codebox"><div class="codehead">SQL · Actualizar producto <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.usp_ActualizarProducto
+    @IdProducto INT,
+    @Precio DECIMAL(10,2),
+    @Stock INT
+AS
+BEGIN
+    UPDATE dbo.ProductosPractica
+    SET Precio = @Precio,
+        Stock = @Stock
+    WHERE IdProducto = @IdProducto;
+END;
+GO
+
+-- Cambia el ID según el registro insertado
+EXEC dbo.usp_ActualizarProducto
+    @IdProducto = 1,
+    @Precio = 55.00,
+    @Stock = 35;
+
+SELECT * FROM dbo.ProductosPractica;</code></pre></div><span class="tag">Ejemplo 9 · DELETE</span><p><strong>Situación:</strong> eliminar un producto de prueba según su código.</p><div class="codebox"><div class="codehead">SQL · Eliminar producto <button class="copy">Copiar SQL</button></div><pre><code>CREATE PROCEDURE dbo.usp_EliminarProducto
+    @IdProducto INT
+AS
+BEGIN
+    DELETE FROM dbo.ProductosPractica
+    WHERE IdProducto = @IdProducto;
+END;
+GO
+
+-- Comprueba antes qué registro eliminarás
+SELECT * FROM dbo.ProductosPractica;
+EXEC dbo.usp_EliminarProducto @IdProducto = 1;
+SELECT * FROM dbo.ProductosPractica;</code></pre></div><div class="note warning"><strong>Precaución:</strong> <code>UPDATE</code> y <code>DELETE</code> deben tener un <code>WHERE</code> adecuado. En aplicaciones reales agrega validación de parámetros, permisos y manejo de errores.</div></section>
+<section class="section" id="administrar"><div class="kicker">07 · Administración</div><h2>Consultar, modificar y eliminar procedimientos</h2><div class="grid"><div class="tile"><strong>Consultar definición</strong><small>sp_helptext</small></div><div class="tile"><strong>Modificar</strong><small>ALTER PROCEDURE</small></div><div class="tile"><strong>Eliminar</strong><small>DROP PROCEDURE</small></div></div><h3>Ver la definición</h3><div class="codebox"><div class="codehead">SQL · sp_helptext <button class="copy">Copiar SQL</button></div><pre><code>EXEC sp_helptext 'dbo.usp_ListarClientes';</code></pre></div><h3>Modificar un procedimiento ya creado</h3><div class="codebox"><div class="codehead">SQL · ALTER PROCEDURE <button class="copy">Copiar SQL</button></div><pre><code>ALTER PROCEDURE dbo.usp_ListarClientes
+AS
+BEGIN
+    SELECT CustomerID, CompanyName, City, Country
+    FROM dbo.Customers
+    WHERE Country = 'Mexico';
+END;
+GO
+
+EXEC dbo.usp_ListarClientes;</code></pre></div><h3>Eliminar un procedimiento</h3><div class="codebox"><div class="codehead">SQL · DROP PROCEDURE <button class="copy">Copiar SQL</button></div><pre><code>DROP PROCEDURE IF EXISTS dbo.usp_ValidarRangoPrecios;
+GO</code></pre></div><div class="note"><strong>Dato adicional:</strong> en SQL Server moderno también existe <code>CREATE OR ALTER PROCEDURE</code>, útil para crear o actualizar sin comprobar antes si el procedimiento existe. Los procedimientos con el mismo nombre deben crearse solo una vez, o modificarse con <code>ALTER</code>.</div></section>
+<section class="section" id="practica"><div class="kicker">08 · Trabajo individual</div><h2>Práctica propuesta para los estudiantes</h2><p><strong>Contexto:</strong> Northwind quiere automatizar consultas de su área comercial. Elabora los procedimientos indicados. Usa nombres descriptivos y demuestra su ejecución.</p><div class="challenge"><b>1 · Empleados (2 puntos).</b> Crear un procedimiento que liste código, nombres, apellidos y cargo de cada empleado.<details><summary>Ver orientación</summary>Tabla <code>Employees</code>; columnas <code>EmployeeID</code>, <code>FirstName</code>, <code>LastName</code>, <code>Title</code>; sin parámetros.</details></div><div class="challenge"><b>2 · Precio mínimo (2 puntos).</b> Recibir un precio y mostrar los productos cuyo precio sea superior al ingresado.<details><summary>Ver orientación</summary>Tabla <code>Products</code>; parámetro <code>@PrecioMinimo MONEY</code>; <code>WHERE UnitPrice &gt; @PrecioMinimo</code>.</details></div><div class="challenge"><b>3 · Buscar cliente (2 puntos).</b> Recibir el código del cliente y devolver nombre comercial, ciudad y país.<details><summary>Ver orientación</summary>Tabla <code>Customers</code>; parámetro <code>@IdCliente NCHAR(5)</code>; filtro por <code>CustomerID</code>.</details></div><div class="challenge"><b>4 · Pedidos por fechas (2 puntos).</b> Recibir una fecha inicial y final, y listar pedidos dentro de ese intervalo.<details><summary>Ver orientación</summary>Tabla <code>Orders</code>; parámetros de tipo <code>DATE</code>; comparar <code>OrderDate</code>. Para incluir todo el día final cuando hay hora, usar <code>OrderDate &gt;= @Inicio AND OrderDate &lt; DATEADD(DAY,1,@Fin)</code>.</details></div><div class="challenge"><b>5 · Productos por categoría (2 puntos).</b> Recibir un identificador de categoría y mostrar sus productos.<details><summary>Ver orientación</summary>Tabla <code>Products</code>; filtro por <code>CategoryID</code>; opcionalmente unir <code>Categories</code>.</details></div><div class="challenge"><b>6 · Clientes por país (2 puntos).</b> Recibir un país y mostrar cuántos clientes hay en ese país.<details><summary>Ver orientación</summary>Tabla <code>Customers</code>; utilizar <code>COUNT(*)</code> y parámetro <code>@Pais</code>.</details></div><div class="challenge"><b>7 · Control de inventario (3 puntos).</b> Recibir el código de un producto y mostrar un mensaje de disponible, agotado o no encontrado.<details><summary>Ver orientación</summary>Utilizar <code>DECLARE</code>, consulta a <code>Products</code> y condiciones <code>IF...ELSE</code>. Distinguir registro inexistente de stock igual a 0.</details></div><div class="challenge"><b>8 · CRUD de práctica (5 puntos).</b> Crear y ejecutar procedimientos para registrar, actualizar y eliminar registros de <code>ProductosPractica</code>. Mostrar la tabla antes y después de cada operación.<details><summary>Ver orientación</summary>Utilizar <code>INSERT INTO</code>, <code>UPDATE ... WHERE IdProducto</code> y <code>DELETE ... WHERE IdProducto</code>. No usar la tabla original <code>Products</code>.</details></div><h3>Entregable</h3><div class="checklist"><label><input type="checkbox"> Archivo <code>.sql</code> con los ocho ejercicios, comentado.</label><label><input type="checkbox"> Al menos una ejecución <code>EXEC</code> por procedimiento.</label><label><input type="checkbox"> Capturas de pantalla de los resultados en SSMS.</label><label><input type="checkbox"> Nombre y apellidos del estudiante en el encabezado SQL y nombre de archivo.</label></div><div class="note"><strong>Evaluación:</strong> 20 puntos. Se revisará que el código ejecute, que los parámetros funcionen y que los resultados correspondan al enunciado.</div></section>
+<section class="section" id="cierre"><div class="kicker">09 · Cierre</div><h2>Distribución de la sesión</h2><div class="timebar"><span></span><span></span><span></span><span></span><span></span></div><table><thead><tr><th>Bloque</th><th>Actividad</th><th>Minutos</th></tr></thead><tbody><tr><td>1</td><td>Conceptos y estructura</td><td>15</td></tr><tr><td>2</td><td>SELECT con y sin parámetros</td><td>30</td></tr><tr><td>3</td><td>IF...ELSE, variables y validaciones</td><td>20</td></tr><tr><td>4</td><td>INSERT, UPDATE, DELETE y administración</td><td>30</td></tr><tr><td>5</td><td>Práctica y revisión</td><td>25</td></tr></tbody></table><h3>Preguntas de repaso</h3><ol><li>¿Cuál es la diferencia entre <code>CREATE PROCEDURE</code> y <code>EXEC</code>?</li><li>¿Para qué sirve un parámetro como <code>@Pais</code>?</li><li>¿En qué caso usarías <code>IF...ELSE</code>?</li><li>¿Cuál es el riesgo de ejecutar <code>DELETE</code> sin <code>WHERE</code>?</li><li>¿Cómo modificas un procedimiento sin eliminarlo?</li></ol><div class="note">Siguiente clase sugerida: parámetros <code>OUTPUT</code>, <code>TRY...CATCH</code>, transacciones y procedimientos que combinan varias tablas.</div></section>
+</main><footer>Guía educativa · SQL Server + Northwind · Ejemplos orientados a la práctica en SSMS</footer>
+<script>
+document.querySelectorAll('.copy').forEach(btn=>btn.addEventListener('click',async()=>{const code=btn.closest('.codebox').querySelector('code').innerText;try{await navigator.clipboard.writeText(code)}catch(e){const t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}const old=btn.textContent;btn.textContent='✓ Copiado';setTimeout(()=>btn.textContent=old,1800)}));
+document.getElementById('projector').addEventListener('click',()=>{document.body.classList.toggle('presentation');document.getElementById('projector').textContent=document.body.classList.contains('presentation')?'⊟ Tamaño normal':'⊞ Proyectar'});
+</script></body></html>
