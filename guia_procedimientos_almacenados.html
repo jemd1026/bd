@@ -9,7 +9,7 @@
 </head>
 <body>
 <header><div class="wrap"><div class="eyebrow">Guía práctica · Administración de bases de datos</div><h1>Procedimientos almacenados<br>en SQL Server</h1><p>Aprende a crear, ejecutar y administrar procedimientos almacenados con ejemplos progresivos sobre <strong>Northwind</strong> y una tabla segura de prácticas.</p><div class="pills"><span class="pill">Nivel: básico</span><span class="pill">Duración: 120 minutos</span><span class="pill">SQL Server / SSMS</span><span class="pill">Ejemplos + práctica evaluada</span></div></div></header>
-<nav><div class="inner"><a href="#objetivos">Inicio</a><a href="#sintaxis">Sintaxis</a><a href="#consultas">SELECT</a><a href="#parametros">Parámetros</a><a href="#condiciones">IF / ELSE</a><a href="#crud">CRUD</a><a href="#administrar">Administrar</a><a href="#practica">Práctica</a><span class="space"></span><button class="btn screen-only" id="projector">⊞ Proyectar</button><button class="btn main screen-only" onclick="window.print()">⎙ Imprimir / PDF</button></div></nav>
+<nav><div class="inner"><a href="#objetivos">Inicio</a><a href="#sintaxis">Sintaxis</a><a href="#consultas">SELECT</a><a href="#parametros">Parámetros</a><a href="#condiciones">IF / ELSE</a><a href="#crud">CRUD</a><a href="#lab-ventas">Productos + ventas</a><a href="#administrar">Administrar</a><a href="#practica">Práctica</a><span class="space"></span><button class="btn screen-only" id="projector">⊞ Proyectar</button><button class="btn main screen-only" onclick="window.print()">⎙ Imprimir / PDF</button></div></nav>
 <main>
 <section class="section" id="objetivos"><div class="kicker">01 · Conceptos</div><h2>¿Qué aprenderemos hoy?</h2><div class="grid"><div class="tile"><strong>Crear y ejecutar</strong><small>Usar CREATE PROCEDURE y EXEC.</small></div><div class="tile"><strong>Enviar valores</strong><small>Trabajar con parámetros de entrada.</small></div><div class="tile"><strong>Tomar decisiones</strong><small>Utilizar variables e IF...ELSE.</small></div><div class="tile"><strong>Gestionar datos</strong><small>Insertar, actualizar y eliminar registros.</small></div></div><h3>¿Qué es un procedimiento almacenado?</h3><p>Un <strong>procedimiento almacenado</strong> es un conjunto de instrucciones SQL guardadas en una base de datos, que se puede ejecutar por su nombre. Puede recibir parámetros, realizar consultas y modificar registros.</p><div class="flow"><span>Usuario<br><small>EXEC dbo.usp_ListarClientes</small></span><span class="arrow">→</span><span>Procedimiento<br><small>Contiene SELECT</small></span><span class="arrow">→</span><span>Northwind<br><small>Devuelve clientes</small></span></div><div class="note"><strong>Comparación con las vistas:</strong> una vista se consulta con <code>SELECT</code> y representa una consulta; un procedimiento se invoca con <code>EXEC</code> y puede contener parámetros, condiciones y varias instrucciones.</div><h3>Preparación</h3><p>Abre SQL Server Management Studio (SSMS), conéctate y ejecuta:</p><div class="codebox"><div class="codehead">SQL · Seleccionar Northwind <button class="copy">Copiar SQL</button></div><pre><code>USE Northwind;
 GO
@@ -177,6 +177,245 @@ EXEC dbo.usp_ListarClientes;</code></pre></div><h3>Eliminar un procedimiento</h3
 GO</code></pre></div><div class="note"><strong>Dato adicional:</strong> en SQL Server moderno también existe <code>CREATE OR ALTER PROCEDURE</code>, útil para crear o actualizar sin comprobar antes si el procedimiento existe. Los procedimientos con el mismo nombre deben crearse solo una vez, o modificarse con <code>ALTER</code>.</div></section>
 <section class="section" id="practica"><div class="kicker">08 · Trabajo individual</div><h2>Práctica propuesta para los estudiantes</h2><p><strong>Contexto:</strong> Northwind quiere automatizar consultas de su área comercial. Elabora los procedimientos indicados. Usa nombres descriptivos y demuestra su ejecución.</p><div class="challenge"><b>1 · Empleados (2 puntos).</b> Crear un procedimiento que liste código, nombres, apellidos y cargo de cada empleado.<details><summary>Ver orientación</summary>Tabla <code>Employees</code>; columnas <code>EmployeeID</code>, <code>FirstName</code>, <code>LastName</code>, <code>Title</code>; sin parámetros.</details></div><div class="challenge"><b>2 · Precio mínimo (2 puntos).</b> Recibir un precio y mostrar los productos cuyo precio sea superior al ingresado.<details><summary>Ver orientación</summary>Tabla <code>Products</code>; parámetro <code>@PrecioMinimo MONEY</code>; <code>WHERE UnitPrice &gt; @PrecioMinimo</code>.</details></div><div class="challenge"><b>3 · Buscar cliente (2 puntos).</b> Recibir el código del cliente y devolver nombre comercial, ciudad y país.<details><summary>Ver orientación</summary>Tabla <code>Customers</code>; parámetro <code>@IdCliente NCHAR(5)</code>; filtro por <code>CustomerID</code>.</details></div><div class="challenge"><b>4 · Pedidos por fechas (2 puntos).</b> Recibir una fecha inicial y final, y listar pedidos dentro de ese intervalo.<details><summary>Ver orientación</summary>Tabla <code>Orders</code>; parámetros de tipo <code>DATE</code>; comparar <code>OrderDate</code>. Para incluir todo el día final cuando hay hora, usar <code>OrderDate &gt;= @Inicio AND OrderDate &lt; DATEADD(DAY,1,@Fin)</code>.</details></div><div class="challenge"><b>5 · Productos por categoría (2 puntos).</b> Recibir un identificador de categoría y mostrar sus productos.<details><summary>Ver orientación</summary>Tabla <code>Products</code>; filtro por <code>CategoryID</code>; opcionalmente unir <code>Categories</code>.</details></div><div class="challenge"><b>6 · Clientes por país (2 puntos).</b> Recibir un país y mostrar cuántos clientes hay en ese país.<details><summary>Ver orientación</summary>Tabla <code>Customers</code>; utilizar <code>COUNT(*)</code> y parámetro <code>@Pais</code>.</details></div><div class="challenge"><b>7 · Control de inventario (3 puntos).</b> Recibir el código de un producto y mostrar un mensaje de disponible, agotado o no encontrado.<details><summary>Ver orientación</summary>Utilizar <code>DECLARE</code>, consulta a <code>Products</code> y condiciones <code>IF...ELSE</code>. Distinguir registro inexistente de stock igual a 0.</details></div><div class="challenge"><b>8 · CRUD de práctica (5 puntos).</b> Crear y ejecutar procedimientos para registrar, actualizar y eliminar registros de <code>ProductosPractica</code>. Mostrar la tabla antes y después de cada operación.<details><summary>Ver orientación</summary>Utilizar <code>INSERT INTO</code>, <code>UPDATE ... WHERE IdProducto</code> y <code>DELETE ... WHERE IdProducto</code>. No usar la tabla original <code>Products</code>.</details></div><h3>Entregable</h3><div class="checklist"><label><input type="checkbox"> Archivo <code>.sql</code> con los ocho ejercicios, comentado.</label><label><input type="checkbox"> Al menos una ejecución <code>EXEC</code> por procedimiento.</label><label><input type="checkbox"> Capturas de pantalla de los resultados en SSMS.</label><label><input type="checkbox"> Nombre y apellidos del estudiante en el encabezado SQL y nombre de archivo.</label></div><div class="note"><strong>Evaluación:</strong> 20 puntos. Se revisará que el código ejecute, que los parámetros funcionen y que los resultados correspondan al enunciado.</div></section>
 <section class="section" id="cierre"><div class="kicker">09 · Cierre</div><h2>Distribución de la sesión</h2><div class="timebar"><span></span><span></span><span></span><span></span><span></span></div><table><thead><tr><th>Bloque</th><th>Actividad</th><th>Minutos</th></tr></thead><tbody><tr><td>1</td><td>Conceptos y estructura</td><td>15</td></tr><tr><td>2</td><td>SELECT con y sin parámetros</td><td>30</td></tr><tr><td>3</td><td>IF...ELSE, variables y validaciones</td><td>20</td></tr><tr><td>4</td><td>INSERT, UPDATE, DELETE y administración</td><td>30</td></tr><tr><td>5</td><td>Práctica y revisión</td><td>25</td></tr></tbody></table><h3>Preguntas de repaso</h3><ol><li>¿Cuál es la diferencia entre <code>CREATE PROCEDURE</code> y <code>EXEC</code>?</li><li>¿Para qué sirve un parámetro como <code>@Pais</code>?</li><li>¿En qué caso usarías <code>IF...ELSE</code>?</li><li>¿Cuál es el riesgo de ejecutar <code>DELETE</code> sin <code>WHERE</code>?</li><li>¿Cómo modificas un procedimiento sin eliminarlo?</li></ol><div class="note">Siguiente clase sugerida: parámetros <code>OUTPUT</code>, <code>TRY...CATCH</code>, transacciones y procedimientos que combinan varias tablas.</div></section>
+<section class="section" id="lab-ventas"><div class="kicker">Complemento · Modelo de ventas</div><h2>Productos, ventas y validaciones intermedias</h2><p>Para practicar cambios reales sin tocar <code>Northwind</code>, usaremos una base separada. <code>Ventas</code> representa la cabecera (una venta) y <code>DetalleVentas</code> sus productos y cantidades. El detalle necesita esa cabecera para relacionarse correctamente.</p><div class="note warning"><strong>Preparación:</strong> ejecuta el bloque inicial una vez en SSMS con permisos para crear bases de datos. Si no tienes esos permisos, pide que te creen <code>TallerProcedimientos</code> y comienza desde <code>USE TallerProcedimientos</code>. Los ejemplos trabajan únicamente en esa base.</div><h3>1. Crear la base, las tablas y cargar 10 productos</h3><div class="codebox"><div class="codehead">SQL · Preparar el laboratorio <button class="copy">Copiar SQL</button></div><pre><code>IF DB_ID(N'TallerProcedimientos') IS NULL
+    CREATE DATABASE TallerProcedimientos;
+GO
+USE TallerProcedimientos;
+GO
+
+IF OBJECT_ID(N'dbo.Productos', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Productos
+    (
+        ProductoId INT IDENTITY(1,1) CONSTRAINT PK_Productos PRIMARY KEY,
+        Codigo VARCHAR(20) NOT NULL CONSTRAINT UQ_Productos_Codigo UNIQUE,
+        Nombre NVARCHAR(100) NOT NULL,
+        Precio DECIMAL(10,2) NOT NULL,
+        Stock INT NOT NULL,
+        Activo BIT NOT NULL CONSTRAINT DF_Productos_Activo DEFAULT (1),
+        CONSTRAINT CK_Productos_Precio CHECK (Precio &gt;= 0),
+        CONSTRAINT CK_Productos_Stock CHECK (Stock &gt;= 0)
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.Ventas', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.Ventas
+    (
+        VentaId INT IDENTITY(1,1) CONSTRAINT PK_Ventas PRIMARY KEY,
+        Fecha DATETIME2(0) NOT NULL CONSTRAINT DF_Ventas_Fecha DEFAULT (SYSDATETIME()),
+        Estado VARCHAR(10) NOT NULL CONSTRAINT DF_Ventas_Estado DEFAULT ('ABIERTA'),
+        CONSTRAINT CK_Ventas_Estado
+            CHECK (Estado IN ('ABIERTA', 'CERRADA', 'ANULADA'))
+    );
+END;
+GO
+
+IF OBJECT_ID(N'dbo.DetalleVentas', N'U') IS NULL
+BEGIN
+    CREATE TABLE dbo.DetalleVentas
+    (
+        DetalleVentaId INT IDENTITY(1,1) CONSTRAINT PK_DetalleVentas PRIMARY KEY,
+        VentaId INT NOT NULL,
+        ProductoId INT NOT NULL,
+        Cantidad INT NOT NULL,
+        PrecioUnitario DECIMAL(10,2) NOT NULL,
+        Total AS (Cantidad * PrecioUnitario) PERSISTED,
+        CONSTRAINT FK_DetalleVentas_Ventas
+            FOREIGN KEY (VentaId) REFERENCES dbo.Ventas(VentaId),
+        CONSTRAINT FK_DetalleVentas_Productos
+            FOREIGN KEY (ProductoId) REFERENCES dbo.Productos(ProductoId),
+        CONSTRAINT CK_DetalleVentas_Cantidad CHECK (Cantidad &gt; 0),
+        CONSTRAINT CK_DetalleVentas_Precio CHECK (PrecioUnitario &gt;= 0)
+    );
+END;
+GO
+
+INSERT INTO dbo.Productos (Codigo, Nombre, Precio, Stock)
+SELECT v.Codigo, v.Nombre, v.Precio, v.Stock
+FROM (VALUES
+    ('TEC-001', N'Teclado USB', 18.50, 25),
+    ('TEC-002', N'Mouse óptico', 9.90, 40),
+    ('TEC-003', N'Monitor 24 pulgadas', 149.00, 12),
+    ('TEC-004', N'Audífonos', 24.75, 18),
+    ('TEC-005', N'Cámara web', 32.00, 15),
+    ('TEC-006', N'Memoria USB 64 GB', 11.25, 30),
+    ('TEC-007', N'Disco SSD 1 TB', 89.90, 10),
+    ('TEC-008', N'Cable HDMI', 7.50, 50),
+    ('TEC-009', N'Parlantes USB', 21.00, 14),
+    ('TEC-010', N'Base para laptop', 27.50, 16)
+) AS v(Codigo, Nombre, Precio, Stock)
+WHERE NOT EXISTS
+    (SELECT 1 FROM dbo.Productos AS p WHERE p.Codigo = v.Codigo);
+GO
+
+SELECT ProductoId, Codigo, Nombre, Precio, Stock, Activo
+FROM dbo.Productos
+ORDER BY ProductoId;
+GO</code></pre></div><p>La carga inicial es repetible: <code>Codigo</code> es único y solo se insertan códigos que todavía no existen. Las restricciones <code>CHECK</code>, <code>UNIQUE</code> y las claves foráneas protegen los datos incluso si alguien no usa los procedimientos.</p><h3>2. Insertar un producto validando sus datos</h3><p>El procedimiento rechaza código o nombre vacío, precio negativo y stock negativo; además, evita repetir el código.</p><div class="codebox"><div class="codehead">SQL · Registrar producto <button class="copy">Copiar SQL</button></div><pre><code>CREATE OR ALTER PROCEDURE dbo.usp_RegistrarProducto
+    @Codigo VARCHAR(20),
+    @Nombre NVARCHAR(100),
+    @Precio DECIMAL(10,2),
+    @Stock INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @Codigo IS NULL OR LEN(LTRIM(RTRIM(@Codigo))) = 0
+        THROW 50001, 'El codigo es obligatorio.', 1;
+    IF @Nombre IS NULL OR LEN(LTRIM(RTRIM(@Nombre))) = 0
+        THROW 50002, 'El nombre es obligatorio.', 1;
+    IF @Precio IS NULL OR @Precio &lt; 0
+        THROW 50003, 'El precio debe ser mayor o igual a cero.', 1;
+    IF @Stock IS NULL OR @Stock &lt; 0
+        THROW 50004, 'El stock debe ser mayor o igual a cero.', 1;
+
+    SET @Codigo = UPPER(LTRIM(RTRIM(@Codigo)));
+    SET @Nombre = LTRIM(RTRIM(@Nombre));
+
+    IF EXISTS (SELECT 1 FROM dbo.Productos WHERE Codigo = @Codigo)
+        THROW 50005, 'Ya existe un producto con ese codigo.', 1;
+
+    INSERT INTO dbo.Productos (Codigo, Nombre, Precio, Stock)
+    VALUES (@Codigo, @Nombre, @Precio, @Stock);
+
+    SELECT CONVERT(INT, SCOPE_IDENTITY()) AS ProductoId;
+END;
+GO
+
+EXEC dbo.usp_RegistrarProducto
+    @Codigo = 'TEC-011', @Nombre = N'Adaptador USB-C',
+    @Precio = 15.00, @Stock = 20;
+GO</code></pre></div><h3>3. Actualizar un producto existente</h3><p>Se exige un identificador válido y se comprueban los nuevos valores antes del <code>UPDATE</code>. El filtro por clave primaria limita el cambio a un solo producto.</p><div class="codebox"><div class="codehead">SQL · Actualizar nombre, precio y stock <button class="copy">Copiar SQL</button></div><pre><code>CREATE OR ALTER PROCEDURE dbo.usp_ActualizarProducto
+    @ProductoId INT,
+    @Nombre NVARCHAR(100),
+    @Precio DECIMAL(10,2),
+    @Stock INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @ProductoId IS NULL OR @ProductoId &lt;= 0
+        THROW 50011, 'El identificador debe ser positivo.', 1;
+    IF NOT EXISTS (SELECT 1 FROM dbo.Productos WHERE ProductoId = @ProductoId)
+        THROW 50012, 'No existe el producto indicado.', 1;
+    IF @Nombre IS NULL OR LEN(LTRIM(RTRIM(@Nombre))) = 0
+        THROW 50013, 'El nombre es obligatorio.', 1;
+    IF @Precio IS NULL OR @Precio &lt; 0
+        THROW 50014, 'El precio debe ser mayor o igual a cero.', 1;
+    IF @Stock IS NULL OR @Stock &lt; 0
+        THROW 50015, 'El stock debe ser mayor o igual a cero.', 1;
+
+    UPDATE dbo.Productos
+    SET Nombre = LTRIM(RTRIM(@Nombre)),
+        Precio = @Precio,
+        Stock = @Stock
+    WHERE ProductoId = @ProductoId;
+
+    SELECT ProductoId, Codigo, Nombre, Precio, Stock
+    FROM dbo.Productos
+    WHERE ProductoId = @ProductoId;
+END;
+GO
+
+EXEC dbo.usp_ActualizarProducto
+    @ProductoId = 1, @Nombre = N'Teclado USB compacto',
+    @Precio = 20.00, @Stock = 23;
+GO</code></pre></div><h3>4. Registrar una venta con detalle y descontar inventario</h3><p>Este procedimiento valida que la venta esté abierta, el producto exista y esté activo, y haya stock suficiente. La transacción garantiza que el detalle y el descuento de inventario se confirmen juntos o se reviertan juntos.</p><div class="codebox"><div class="codehead">SQL · Insertar detalle de venta con transacción <button class="copy">Copiar SQL</button></div><pre><code>CREATE OR ALTER PROCEDURE dbo.usp_RegistrarDetalleVenta
+    @VentaId INT,
+    @ProductoId INT,
+    @Cantidad INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    IF @VentaId IS NULL OR @VentaId &lt;= 0
+        THROW 50021, 'El identificador de venta debe ser positivo.', 1;
+    IF @ProductoId IS NULL OR @ProductoId &lt;= 0
+        THROW 50022, 'El identificador de producto debe ser positivo.', 1;
+    IF @Cantidad IS NULL OR @Cantidad &lt;= 0
+        THROW 50023, 'La cantidad debe ser mayor que cero.', 1;
+
+    DECLARE @Precio DECIMAL(10,2);
+    DECLARE @Stock INT;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        IF NOT EXISTS
+        (
+            SELECT 1 FROM dbo.Ventas WITH (UPDLOCK, HOLDLOCK)
+            WHERE VentaId = @VentaId AND Estado = 'ABIERTA'
+        )
+            THROW 50024, 'La venta no existe o no esta abierta.', 1;
+
+        SELECT @Precio = Precio, @Stock = Stock
+        FROM dbo.Productos WITH (UPDLOCK, HOLDLOCK)
+        WHERE ProductoId = @ProductoId AND Activo = 1;
+
+        IF @Precio IS NULL
+            THROW 50025, 'El producto no existe o esta inactivo.', 1;
+        IF @Stock &lt; @Cantidad
+            THROW 50026, 'Stock insuficiente para completar la venta.', 1;
+
+        INSERT INTO dbo.DetalleVentas
+            (VentaId, ProductoId, Cantidad, PrecioUnitario)
+        VALUES (@VentaId, @ProductoId, @Cantidad, @Precio);
+
+        UPDATE dbo.Productos
+        SET Stock = Stock - @Cantidad
+        WHERE ProductoId = @ProductoId;
+
+        COMMIT TRANSACTION;
+
+        SELECT DetalleVentaId, VentaId, ProductoId, Cantidad,
+               PrecioUnitario, Total
+        FROM dbo.DetalleVentas
+        WHERE DetalleVentaId = CONVERT(INT, SCOPE_IDENTITY());
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() &lt;&gt; 0
+            ROLLBACK TRANSACTION;
+        THROW;
+    END CATCH;
+END;
+GO
+
+DECLARE @NuevaVentaId INT;
+INSERT INTO dbo.Ventas DEFAULT VALUES;
+SET @NuevaVentaId = CONVERT(INT, SCOPE_IDENTITY());
+
+EXEC dbo.usp_RegistrarDetalleVenta
+    @VentaId = @NuevaVentaId, @ProductoId = 2, @Cantidad = 3;
+
+SELECT v.VentaId, v.Fecha, v.Estado, d.ProductoId, p.Nombre,
+       d.Cantidad, d.PrecioUnitario, d.Total
+FROM dbo.Ventas AS v
+JOIN dbo.DetalleVentas AS d ON d.VentaId = v.VentaId
+JOIN dbo.Productos AS p ON p.ProductoId = d.ProductoId
+WHERE v.VentaId = @NuevaVentaId;
+GO</code></pre></div><h3>5. Desactivar en lugar de borrar</h3><p>Es preferible conservar el producto y su historial de ventas. Por eso, el borrado lógico cambia <code>Activo</code>; el procedimiento rechaza identificadores inexistentes.</p><div class="codebox"><div class="codehead">SQL · Desactivar producto <button class="copy">Copiar SQL</button></div><pre><code>CREATE OR ALTER PROCEDURE dbo.usp_DesactivarProducto
+    @ProductoId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    IF @ProductoId IS NULL OR @ProductoId &lt;= 0
+        THROW 50031, 'El identificador debe ser positivo.', 1;
+    IF NOT EXISTS (SELECT 1 FROM dbo.Productos WHERE ProductoId = @ProductoId)
+        THROW 50032, 'No existe el producto indicado.', 1;
+
+    UPDATE dbo.Productos
+    SET Activo = 0
+    WHERE ProductoId = @ProductoId AND Activo = 1;
+
+    SELECT ProductoId, Codigo, Nombre, Activo
+    FROM dbo.Productos
+    WHERE ProductoId = @ProductoId;
+END;
+GO</code></pre></div><div class="note"><strong>Qué validamos:</strong> obligatoriedad y formato básico, rangos, identificadores existentes, unicidad, stock disponible, estado de la venta y relaciones entre tablas. <code>THROW</code> informa el error al cliente; las restricciones de tabla son una segunda barrera. Para un sistema real agrega autorización, auditoría y reglas de anulación/devolución.</div><div class="question"><span class="numlabel">Para practicar:</span> prueba un código duplicado, precio negativo, producto inexistente, venta cerrada y cantidad superior al stock. Comprueba que cada intento produce un error claro y que no deja cambios parciales en <code>DetalleVentas</code> ni en <code>Productos</code>.</div></section>
 </main><footer>Guía educativa · SQL Server + Northwind · Ejemplos orientados a la práctica en SSMS</footer>
 <script>
 document.querySelectorAll('.copy').forEach(btn=>btn.addEventListener('click',async()=>{const code=btn.closest('.codebox').querySelector('code').innerText;try{await navigator.clipboard.writeText(code)}catch(e){const t=document.createElement('textarea');t.value=code;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove()}const old=btn.textContent;btn.textContent='✓ Copiado';setTimeout(()=>btn.textContent=old,1800)}));
