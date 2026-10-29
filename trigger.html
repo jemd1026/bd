@@ -350,6 +350,15 @@
       No hay que crearlas — SQL Server las genera solo.
     </div>
 
+    <div class="nota">
+      <strong>Importante:</strong> <code>inserted</code> y <code>deleted</code> solo existen mientras
+      se ejecuta el trigger. No son tablas permanentes y no se pueden consultar después con
+      <code>SELECT * FROM inserted</code> desde otra ventana. Para revisar el resultado después,
+      consulta la tabla afectada o una tabla de auditoría. En los ejemplos se indica qué consulta ejecutar.
+      Durante la clase, un <code>SELECT</code> dentro del trigger puede mostrar las filas de estas tablas,
+      pero se usa solo para aprender; en aplicaciones reales se recomienda no devolver resultados desde triggers.
+    </div>
+
     <!-- ── INSERTED ── -->
     <h2 style="color:#2e7d32; border-left-color:#6bbf8a; margin-top:30px;">6.1 Tabla <code>inserted</code> — los valores nuevos</h2>
 
@@ -562,15 +571,22 @@
     <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 1 — Crear la base de datos</h2>
 
     <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
-      <span style="color:#75715e;">-- Si ya existe, la eliminamos y empezamos limpio</span><br>
-      <span style="color:#a6e22e;">IF EXISTS</span> (<span style="color:#a6e22e;">SELECT</span> name <span style="color:#a6e22e;">FROM</span> sys.databases <span style="color:#a6e22e;">WHERE</span> name = <span style="color:#e6db74;">'Tienda'</span>)<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#a6e22e;">DROP DATABASE</span> Tienda;<br>
-      <br>
+
+      <span style="color:#75715e;">-- Crear solo si Tienda todavía no existe</span><br>
       <span style="color:#a6e22e;">CREATE DATABASE</span> Tienda;<br>
       <span style="color:#a6e22e;">GO</span><br>
       <br>
       <span style="color:#a6e22e;">USE</span> Tienda;<br>
-      <span style="color:#a6e22e;">GO</span>
+      <span style="color:#a6e22e;">GO</span><br>
+      <span style="color:#a6e22e;">SELECT</span> DB_NAME() <span style="color:#a6e22e;">AS</span> base_actual;
+    </div>
+
+    <div class="nota">
+      <strong>Antes de ejecutar:</strong> abre SQL Server Management Studio (SSMS), conéctate al servidor
+      y ejecuta este paso una sola vez. Si <code>Tienda</code> ya existe, omite
+      <code>CREATE DATABASE Tienda;</code> y ejecuta solamente <code>USE Tienda;</code>.
+      No se elimina ninguna base existente: <code>DROP DATABASE</code> borraría todos sus datos.
+      Ejecuta los bloques en orden y usa <code>GO</code> para separar los lotes.
     </div>
 
     <!-- ── PASO 2: CREAR LAS TABLAS ── -->
@@ -623,6 +639,22 @@
       &nbsp;&nbsp;&nbsp;&nbsp;precio_unit &nbsp;<span style="color:#66d9e8;">DECIMAL</span>(10,2) <span style="color:#a6e22e;">NOT NULL</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- precio al momento de la venta (puede cambiar después)</span><br>
       );<br>
       <span style="color:#a6e22e;">GO</span>
+    </div>
+
+    <div class="nota">
+      <strong>Comprobar que se crearon las tablas:</strong> ejecuta estas consultas después del Paso 2.
+      La primera muestra las tablas disponibles y las siguientes muestran sus filas (todavía estarán vacías).
+      Ejecuta los INSERT del Paso 3 una sola vez; si los repites, se agregarán nuevos registros.
+    </div>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#a6e22e;">SELECT</span> TABLE_NAME <span style="color:#a6e22e;">FROM</span> INFORMATION_SCHEMA.TABLES<br>
+      <span style="color:#a6e22e;">WHERE</span> TABLE_TYPE = <span style="color:#e6db74;">'BASE TABLE'</span>;<br>
+      <br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Productos;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Clientes;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Ventas;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> DetalleVentas;
     </div>
 
     <!-- DIAGRAMA DE RELACIONES -->
@@ -734,6 +766,24 @@
       <span style="color:#a6e22e;">GO</span>
     </div>
 
+    <div class="nota">
+      <strong>Revisar los datos iniciales:</strong> después del Paso 3, ejecuta las consultas siguientes.
+      En SSMS, cada <code>SELECT</code> aparece como un resultado independiente. Deberías ver 15 productos,
+      10 clientes, 20 ventas y 80 detalles.
+    </div>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">ORDER BY</span> id;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Clientes <span style="color:#a6e22e;">ORDER BY</span> id;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Ventas <span style="color:#a6e22e;">ORDER BY</span> id;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> DetalleVentas <span style="color:#a6e22e;">ORDER BY</span> id;<br>
+      <br>
+      <span style="color:#a6e22e;">SELECT</span> <span style="color:#e6db74;">'Productos'</span> <span style="color:#a6e22e;">AS</span> tabla, <span style="color:#a6e22e;">COUNT</span>(*) <span style="color:#a6e22e;">AS</span> filas <span style="color:#a6e22e;">FROM</span> Productos<br>
+      <span style="color:#a6e22e;">UNION ALL SELECT</span> <span style="color:#e6db74;">'Clientes'</span>, <span style="color:#a6e22e;">COUNT</span>(*) <span style="color:#a6e22e;">FROM</span> Clientes<br>
+      <span style="color:#a6e22e;">UNION ALL SELECT</span> <span style="color:#e6db74;">'Ventas'</span>, <span style="color:#a6e22e;">COUNT</span>(*) <span style="color:#a6e22e;">FROM</span> Ventas<br>
+      <span style="color:#a6e22e;">UNION ALL SELECT</span> <span style="color:#e6db74;">'DetalleVentas'</span>, <span style="color:#a6e22e;">COUNT</span>(*) <span style="color:#a6e22e;">FROM</span> DetalleVentas;
+    </div>
+
     <!-- ── PRIMER TRIGGER ── -->
     <h2 style="color:#5a3e8a; border-left-color:#9a7bd1; margin-top:28px;">Paso 4 — El primer trigger sobre esta base de datos</h2>
 
@@ -754,14 +804,19 @@
       <br>
       <span style="color:#75715e;">-- Prueba: este INSERT dispara el trigger automáticamente</span><br>
       <span style="color:#a6e22e;">INSERT INTO</span> Productos (nombre, precio, stock)<br>
-      <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Webcam HD'</span>, 75.00, 15);
+      <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Webcam HD'</span>, 75.00, 15);<br>
+      <br>
+      <span style="color:#75715e;">-- El mensaje del PRINT aparece en Mensajes; esta consulta muestra la fila en Resultados</span><br>
+      <span style="color:#a6e22e;">SELECT TOP</span> (1) * <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">ORDER BY</span> id <span style="color:#a6e22e;">DESC</span>;
     </div>
 
     <div class="nota">
       <strong>Para recordar:</strong>
       Los triggers son útiles, pero deben usarse con cuidado porque se ejecutan
       automáticamente y pueden afectar el rendimiento si contienen mucha lógica.
-      En los ejemplos de la sección 9 veremos casos reales sobre estas mismas tablas.
+      El <code>PRINT</code> se ve en la pestaña <strong>Mensajes</strong> de SSMS y el
+      <code>SELECT</code> en <strong>Resultados</strong>. En los ejemplos siguientes también
+      consultaremos las tablas afectadas para confirmar qué cambió.
     </div>
 
     <!-- ===================== SECCIÓN 8: EJEMPLOS POR CASO DE USO ===================== -->
@@ -772,6 +827,14 @@
       Un ejemplo práctico para cada uno de los cinco usos principales de los triggers.
       Todos trabajan sobre la base de datos <code>Tienda</code> creada en la sección 8.
     </p>
+
+    <div class="nota">
+      <strong>Rutina para cada práctica:</strong> crea cada tabla y trigger una sola vez, ejecuta la operación
+      de prueba y luego ejecuta los <code>SELECT</code> indicados para revisar las tablas afectadas.
+      En SSMS, los datos se ven en <strong>Resultados</strong> y los mensajes de <code>PRINT</code> o errores
+      en <strong>Mensajes</strong>. Las tablas <code>inserted</code> y <code>deleted</code> solo se consultan
+      desde el cuerpo del trigger; después se revisan los cambios persistidos en las tablas normales.
+    </div>
 
     <!-- ── CASO 1 ── -->
     <h2 style="color:#5a7abf; border-left-color:#6aa8c8;">9.1 Registrar cambios realizados en una tabla</h2>
@@ -808,13 +871,17 @@
       <span style="color:#a6e22e;">GO</span><br>
       <br>
       <span style="color:#75715e;">-- Prueba: cambia el precio del Teclado USB de 25.00 a 29.00</span><br>
-      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> precio = 29.00 <span style="color:#a6e22e;">WHERE</span> id = 1;
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> precio = 29.00 <span style="color:#a6e22e;">WHERE</span> id = 1;<br>
+      <br>
+      <span style="color:#75715e;">-- Revisar el estado actual y el historial persistente (inserted/deleted ya no existen)</span><br>
+      <span style="color:#a6e22e;">SELECT</span> id, nombre, precio <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 1;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> HistorialPrecios <span style="color:#a6e22e;">WHERE</span> id_producto = 1;
     </div>
 
     <div class="nota">
-      <strong>Resultado:</strong> Si ejecutamos
-      <code>UPDATE Productos SET precio = 45.00 WHERE id = 1;</code>,
-      el trigger guarda automáticamente el precio anterior y el nuevo en <code>HistorialPrecios</code>.
+      <strong>Resultado:</strong> El producto 1 queda con precio 29.00 y <code>HistorialPrecios</code>
+      muestra el valor anterior y el nuevo. La pareja de valores se tomó de
+      <code>deleted</code> e <code>inserted</code> durante la ejecución del trigger.
     </div>
 
     <!-- ── CASO 2 ── -->
@@ -855,7 +922,8 @@
       <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Webcam HD'</span>, 75.00, 15);<br>
       <br>
       <span style="color:#75715e;">-- Verificar qué quedó registrado en auditoría</span><br>
-      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> AuditoriaProductos;
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> AuditoriaProductos;<br>
+      <span style="color:#a6e22e;">SELECT TOP</span> (1) id, nombre, precio, stock <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">ORDER BY</span> id <span style="color:#a6e22e;">DESC</span>;
     </div>
 
     <div class="nota">
@@ -891,16 +959,17 @@
       <br>
       <span style="color:#75715e;">-- Prueba 1: precio válido → se permite</span><br>
       <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> precio = 350.00 <span style="color:#a6e22e;">WHERE</span> id = 3;<br>
+      <span style="color:#a6e22e;">SELECT</span> id, precio <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 3; <span style="color:#75715e;">-- debe mostrar 350.00</span><br>
       <br>
       <span style="color:#75715e;">-- Prueba 2: precio inválido → el trigger lo cancela con error</span><br>
-      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> precio = 99999.00 <span style="color:#a6e22e;">WHERE</span> id = 3;
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> precio = 99999.00 <span style="color:#a6e22e;">WHERE</span> id = 3;<br>
+      <span style="color:#a6e22e;">SELECT</span> id, precio <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 3; <span style="color:#75715e;">-- debe seguir en 350.00</span>
     </div>
 
     <div class="nota">
-      <strong>Resultado:</strong> Si alguien ejecuta
-      <code>UPDATE Productos SET precio = 99999 WHERE id = 2;</code>,
-      la transacción se cancela con <code>ROLLBACK</code> y aparece el mensaje de error.
-      El precio <em>no</em> cambia en la tabla.
+      <strong>Resultado:</strong> El intento de asignar 99 999 genera un error y el precio se mantiene
+      en 350.00. La consulta inmediatamente posterior permite comprobar que el <code>ROLLBACK</code>
+      deshizo el cambio.
     </div>
 
     <!-- ── CASO 4 ── -->
@@ -910,6 +979,10 @@
       <p>
         <strong>Situación:</strong> Los productos marcados como activos (<code>activo = 1</code>)
         no deben poder eliminarse mientras sigan en uso.
+      </p>
+      <p>
+        Para esta prueba usaremos un producto nuevo sin detalles de venta. Una clave foránea también
+        impide borrar un producto que todavía aparece en <code>DetalleVentas</code>, aunque el trigger lo permita.
       </p>
     </div>
 
@@ -933,18 +1006,27 @@
       <span style="color:#a6e22e;">END</span>;<br>
       <span style="color:#a6e22e;">GO</span><br>
       <br>
+      <span style="color:#75715e;">-- Crear un producto aislado para que ninguna clave foránea impida la prueba</span><br>
+      <span style="color:#a6e22e;">DECLARE</span> @id_producto_prueba <span style="color:#66d9e8;">INT</span>;<br>
+      <span style="color:#a6e22e;">INSERT INTO</span> Productos (nombre, precio, stock)<br>
+      <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Producto de prueba para borrar'</span>, 12.00, 3);<br>
+      <span style="color:#a6e22e;">SET</span> @id_producto_prueba = SCOPE_IDENTITY();<br>
+      <br>
       <span style="color:#75715e;">-- Prueba 1: intentar borrar un producto activo → el trigger lo bloquea</span><br>
-      <span style="color:#a6e22e;">DELETE FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 1; <span style="color:#75715e;">-- activo = 1, se esperan error</span><br>
+      <span style="color:#a6e22e;">DELETE FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = @id_producto_prueba; <span style="color:#75715e;">-- activo = 1, debe mostrar un error</span><br>
+      <span style="color:#a6e22e;">SELECT</span> id, nombre, activo <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = @id_producto_prueba; <span style="color:#75715e;">-- la fila debe seguir existiendo</span><br>
       <br>
       <span style="color:#75715e;">-- Prueba 2: desactivar primero, luego borrar → el trigger lo permite</span><br>
-      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> activo = 0 <span style="color:#a6e22e;">WHERE</span> id = 1;<br>
-      <span style="color:#a6e22e;">DELETE FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 1; <span style="color:#75715e;">-- ahora sí procede</span>
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> activo = 0 <span style="color:#a6e22e;">WHERE</span> id = @id_producto_prueba;<br>
+      <span style="color:#a6e22e;">DELETE FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = @id_producto_prueba; <span style="color:#75715e;">-- ahora sí procede</span><br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = @id_producto_prueba; <span style="color:#75715e;">-- 0 filas: se eliminó</span>
     </div>
 
     <div class="nota">
       <strong>Nota clave:</strong> Este trigger usa <code>INSTEAD OF DELETE</code>, lo que significa
       que <em>reemplaza</em> la operación DELETE en lugar de ejecutarse después.
-      Así tiene control total sobre si se permite o no la eliminación.
+      Así tiene control sobre si se permite. La consulta posterior permite observar que la fila
+      permanece tras el intento bloqueado y desaparece tras desactivarla y eliminarla.
     </div>
 
     <!-- ── CASO 5 ── -->
@@ -969,18 +1051,24 @@
       <span style="color:#a6e22e;">END</span>;<br>
       <span style="color:#a6e22e;">GO</span><br>
       <br>
-      <span style="color:#75715e;">-- Prueba: eliminar el Mouse inalámbrico (id=2) borra también su historial de precios</span><br>
-      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> activo = 0 <span style="color:#a6e22e;">WHERE</span> id = 2; <span style="color:#75715e;">-- primero lo desactivamos</span><br>
-      <span style="color:#a6e22e;">DELETE FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = 2; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#75715e;">-- esto dispara el trigger</span><br>
+      <span style="color:#75715e;">-- Crear un producto sin detalles de venta y generar historial de precio</span><br>
+      <span style="color:#a6e22e;">DECLARE</span> @id_producto_prueba <span style="color:#66d9e8;">INT</span>;<br>
+      <span style="color:#a6e22e;">INSERT INTO</span> Productos (nombre, precio, stock)<br>
+      <span style="color:#a6e22e;">VALUES</span> (<span style="color:#e6db74;">'Producto con historial de prueba'</span>, 20.00, 1);<br>
+      <span style="color:#a6e22e;">SET</span> @id_producto_prueba = SCOPE_IDENTITY();<br>
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> precio = 22.00 <span style="color:#a6e22e;">WHERE</span> id = @id_producto_prueba;<br>
+      <span style="color:#a6e22e;">UPDATE</span> Productos <span style="color:#a6e22e;">SET</span> activo = 0 <span style="color:#a6e22e;">WHERE</span> id = @id_producto_prueba;<br>
+      <span style="color:#a6e22e;">DELETE FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = @id_producto_prueba; <span style="color:#75715e;">-- dispara INSTEAD OF y AFTER DELETE</span><br>
       <br>
-      <span style="color:#75715e;">-- Verificar que no quedaron registros huérfanos</span><br>
-      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> HistorialPrecios <span style="color:#a6e22e;">WHERE</span> id_producto = 2; <span style="color:#75715e;">-- debe devolver 0 filas</span>
+      <span style="color:#75715e;">-- Ambas consultas deben devolver 0 filas</span><br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">WHERE</span> id = @id_producto_prueba;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> HistorialPrecios <span style="color:#a6e22e;">WHERE</span> id_producto = @id_producto_prueba;
     </div>
 
     <div class="nota">
-      <strong>Resultado:</strong> Al eliminar el producto con id = 3, el trigger borra automáticamente
-      todos los registros de precio que le pertenecían en <code>HistorialPrecios</code>,
-      evitando que queden datos sin dueño (huérfanos).
+      <strong>Resultado:</strong> El producto de prueba no tiene detalles relacionados y está inactivo,
+      por eso se permite eliminarlo. El trigger usa <code>deleted</code> para identificar su id y borrar
+      el historial; las dos consultas finales comprueban que ya no hay producto ni historial huérfano.
     </div>
 
     <!-- RESUMEN VISUAL -->
@@ -1044,6 +1132,15 @@
     <div class="nota">
       <strong>Recomendación:</strong> consultar las secciones 5, 6 y 7
       si no se recuerda la sintaxis o el uso de <code>inserted</code> / <code>deleted</code>.
+      Al terminar cada ejercicio, revisa la tabla del trigger y las tablas relacionadas con un
+      <code>SELECT</code>; no intentes consultar <code>inserted</code> ni <code>deleted</code> fuera del trigger.
+    </div>
+
+    <div class="ejemplo" style="font-family:'Fira Code',monospace; font-size:13.5px; line-height:1.9;">
+      <span style="color:#75715e;">-- Consultas de comprobación para usar después de cada ejercicio</span><br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Productos <span style="color:#a6e22e;">ORDER BY</span> id;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> Ventas <span style="color:#a6e22e;">ORDER BY</span> id;<br>
+      <span style="color:#a6e22e;">SELECT</span> * <span style="color:#a6e22e;">FROM</span> DetalleVentas <span style="color:#a6e22e;">ORDER BY</span> id;
     </div>
 
     <!-- ═══════════════════ EJERCICIO 1 ═══════════════════ -->
