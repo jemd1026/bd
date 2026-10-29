@@ -1060,7 +1060,32 @@ End Sub</code></pre>
                         <li>Guarda con <kbd>Ctrl</kbd>+<kbd>S</kbd>. Antes de pasar al código, revisa uno por uno los nombres de la tabla en Propiedades. No hagas doble clic en botones para crear eventos: el paso 8 conecta los eventos desde el código.</li>
                     </ol>
                     <p>La posición y el tamaño pueden variar; lo indispensable es que estén todos los controles y sus nombres coincidan exactamente con la tabla.</p>
-                    <h3>7.3. Distribución sugerida</h3>
+                    <h3>7.3. Crear la franja de título dentro del formulario</h3>
+                    <p>La imagen de referencia tiene una franja azul dentro de la ventana, debajo de la barra de título de Windows. Para crearla, usa un <code>Panel</code> y dos controles <code>Label</code>; esta franja es parte del contenido del formulario y no reemplaza la barra de título del sistema.</p>
+                    <ol>
+                        <li>En el diseñador, arrastra un <code>Panel</code> desde el Cuadro de herramientas y colócalo en la parte superior del formulario. En Propiedades, configura <code>(Name)=pnlEncabezado</code>, <code>Dock=Top</code> y <code>Height=75</code>. El panel debe ocupar todo el ancho.</li>
+                        <li>En la propiedad <code>BackColor</code>, elige un color azul oscuro o azul. El control Panel estándar permite un color sólido; no es necesario reproducir el degradado de la imagen.</li>
+                        <li>Arrastra un <code>Label</code> dentro del panel. Configura <code>(Name)=lblTitulo</code>, <code>Text=PRODUCTOS</code>, <code>ForeColor=White</code>, <code>Font</code> en negrita y un tamaño aproximado de 18 a 22 puntos. Ubícalo hacia la izquierda y centrado verticalmente.</li>
+                        <li>Agrega otro <code>Label</code> debajo del título. Configura <code>(Name)=lblSubtitulo</code>, <code>Text=Mantenimiento de productos del sistema POS</code> y <code>ForeColor=White</code>; usa un tamaño de letra menor, por ejemplo 9 o 10 puntos.</li>
+                        <li>Opcionalmente, agrega un <code>PictureBox</code> a la izquierda de los textos para mostrar un icono de carrito. En sus propiedades usa <code>(Name)=picLogo</code>, <code>Image</code> para seleccionar el PNG y <code>SizeMode=Zoom</code>. Ajusta su tamaño y deja espacio entre el icono y las etiquetas. El PictureBox es decorativo y no lo necesita el código del paso 8.</li>
+                        <li>Comprueba que <code>grpDatos</code> y los demás controles queden debajo de la franja, no cubiertos por ella. Guarda con <kbd>Ctrl</kbd>+<kbd>S</kbd> y ejecuta con <kbd>F5</kbd> para revisar el resultado.</li>
+                    </ol>
+                    <h3>7.4. Agregar el icono del formulario y los iconos de los botones</h3>
+                    <p>Puedes personalizar por separado el icono que aparece a la izquierda del título de la ventana y las imágenes de los botones <code>Nuevo</code>, <code>Registrar</code>, <code>Modificar</code>, <code>Eliminar</code> y <code>Cancelar</code>. Prepara un archivo <code>.ico</code> para el formulario y archivos de imagen <code>.png</code> para los botones. Para que se vean nítidos, usa imágenes pequeñas con fondo transparente (por ejemplo, 24 × 24 píxeles) y mantén los archivos dentro de una carpeta del proyecto, como <code>Recursos</code>.</p>
+                    <h4>Icono en la barra de título del formulario</h4>
+                    <ol>
+                        <li>Abre <code>FormProducto.vb</code> en el diseñador y selecciona el fondo del formulario, no un control.</li>
+                        <li>En la ventana <b>Propiedades</b> (<kbd>F4</kbd>), busca <code>Icon</code>. Pulsa el botón de selección <code>...</code>, importa o busca el archivo <code>.ico</code> y confirma. Si el diseñador pregunta cómo guardar el recurso, usa el recurso local del formulario/proyecto.</li>
+                        <li>En la misma ventana, confirma que <code>ShowIcon</code> esté en <code>True</code>. La propiedad <code>Text</code> define el título que aparece junto al icono. Guarda con <kbd>Ctrl</kbd>+<kbd>S</kbd> y ejecuta con <kbd>F5</kbd> para comprobarlo.</li>
+                    </ol>
+                    <h4>Iconos dentro de los botones de acciones</h4>
+                    <ol>
+                        <li>En el diseñador, selecciona, por ejemplo, <code>btnNuevo</code>. En Propiedades, busca <code>Image</code>, pulsa <code>...</code> y selecciona <b>Importar</b> para cargar el archivo PNG correspondiente. Repite con los demás botones, usando imágenes que representen claramente cada acción.</li>
+                        <li>Para que el icono acompañe al texto, configura <code>Text</code> con el nombre de la acción (por ejemplo, <code>Nuevo</code>), <code>ImageAlign</code> en <code>MiddleLeft</code> y <code>TextImageRelation</code> en <code>ImageBeforeText</code>. Ajusta el tamaño del botón para que quepan ambos.</li>
+                        <li>Guarda y ejecuta con <kbd>F5</kbd>. Si el selector ofrece guardar las imágenes como recursos del proyecto, acepta; así quedan incluidas al compilar y no dependen de una ruta temporal de tu equipo.</li>
+                    </ol>
+                    <p><b>Nota:</b> el icono del formulario no cambia los botones estándar de minimizar, maximizar y cerrar de la barra de título; Windows los administra. Los iconos de acciones se colocan en los botones dentro del formulario. Para diseñar una barra de título completamente personalizada habría que ocultar la barra estándar y programar su comportamiento, lo cual no es necesario para esta guía.</p>
+                    <h3>7.5. Distribución sugerida</h3>
                     <div class="code-head"><span>ESQUEMA</span><button class="copy" onclick="copyCode(this)">Copiar código</button></div>
                     <pre><code>┌────────────────────────────────────────────────────────────┐
                             │ PRODUCTOS — Mantenimiento de productos del sistema POS │
