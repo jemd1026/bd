@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laboratorio: Seguridad y Acceso</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f8fb;
+      color: #2b2b2b;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .contenedor {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      color: #7b1e1e;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 35px;
+    }
+
+    h2 {
+      color: #7b1e1e;
+      border-left: 6px solid #b85c5c;
+      padding-left: 12px;
+      margin-top: 35px;
+    }
+
+    h2.verde  { color: #2e7d32; border-left-color: #6bbf8a; margin-top: 30px; }
+    h2.morado { color: #5a3e8a; border-left-color: #9a7bd1; margin-top: 28px; }
+
+    .card {
+      background: #fdf6f3;
+      border-left: 5px solid #d68b7c;
+      padding: 18px 22px;
+      border-radius: 12px;
+      margin: 18px 0;
+    }
+
+    .card.azul   { background: #eef7fb; border-left-color: #6aa8c8; }
+    .card.verde  { background: #eefbf3; border-left-color: #6bbf8a; }
+    .card.morado { background: #f5f0fb; border-left-color: #9a7bd1; }
+    .card.rojo   { background: #fdf0f0; border-left-color: #c0524a; }
+
+    .resaltado {
+      background: #fff3cd;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      background: white;
+    }
+
+    th {
+      background: #7b1e1e;
+      color: white;
+      padding: 12px;
+    }
+
+    td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    code {
+      background: #f1f1f1;
+      padding: 3px 6px;
+      border-radius: 5px;
+      color: #7b1e1e;
+      font-weight: bold;
+    }
+
+    pre.ejemplo {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      line-height: 1.9;
+      margin: 14px 0;
+      white-space: pre;
+    }
+
+    .k { color: #a6e22e; }   /* palabras clave */
+    .t { color: #66d9e8; }   /* tipos de datos y funciones */
+    .s { color: #e6db74; }   /* cadenas */
+    .c { color: #75715e; }   /* comentarios */
+    .ph { color: #fd971f; font-weight: 500; }   /* parte que el alumno debe reemplazar */
+
+    .nota {
+      background: #fff8e8;
+      border: 1px solid #f0d58c;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .nota.alerta {
+      background: #fdf0f0;
+      border-color: #e3a9a3;
+    }
+
+    .ejemplo-mini {
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      color: #1a5c8a;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Lista de evidencias */
+    ul.evidencias {
+      list-style: none;
+      padding-left: 0;
+      margin: 10px 0 0 0;
+    }
+
+    ul.evidencias li {
+      margin: 8px 0;
+      padding-left: 66px;
+      position: relative;
+    }
+
+    ul.evidencias li .id {
+      position: absolute;
+      left: 0;
+      top: 1px;
+      background: #7b1e1e;
+      color: white;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .pasos { counter-reset: paso; list-style: none; padding-left: 0; }
+    .pasos > li { counter-increment: paso; margin: 10px 0; padding-left: 38px; position: relative; }
+    .pasos > li::before {
+      content: counter(paso);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #9a7bd1;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      line-height: 26px;
+      font-size: 14px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .contenedor { margin: 0; padding: 20px 16px; border-radius: 0; }
+      td, th { padding: 8px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="contenedor">
+
+    <h1>Laboratorio: Gestión de Seguridad y Acceso</h1>
+    <p class="subtitulo">Gestión de Datos e Información · Sesión 6 · Trabajo en casa</p>
+
+    <!-- ===================== INDICACIONES ===================== -->
+    <h2>1. Indicaciones generales</h2>
+
+    <div class="card azul">
+      <p><strong>Objetivo:</strong> aplicar en tu propio equipo la creación de logins, usuarios, roles y permisos,
+        y proteger datos sensibles con enmascaramiento y auditoría en SQL Server.</p>
+      <ul>
+        <li><strong>Modalidad:</strong> individual.</li>
+        <li><strong>Base de datos:</strong> <code>FinancieraDemoBD</code>, creada con los Pasos 1 y 2 de la sección 9 de la
+          <a href="seguridad_acceso.html#s9">guía de la sesión</a>.</li>
+        <li><strong>Herramientas:</strong> SQL Server (Express o Developer) y SQL Server Management Studio (SSMS).</li>
+        <li><strong>Requisito previo:</strong> el servidor debe estar en <strong>modo mixto</strong> de autenticación
+          (guía, sección 5).</li>
+        <li><strong>Entrega:</strong> un script <code>.sql</code> y un informe <code>.pdf</code> con las evidencias (sección 4).</li>
+      </ul>
+    </div>
+
+    <div class="nota alerta">
+      <strong>Regla de personalización (obligatoria):</strong> en todos los objetos que crees, reemplaza
+      <code>APELLIDO</code> por <strong>tu primer apellido en mayúsculas, sin tildes ni espacios</strong>.
+      Por ejemplo, si te apellidas Pérez: <code>LoginAnalista_PEREZ</code>, <code>RolCaja_PEREZ</code>.
+      En los bloques de código, lo que debes reemplazar aparece en <span class="ph" style="background:#272822; padding:2px 6px; border-radius:4px;">naranja</span>.
+      Un ejercicio con nombres sin personalizar no se califica.
+    </div>
+
+    <!-- ===================== CONSULTA DE IDENTIFICACIÓN ===================== -->
+    <h2>2. Consulta de identificación</h2>
+
+    <p>
+      Ejecútala <strong>al inicio de cada ejercicio</strong> y haz que aparezca en la primera captura de ese ejercicio.
+      Permite comprobar que el trabajo se hizo en tu equipo y en la fecha de entrega.
+    </p>
+
+    <pre class="ejemplo"><span class="k">SELECT</span> <span class="s">'<span class="ph">APELLIDO Nombre</span>'</span>                  <span class="k">AS</span> estudiante,
+       @@SERVERNAME                        <span class="k">AS</span> servidor,       <span class="c">-- nombre de tu equipo / instancia</span>
+       <span class="t">SUSER_SNAME</span>()                       <span class="k">AS</span> login_actual,
+       <span class="t">DB_NAME</span>()                           <span class="k">AS</span> base_actual,
+       <span class="t">SERVERPROPERTY</span>(<span class="s">'ProductVersion'</span>)    <span class="k">AS</span> version_sql,
+       <span class="t">SYSDATETIME</span>()                       <span class="k">AS</span> fecha_hora;</pre>
+
+    <!-- ===================== EJERCICIOS ===================== -->
+    <h2>3. Ejercicios</h2>
+
+    <!-- ═══════════ EJERCICIO 1 ═══════════ -->
+    <h2 class="verde">Ejercicio 1 — Logins con política de contraseñas y conexión real</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <ol class="pasos">
+        <li>Crear el login <code>LoginAnalista_APELLIDO</code> (autenticación de SQL Server) con una contraseña segura
+          elegida por ti, base predeterminada <code>FinancieraDemoBD</code>, <code>CHECK_POLICY = ON</code> y
+          <code>CHECK_EXPIRATION = ON</code>.</li>
+        <li>Crear su usuario <code>UsuarioAnalista_APELLIDO</code> en <code>FinancieraDemoBD</code> y agregarlo
+          <strong>solo</strong> al rol <code>db_datareader</code>.</li>
+        <li>Crear el login <code>LoginPracticante_APELLIDO</code> con contraseña temporal que <strong>deba cambiarse</strong>
+          en el primer ingreso.</li>
+        <li>En SSMS, abrir una <strong>nueva conexión</strong> (Conectar → Motor de base de datos →
+          Autenticación de SQL Server) con <code>LoginAnalista_APELLIDO</code>. Desde esa conexión: leer
+          <code>CLIENTE</code> e intentar eliminar un cliente.</li>
+        <li>Abrir otra conexión con <code>LoginPracticante_APELLIDO</code> y cambiar la contraseña cuando SSMS lo solicite.</li>
+      </ol>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li><code>MUST_CHANGE</code> va inmediatamente después de la contraseña y exige <code>CHECK_EXPIRATION = ON</code>.</li>
+        <li>Para comprobar la configuración usa <code>sys.sql_logins</code> (<code>is_policy_checked</code>,
+          <code>is_expiration_checked</code>) y <code>LOGINPROPERTY(name, 'IsMustChange')</code>.</li>
+        <li>En la conexión del analista, <code>SELECT SUSER_SNAME(), USER_NAME();</code> muestra con quién estás conectado.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E1.1</span> Consulta de identificación + resultado de <code>sys.sql_logins</code> mostrando los dos logins con sus políticas.</li>
+        <li><span class="id">E1.2</span> Explorador de objetos con la conexión de <code>LoginAnalista_APELLIDO</code> visible, el <code>SELECT</code> exitoso sobre <code>CLIENTE</code> y el error al intentar el <code>DELETE</code>.</li>
+        <li><span class="id">E1.3</span> Ventana de SSMS solicitando el cambio de contraseña de <code>LoginPracticante_APELLIDO</code>.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> el practicante puede conectarse al servidor, pero no puede abrir
+        <code>FinancieraDemoBD</code>. ¿Por qué? ¿Qué le falta?</p>
+    </div>
+
+    <!-- ═══════════ EJERCICIO 2 ═══════════ -->
+    <h2 class="verde">Ejercicio 2 — Roles por área y matriz de pruebas</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear tres roles personalizados y un usuario sin login para cada uno, de modo que se cumpla exactamente
+        esta matriz de permisos (lo que no aparece, <strong>no</strong> se concede):
+      </p>
+      <table>
+        <tr>
+          <th>Rol</th>
+          <th>Usuario de prueba</th>
+          <th>Permisos</th>
+        </tr>
+        <tr>
+          <td><code>RolCaja_APELLIDO</code></td>
+          <td><code>UsuCaja_APELLIDO</code></td>
+          <td><code>SELECT</code> e <code>INSERT</code> en <code>CLIENTE</code>; <code>EXECUTE</code> en
+            <code>spListar_Clientes</code> y <code>spInsertar_Cliente</code>.</td>
+        </tr>
+        <tr>
+          <td><code>RolCompras_APELLIDO</code></td>
+          <td><code>UsuCompras_APELLIDO</code></td>
+          <td><code>SELECT</code>, <code>INSERT</code> y <code>UPDATE</code> en <code>PROVEEDOR</code>;
+            <code>EXECUTE</code> en <code>spListar_Proveedor</code>.</td>
+        </tr>
+        <tr>
+          <td><code>RolGerencia_APELLIDO</code></td>
+          <td><code>UsuGerente_APELLIDO</code></td>
+          <td><code>SELECT</code> sobre <strong>todo</strong> el esquema <code>dbo</code>; no puede modificar nada.</td>
+        </tr>
+      </table>
+      <p>
+        Luego, completar en el informe una <strong>matriz de pruebas</strong> de al menos <strong>9 pruebas</strong>
+        (3 por usuario: una permitida y dos denegadas), ejecutadas con <code>EXECUTE AS USER</code> / <code>REVERT</code>.
+      </p>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Usuarios de prueba: <code>CREATE USER ... WITHOUT LOGIN</code>; miembros: <code>ALTER ROLE ... ADD MEMBER</code>.</li>
+        <li>Permiso sobre un esquema completo: <code>GRANT SELECT ON SCHEMA::dbo TO ...</code></li>
+        <li>Para probar un <code>INSERT</code> o <code>UPDATE</code> sin alterar los datos, envuélvelo en
+          <code>BEGIN TRANSACTION</code> … <code>ROLLBACK</code>.</li>
+      </ul>
+    </div>
+
+    <p>Formato de la matriz de pruebas que debe ir en el informe:</p>
+
+    <table>
+      <tr>
+        <th>#</th>
+        <th>Usuario</th>
+        <th>Instrucción probada</th>
+        <th>Resultado esperado</th>
+        <th>Resultado obtenido</th>
+      </tr>
+      <tr>
+        <td>1</td>
+        <td>UsuCaja_APELLIDO</td>
+        <td><code>SELECT * FROM CLIENTE</code></td>
+        <td>Permitido</td>
+        <td>OK — 5 filas</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td>UsuCaja_APELLIDO</td>
+        <td><code>SELECT * FROM PROVEEDOR</code></td>
+        <td>Denegado</td>
+        <td>Error 229</td>
+      </tr>
+      <tr>
+        <td>…</td>
+        <td>…</td>
+        <td>…</td>
+        <td>…</td>
+        <td>…</td>
+      </tr>
+    </table>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E2.1</span> Resultado de la consulta de miembros de roles (<code>sys.database_role_members</code>) y de permisos (<code>sys.database_permissions</code>) filtrada a tus roles.</li>
+        <li><span class="id">E2.2</span> Una captura por usuario (3 en total) con sus pruebas ejecutadas: lo permitido y los errores.</li>
+        <li><span class="id">E2.3</span> La matriz de pruebas completa en el informe.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> mañana ingresan dos cajeros nuevos. ¿Qué instrucciones
+        ejecutarías para darles acceso? ¿Por qué es mejor que dar los permisos a cada usuario?</p>
+    </div>
+
+    <!-- ═══════════ EJERCICIO 3 ═══════════ -->
+    <h2 class="verde">Ejercicio 3 — DENY, REVOKE y permisos delegados</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear el usuario sin login <code>UsuSupervisor_APELLIDO</code>, miembro de <code>db_datareader</code>,
+        <code>db_datawriter</code> y <code>RolCaja_APELLIDO</code>. Antes de ejecutar cada paso,
+        <strong>escribe en el informe tu predicción</strong>; después, ejecútalo y anota el resultado real.
+      </p>
+      <ol class="pasos">
+        <li>Denegar al supervisor el <code>DELETE</code> sobre <code>CLIENTE</code>.
+          ¿Puede eliminar en <code>CLIENTE</code>? ¿Y en <code>PROVEEDOR</code>?</li>
+        <li>Denegar <code>SELECT</code> sobre el esquema <code>dbo</code> al rol <code>RolCaja_APELLIDO</code>.
+          ¿Puede ahora el supervisor leer <code>PROVEEDOR</code>, aunque esté en <code>db_datareader</code>?</li>
+        <li>Revertir el paso 2 con <code>REVOKE</code> y comprobar que el supervisor vuelve a leer.</li>
+        <li>Conceder al supervisor <code>SELECT</code> sobre <code>PROVEEDOR</code> <strong>con opción de concederlo
+          a otros</strong>. Actuando como el supervisor, concederle ese permiso a <code>UsuCaja_APELLIDO</code>.</li>
+        <li>Quitar el permiso al supervisor <strong>en cascada</strong> y comprobar que <code>UsuCaja_APELLIDO</code>
+          también lo perdió.</li>
+      </ol>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Opción de delegar: <code>GRANT ... WITH GRANT OPTION</code>. Quitar en cascada: <code>REVOKE ... CASCADE</code>.</li>
+        <li>Prueba los <code>DELETE</code> dentro de <code>BEGIN TRANSACTION</code> … <code>ROLLBACK</code>.</li>
+        <li>Esta consulta muestra quién concedió cada permiso (columna <code>grantor</code>):</li>
+      </ul>
+      <pre class="ejemplo"><span class="k">SELECT</span> pr.name <span class="k">AS</span> grantee, gr.name <span class="k">AS</span> grantor,
+       pe.state_desc, pe.permission_name, pe.class_desc,
+       <span class="t">OBJECT_NAME</span>(pe.major_id) <span class="k">AS</span> objeto
+<span class="k">FROM</span> sys.database_permissions pe
+<span class="k">JOIN</span> sys.database_principals pr <span class="k">ON</span> pe.grantee_principal_id = pr.principal_id
+<span class="k">JOIN</span> sys.database_principals gr <span class="k">ON</span> pe.grantor_principal_id = gr.principal_id
+<span class="k">WHERE</span> pr.name <span class="k">LIKE</span> <span class="s">'%<span class="ph">APELLIDO</span>'</span>
+<span class="k">ORDER BY</span> grantee, objeto;</pre>
+    </div>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E3.1</span> Tabla en el informe con las 5 predicciones y los 5 resultados reales.</li>
+        <li><span class="id">E3.2</span> Captura del paso 2 mostrando el error del supervisor al leer <code>PROVEEDOR</code>.</li>
+        <li><span class="id">E3.3</span> Consulta de permisos después del paso 4, donde se vea <code>GRANT_WITH_GRANT_OPTION</code> y al supervisor como <code>grantor</code> del permiso de <code>UsuCaja_APELLIDO</code>.</li>
+        <li><span class="id">E3.4</span> Misma consulta después del paso 5: el permiso de <code>UsuCaja_APELLIDO</code> ya no aparece.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> ¿por qué el <code>DENY</code> del paso 2, aplicado a un rol,
+        terminó afectando al supervisor? ¿Qué riesgo tiene conceder permisos <code>WITH GRANT OPTION</code>?</p>
+    </div>
+
+    <!-- ═══════════ EJERCICIO 4 ═══════════ -->
+    <h2 class="verde">Ejercicio 4 — Vista y procedimiento como capa de seguridad</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>El asistente de RR.HH. necesita ver la lista de colaboradores y aplicar aumentos de sueldo, pero:</p>
+      <ul>
+        <li>No debe ver los sueldos ni acceder directamente a la tabla <code>COLABORADOR</code>.</li>
+        <li>Solo puede aplicar aumentos <strong>mayores que 0 % y de hasta 10 %</strong>.</li>
+        <li>Cada aumento debe quedar registrado (colaborador, sueldo anterior, sueldo nuevo, usuario y fecha).</li>
+      </ul>
+      <ol class="pasos">
+        <li>Crear la vista <code>vw_Colaboradores_APELLIDO</code> con <code>id_colaborador</code>, <code>nombre</code> y <code>cargo</code>.</li>
+        <li>Crear la tabla <code>LogSueldos_APELLIDO</code>.</li>
+        <li>Crear el procedimiento <code>spAjustarSueldo_APELLIDO</code> con los parámetros <code>@id_colaborador</code> y
+          <code>@porcentaje</code>, que valide el rango, actualice el sueldo y registre el cambio.</li>
+        <li>Crear el usuario sin login <code>UsuAsistenteRRHH_APELLIDO</code> con permiso <strong>solo</strong> sobre la vista y el procedimiento.</li>
+        <li>Probar como el asistente: leer la vista, leer la tabla, aplicar un aumento de 5 %, uno de 25 % y un
+          <code>UPDATE</code> directo a la tabla.</li>
+      </ol>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Para rechazar un porcentaje inválido:
+          <span class="ejemplo-mini">// THROW 50001, 'El porcentaje debe ser mayor que 0 y como máximo 10.', 1;</span></li>
+        <li>Para registrar quién hizo el cambio dentro del procedimiento, usa <code>USER_NAME()</code>.</li>
+        <li>Recuerda el <strong>encadenamiento de propiedad</strong> (guía, Paso 6): si la vista, el procedimiento y las tablas
+          pertenecen a <code>dbo</code>, basta con dar permiso sobre la vista y el procedimiento.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E4.1</span> Código del procedimiento visible en el editor de SSMS.</li>
+        <li><span class="id">E4.2</span> Las 5 pruebas del paso 5 con sus resultados: 2 exitosas (vista y 5 %) y 3 rechazadas (tabla, 25 % y <code>UPDATE</code> directo).</li>
+        <li><span class="id">E4.3</span> Contenido de <code>LogSueldos_APELLIDO</code> mostrando el aumento registrado y el usuario que lo aplicó.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> el asistente no tiene permiso <code>UPDATE</code> sobre
+        <code>COLABORADOR</code> y, aun así, el procedimiento actualizó el sueldo. Explica por qué.</p>
+    </div>
+
+    <!-- ═══════════ EJERCICIO 5 ═══════════ -->
+    <h2 class="verde">Ejercicio 5 — Enmascaramiento y auditoría de accesos</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <ol class="pasos">
+        <li>Enmascarar <code>CLIENTE.documento</code> para que solo se vean los 4 últimos caracteres, y
+          <code>COLABORADOR.sueldo</code> para que muestre un valor aleatorio entre 1000 y 9999.</li>
+        <li>Crear el rol <code>RolRRHH_APELLIDO</code> (con <code>SELECT</code> sobre <code>COLABORADOR</code> y permiso para ver datos sin máscara)
+          y un usuario sin login miembro de ese rol.</li>
+        <li>Crear la auditoría de servidor <code>Auditoria_APELLIDO</code> en la carpeta <code>C:\AuditoriaLab\</code> con:
+          <ul>
+            <li>una especificación de servidor para inicios de sesión <strong>correctos y fallidos</strong>;</li>
+            <li>una especificación de base de datos para <code>SELECT</code> y <code>UPDATE</code> sobre
+              <code>COLABORADOR</code> y <code>EXECUTE</code> sobre <code>spAjustarSueldo_APELLIDO</code>.</li>
+          </ul>
+        </li>
+        <li>Generar eventos: <strong>2 intentos fallidos</strong> de conexión con <code>LoginAnalista_APELLIDO</code>
+          (contraseña incorrecta) y 1 correcto; leer <code>CLIENTE</code> como <code>UsuCaja_APELLIDO</code> y
+          <code>COLABORADOR</code> como <code>UsuGerente_APELLIDO</code> y como el usuario de RR.HH.; ejecutar el procedimiento
+          del ejercicio 4 como el asistente.</li>
+        <li>Consultar el archivo de auditoría.</li>
+      </ol>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Funciones de máscara: <code>partial(0,"XXXX",4)</code> y <code>random(1000, 9999)</code>.</li>
+        <li>Crea la carpeta <code>C:\AuditoriaLab\</code> antes de crear la auditoría. No hagas más de 2 intentos fallidos
+          para no bloquear la cuenta (<code>CHECK_POLICY = ON</code>).</li>
+        <li>Códigos de acción útiles: <code>LGIF</code> (inicio fallido), <code>LGIS</code> (inicio correcto),
+          <code>SL</code> (SELECT), <code>UP</code> (UPDATE), <code>EX</code> (EXECUTE).</li>
+      </ul>
+      <pre class="ejemplo"><span class="c">-- Lectura del archivo de auditoría</span>
+<span class="k">SELECT</span> event_time, action_id, succeeded,
+       server_principal_name, database_principal_name, object_name, statement
+<span class="k">FROM</span> sys.<span class="t">fn_get_audit_file</span>(<span class="s">'C:\AuditoriaLab\*.sqlaudit'</span>, <span class="k">DEFAULT</span>, <span class="k">DEFAULT</span>)
+<span class="k">WHERE</span> action_id <span class="k">IN</span> (<span class="s">'LGIF'</span>, <span class="s">'LGIS'</span>, <span class="s">'SL'</span>, <span class="s">'UP'</span>, <span class="s">'EX'</span>)
+<span class="k">ORDER BY</span> event_time <span class="k">DESC</span>;</pre>
+    </div>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E5.1</span> El mismo <code>SELECT</code> a <code>COLABORADOR</code> ejecutado por el gerente (sueldo enmascarado) y por RR.HH. (sueldo real).</li>
+        <li><span class="id">E5.2</span> <code>CLIENTE</code> leído por el cajero con el documento enmascarado.</li>
+        <li><span class="id">E5.3</span> Resultado de la consulta de auditoría donde se vean al menos 2 <code>LGIF</code> de <code>LoginAnalista_APELLIDO</code>, eventos <code>SL</code> sobre <code>COLABORADOR</code> y el <code>EX</code> del procedimiento.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> ¿el enmascaramiento protege los sueldos frente a un usuario
+        <code>sysadmin</code>? ¿Qué técnica usarías si ni siquiera el administrador debe verlos?</p>
+    </div>
+
+    <!-- ===================== ENTREGA ===================== -->
+    <h2>4. ¿Cómo entregar las evidencias?</h2>
+
+    <h2 class="morado">4.1 Archivos que debes subir</h2>
+
+    <table>
+      <tr>
+        <th>Archivo</th>
+        <th>Nombre</th>
+        <th>Contenido</th>
+      </tr>
+      <tr>
+        <td><strong>Script SQL</strong></td>
+        <td><code>LAB06_APELLIDO_Nombre.sql</code></td>
+        <td>Todo el código de los 5 ejercicios, en orden, separado por comentarios
+          (<code>-- EJERCICIO 1</code>, <code>-- EJERCICIO 2</code>…) y con un comentario explicativo en cada instrucción importante.</td>
+      </tr>
+      <tr>
+        <td><strong>Informe</strong></td>
+        <td><code>LAB06_APELLIDO_Nombre.pdf</code></td>
+        <td>Carátula, las capturas numeradas (E1.1, E1.2…), la matriz de pruebas, la tabla de predicciones y las respuestas a las 5 preguntas.</td>
+      </tr>
+    </table>
+
+    <div class="nota">
+      <strong>Si la plataforma solo acepta un archivo:</strong> comprime ambos en
+      <code>LAB06_APELLIDO_Nombre.zip</code> y sube el ZIP.
+    </div>
+
+    <h2 class="morado">4.2 Estructura del informe PDF</h2>
+
+    <div class="card azul">
+      <ol>
+        <li><strong>Carátula:</strong> universidad, curso, sesión, nombre completo, código de estudiante y fecha.</li>
+        <li><strong>Una sección por ejercicio</strong> con:
+          <ul>
+            <li>las capturas en el orden de la lista de evidencias, cada una con su código como título
+              (por ejemplo, <em>“E2.2 — Pruebas de UsuCompras_PEREZ”</em>) y una línea que explique qué se ve;</li>
+            <li>las tablas pedidas (matriz de pruebas del ejercicio 2 y predicciones del ejercicio 3);</li>
+            <li>la respuesta a la pregunta del ejercicio, con tus palabras (3 a 6 líneas).</li>
+          </ul>
+        </li>
+        <li><strong>Conclusiones:</strong> qué aprendiste y qué dificultades tuviste (máximo media página).</li>
+      </ol>
+    </div>
+
+    <h2 class="morado">4.3 Cómo deben ser las capturas</h2>
+
+    <div class="card">
+      <ul>
+        <li>Usa <strong>Windows + Shift + S</strong> (Recortes) y pega la imagen en tu documento.</li>
+        <li>Cada captura debe mostrar a la vez:
+          <ul>
+            <li>la <strong>instrucción</strong> ejecutada en el editor;</li>
+            <li>el panel de <strong>Resultados</strong> o <strong>Mensajes</strong>, según corresponda;</li>
+            <li>la <strong>barra de estado</strong> de SSMS (abajo: servidor, login y base de datos);</li>
+            <li>la <strong>fecha y hora</strong> de Windows o la columna <code>fecha_hora</code> de la consulta de identificación.</li>
+          </ul>
+        </li>
+        <li>El texto debe ser legible: no recortes demasiado pequeño ni uses fotos tomadas con el celular.</li>
+        <li>Los nombres personalizados (<code>_APELLIDO</code>) deben verse en las capturas.</li>
+      </ul>
+    </div>
+
+    <h2 class="morado">4.4 Subida a la plataforma</h2>
+
+    <ol class="pasos">
+      <li>Ingresa al curso en la plataforma de la universidad y abre la tarea <strong>“Laboratorio Sesión 6 — Seguridad y Acceso”</strong>.</li>
+      <li>Adjunta el <code>.sql</code> y el <code>.pdf</code> (o el <code>.zip</code>).</li>
+      <li>Antes de enviar, revisa la lista de verificación de abajo.</li>
+      <li>Pulsa <strong>Enviar</strong> y comprueba que la tarea aparezca como <em>entregada</em>. Guarda la confirmación.</li>
+    </ol>
+
+    <div class="card rojo">
+      <strong>Lista de verificación antes de enviar:</strong>
+      <ul>
+        <li>☐ Todos los objetos llevan el sufijo con mi apellido.</li>
+        <li>☐ La consulta de identificación aparece al inicio de cada ejercicio.</li>
+        <li>☐ Están las 16 evidencias (E1.1 a E5.3), numeradas y en orden.</li>
+        <li>☐ El script <code>.sql</code> se ejecuta de principio a fin sin errores inesperados.</li>
+        <li>☐ Respondí las 5 preguntas con mis palabras.</li>
+        <li>☐ Los archivos tienen el nombre <code>LAB06_APELLIDO_Nombre</code>.</li>
+      </ul>
+    </div>
+
+    <!-- ===================== RÚBRICA ===================== -->
+    <h2>5. Rúbrica de evaluación</h2>
+
+    <table>
+      <tr>
+        <th>Criterio (por ejercicio)</th>
+        <th>Logrado</th>
+        <th>En proceso</th>
+        <th>No logrado</th>
+      </tr>
+      <tr>
+        <td><strong>Script</strong> correcto y comentado</td>
+        <td>1.5 — cumple todo lo pedido sin errores</td>
+        <td>0.75 — cumple parcialmente o con errores menores</td>
+        <td>0 — no funciona o falta</td>
+      </tr>
+      <tr>
+        <td><strong>Evidencias</strong> completas y legibles</td>
+        <td>1.5 — todas, con los elementos de 4.3</td>
+        <td>0.75 — faltan algunas o no se leen bien</td>
+        <td>0 — no presenta</td>
+      </tr>
+      <tr>
+        <td><strong>Respuesta</strong> a la pregunta</td>
+        <td>1 — correcta y con sus palabras</td>
+        <td>0.5 — incompleta</td>
+        <td>0 — no responde o es copiada</td>
+      </tr>
+    </table>
+
+    <p>
+      Cada ejercicio vale <strong>4 puntos</strong>; los 5 ejercicios suman <strong>20 puntos</strong>.
+    </p>
+
+    <div class="nota alerta">
+      <strong>Integridad académica:</strong> las capturas sin nombres personalizados, con el mismo nombre de servidor que otro
+      compañero o con fecha anterior a la publicación del laboratorio no se califican, y el caso se revisa con el docente.
+    </div>
+
+    <!-- ===================== LIMPIEZA ===================== -->
+    <h2>6. Después de recibir tu nota (opcional)</h2>
+
+    <p>
+      Para dejar tu servidor limpio, elimina lo creado en este orden: especificaciones de auditoría y auditoría (desactivándolas primero),
+      usuarios, roles y, por último, logins. La sección 14 de la
+      <a href="seguridad_acceso.html#s14">guía</a> muestra el procedimiento completo.
+    </p>
+
+    <div class="footer">
+      Laboratorio de Gestión de Seguridad y Acceso - SQL Server
+    </div>
+
+  </div>
+
+</body>
+</html>
