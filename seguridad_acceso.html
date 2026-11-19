@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guía: Gestión de Seguridad y Acceso</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f8fb;
+      color: #2b2b2b;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .contenedor {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      color: #7b1e1e;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 35px;
+    }
+
+    h2 {
+      color: #7b1e1e;
+      border-left: 6px solid #b85c5c;
+      padding-left: 12px;
+      margin-top: 35px;
+    }
+
+    /* Variantes de subtítulo (mismas combinaciones de color que trigger.html) */
+    h2.verde   { color: #2e7d32; border-left-color: #6bbf8a; margin-top: 30px; }
+    h2.morado  { color: #5a3e8a; border-left-color: #9a7bd1; margin-top: 28px; }
+    h2.azul    { color: #5a7abf; border-left-color: #6aa8c8; }
+
+    .card {
+      background: #fdf6f3;
+      border-left: 5px solid #d68b7c;
+      padding: 18px 22px;
+      border-radius: 12px;
+      margin: 18px 0;
+    }
+
+    .card.azul {
+      background: #eef7fb;
+      border-left-color: #6aa8c8;
+    }
+
+    .card.verde {
+      background: #eefbf3;
+      border-left-color: #6bbf8a;
+    }
+
+    .card.morado {
+      background: #f5f0fb;
+      border-left-color: #9a7bd1;
+    }
+
+    .card.rojo {
+      background: #fdf0f0;
+      border-left-color: #c0524a;
+    }
+
+    .resaltado {
+      background: #fff3cd;
+      padding: 3px 7px;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      background: white;
+    }
+
+    th {
+      background: #7b1e1e;
+      color: white;
+      padding: 12px;
+    }
+
+    td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    code {
+      background: #f1f1f1;
+      padding: 3px 6px;
+      border-radius: 5px;
+      color: #7b1e1e;
+      font-weight: bold;
+    }
+
+    .ejemplo {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-size: 15px;
+    }
+
+    /* Bloques SQL estilo Monokai */
+    pre.ejemplo {
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      line-height: 1.9;
+      margin: 14px 0;
+      white-space: pre;
+    }
+
+    .k { color: #a6e22e; }   /* palabras clave */
+    .t { color: #66d9e8; }   /* tipos de datos y funciones */
+    .s { color: #e6db74; }   /* cadenas */
+    .c { color: #75715e; }   /* comentarios */
+
+    .nota {
+      background: #fff8e8;
+      border: 1px solid #f0d58c;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .nota.alerta {
+      background: #fdf0f0;
+      border-color: #e3a9a3;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 14px;
+    }
+
+    .ejemplo-mini {
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      color: #1a5c8a;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .si { color: green; font-weight: bold; text-align: center; }
+    .no { color: #aaa; text-align: center; }
+
+    /* Índice */
+    .indice ol { columns: 2; column-gap: 30px; margin: 8px 0 0 0; }
+    .indice a { color: #1a5c8a; text-decoration: none; }
+    .indice a:hover { text-decoration: underline; }
+
+    /* Diagrama de flujo de acceso */
+    .flujo {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: stretch;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .flujo .paso {
+      flex: 1;
+      min-width: 140px;
+      background: white;
+      border: 2px solid #ddd;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    .flujo .paso strong { display: block; font-size: 16px; margin-bottom: 4px; }
+    .flujo .flecha { display: flex; align-items: center; font-size: 26px; color: #9a7bd1; }
+
+    /* Jerarquía de asegurables (cajas anidadas) */
+    .capa {
+      border: 2px solid;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 10px;
+    }
+
+    .capa > .titulo-capa { font-weight: bold; margin-bottom: 4px; }
+    .capa.servidor { border-color: #7b1e1e; background: #fdf6f3; }
+    .capa.bd       { border-color: #6aa8c8; background: #eef7fb; }
+    .capa.esquema  { border-color: #9a7bd1; background: #f5f0fb; }
+    .capa.objeto   { border-color: #6bbf8a; background: #eefbf3; }
+
+    /* Solución oculta */
+    details.solucion {
+      margin-top: 12px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      padding: 10px 14px;
+      background: #fafafa;
+    }
+
+    details.solucion summary {
+      cursor: pointer;
+      font-weight: bold;
+      color: #7b1e1e;
+    }
+
+    @media (max-width: 640px) {
+      .contenedor { margin: 0; padding: 20px 16px; border-radius: 0; }
+      .indice ol { columns: 1; }
+      .flujo .flecha { transform: rotate(90deg); width: 100%; justify-content: center; }
+      td, th { padding: 8px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="contenedor">
+
+    <h1>Gestión de Seguridad y Acceso en SQL Server</h1>
+    <p class="subtitulo">Gestión de Datos e Información · Sesión 6 · Guía didáctica para alumnos</p>
+
+    <div class="card azul indice">
+      <strong>Contenido</strong>
+      <ol>
+        <li><a href="#s1">¿Qué es la seguridad de base de datos?</a></li>
+        <li><a href="#s2">Los cuatro pilares de la seguridad</a></li>
+        <li><a href="#s3">Entidades de seguridad (principals)</a></li>
+        <li><a href="#s4">Asegurables (securables)</a></li>
+        <li><a href="#s5">Modos de autenticación</a></li>
+        <li><a href="#s6">Login vs Usuario</a></li>
+        <li><a href="#s7">Roles de servidor y de base de datos</a></li>
+        <li><a href="#s8">Permisos: GRANT, DENY y REVOKE</a></li>
+        <li><a href="#s9">Práctica paso a paso</a></li>
+        <li><a href="#s10">Políticas de contraseña</a></li>
+        <li><a href="#s11">Permisos a nivel de sistema</a></li>
+        <li><a href="#s12">Auditoría de eventos</a></li>
+        <li><a href="#s13">Protección de datos sensibles</a></li>
+        <li><a href="#s14">Limpieza del entorno</a></li>
+        <li><a href="#s15">Resumen de comandos</a></li>
+        <li><a href="#s16">Ejercicios para clase</a></li>
+      </ol>
+    </div>
+
+    <!-- ===================== SECCIÓN 1 ===================== -->
+    <h2 id="s1">1. ¿Qué es la seguridad de base de datos?</h2>
+
+    <div class="card">
+      <p>
+        La <span class="resaltado">seguridad de base de datos</span> es una parte esencial de la
+        administración de bases de datos, especialmente en entornos empresariales donde la
+        <strong>integridad</strong> y la <strong>confidencialidad</strong> de la información son prioritarias.
+      </p>
+      <p>
+        En SQL Server se implementa mediante un sistema que abarca la gestión de
+        <strong>usuarios</strong>, <strong>roles</strong>, <strong>permisos</strong> y la
+        <strong>auditoría de eventos</strong>.
+      </p>
+    </div>
+
+    <p>
+      Dicho de forma simple, la seguridad responde tres preguntas cada vez que alguien intenta trabajar con los datos:
+      <strong>¿quién eres?</strong>, <strong>¿qué puedes hacer?</strong> y <strong>¿qué hiciste?</strong>
+    </p>
+
+    <div class="nota">
+      <strong>Idea clave:</strong>
+      En SQL Server nadie tiene acceso a nada por defecto. Todo acceso debe concederse explícitamente,
+      y lo recomendable es conceder <strong>solo lo mínimo necesario</strong> (principio de mínimo privilegio).
+    </div>
+
+    <!-- ===================== SECCIÓN 2 ===================== -->
+    <h2 id="s2">2. Los cuatro pilares de la seguridad</h2>
+
+    <table>
+      <tr>
+        <th>Pilar</th>
+        <th>Pregunta que responde</th>
+        <th>Herramienta en SQL Server</th>
+      </tr>
+      <tr>
+        <td><strong>Autenticación</strong></td>
+        <td>¿Quién eres?</td>
+        <td>Logins (Windows o SQL Server), contraseñas y sus políticas.
+          <span class="ejemplo-mini">// CREATE LOGIN LoginFinanciera WITH PASSWORD = '...';</span></td>
+      </tr>
+      <tr>
+        <td><strong>Autorización</strong></td>
+        <td>¿Qué puedes hacer?</td>
+        <td>Usuarios, roles y permisos.
+          <span class="ejemplo-mini">// GRANT SELECT ON dbo.CLIENTE TO UsuarioBDFinanciera;</span></td>
+      </tr>
+      <tr>
+        <td><strong>Auditoría</strong></td>
+        <td>¿Qué hiciste y cuándo?</td>
+        <td>SQL Server Audit (auditorías de servidor y de base de datos).
+          <span class="ejemplo-mini">// CREATE SERVER AUDIT AuditoriaInicioSesion ...</span></td>
+      </tr>
+      <tr>
+        <td><strong>Protección de datos</strong></td>
+        <td>¿Y si alguien ve lo que no debe?</td>
+        <td>Enmascaramiento dinámico, Always Encrypted, cifrado de columnas.
+          <span class="ejemplo-mini">// ALTER TABLE ... ADD MASKED WITH (FUNCTION = 'email()');</span></td>
+      </tr>
+    </table>
+
+    <!-- ===================== SECCIÓN 3 ===================== -->
+    <h2 id="s3">3. Entidades de seguridad (<em>principals</em>)</h2>
+
+    <p>
+      Una <strong>entidad de seguridad</strong> (en inglés <em>principal</em>) es <strong>alguien</strong>
+      que puede solicitar acceso a los recursos de SQL Server: una persona, un grupo o una aplicación.
+      Existen en tres niveles:
+    </p>
+
+    <table>
+      <tr>
+        <th>Nivel</th>
+        <th>Entidades de seguridad</th>
+        <th>Ejemplo</th>
+      </tr>
+      <tr>
+        <td><strong>Windows</strong></td>
+        <td>Cuenta de usuario local de Windows<br>Cuenta de usuario de dominio<br>Grupo de Windows</td>
+        <td><code>MIPC\Alumno</code>, <code>UCV\jperez</code>, <code>UCV\Docentes</code></td>
+      </tr>
+      <tr>
+        <td><strong>Servidor SQL Server</strong></td>
+        <td>Inicio de sesión (<em>login</em>) de SQL Server<br>Rol de servidor</td>
+        <td><code>LoginFinanciera</code>, <code>sysadmin</code></td>
+      </tr>
+      <tr>
+        <td><strong>Base de datos</strong></td>
+        <td>Usuario de base de datos<br>Rol de base de datos<br>Rol de aplicación</td>
+        <td><code>UsuarioBDFinanciera</code>, <code>db_datareader</code></td>
+      </tr>
+    </table>
+
+    <!-- ===================== SECCIÓN 4 ===================== -->
+    <h2 id="s4">4. Asegurables (<em>securables</em>)</h2>
+
+    <p>
+      Los <strong>asegurables</strong> son los <strong>recursos</strong> a los cuales el sistema de autorización
+      controla el acceso. Están organizados como cajas dentro de cajas: un permiso dado en una caja exterior
+      suele aplicarse a todo lo que contiene.
+    </p>
+
+    <div class="capa servidor">
+      <div class="titulo-capa" style="color:#7b1e1e;">Servidor</div>
+      Logins · Roles de servidor · Bases de datos · Endpoints (HTTP)
+      <div class="capa bd">
+        <div class="titulo-capa" style="color:#1a5c8a;">Base de datos</div>
+        Usuarios · Roles · Roles de aplicación · Certificados · Assemblies · Esquemas
+        <div class="capa esquema">
+          <div class="titulo-capa" style="color:#5a3e8a;">Esquema (por ejemplo <code>dbo</code>)</div>
+          <div class="capa objeto">
+            <div class="titulo-capa" style="color:#2e7d32;">Objetos</div>
+            Tablas · Vistas · Funciones · Procedimientos almacenados · Reglas · Defaults
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nota">
+      <strong>Ejemplo de herencia:</strong> si se concede <code>SELECT</code> sobre el esquema <code>dbo</code>,
+      el usuario podrá leer <strong>todas</strong> las tablas y vistas de ese esquema, incluso las que se creen después.
+      <span class="ejemplo-mini">// GRANT SELECT ON SCHEMA::dbo TO UsuarioBDFinanciera;</span>
+    </div>
+
+    <!-- ===================== SECCIÓN 5 ===================== -->
+    <h2 id="s5">5. Modos de autenticación</h2>
+
+    <p>
+      Autenticar significa <strong>comprobar la identidad</strong> de quien se conecta.
+      SQL Server ofrece dos formas de hacerlo:
+    </p>
+
+    <!-- WINDOWS -->
+    <div class="card verde">
+      <p><strong>Autenticación de Windows</strong> — Windows confirma la identidad.</p>
+      <p>
+        Cuando un usuario se conecta con una cuenta de Windows, SQL Server valida el nombre de cuenta
+        y la contraseña con el <strong>token de seguridad</strong> del sistema operativo.
+        SQL Server <strong>no pide la contraseña</strong> ni realiza la validación de identidad.
+      </p>
+      <ul>
+        <li>Es el modo <strong>predeterminado</strong> y es <strong>más seguro</strong>.</li>
+        <li>Usa el protocolo <strong>Kerberos</strong>.</li>
+        <li>Aplica las directivas de contraseña de Windows: complejidad, bloqueo de cuentas y expiración.</li>
+        <li>Se le llama <strong>conexión de confianza</strong> (<em>trusted connection</em>).</li>
+        <li>Permite crear un único login para un <strong>grupo de Windows</strong> completo.
+          <span class="ejemplo-mini">// CREATE LOGIN [UCV\Docentes] FROM WINDOWS;  → todos los docentes del grupo acceden</span></li>
+      </ul>
+      <div class="nota" style="margin-top:12px;">
+        <strong>Analogía:</strong> Es como entrar a la universidad mostrando el carné que ya te revisaron en la puerta
+        principal. El guardia del aula confía en que la puerta principal ya verificó quién eres.
+      </div>
+    </div>
+
+    <!-- SQL SERVER -->
+    <div class="card">
+      <p><strong>Autenticación de SQL Server</strong> — SQL Server guarda y valida las credenciales.</p>
+      <p>
+        Los inicios de sesión se crean en SQL Server y <strong>no dependen</strong> de cuentas de Windows.
+        El nombre de usuario y la contraseña se almacenan en SQL Server.
+      </p>
+      <ul>
+        <li>El usuario debe escribir su login y contraseña <strong>cada vez</strong> que se conecta.</li>
+        <li>Hay que establecer <strong>contraseñas seguras</strong> para todas las cuentas.</li>
+        <li>Útil para aplicaciones web, equipos fuera del dominio o sistemas Linux.</li>
+        <li>SQL Server crea una cuenta de administrador llamada <code>sa</code>, con privilegios completos.</li>
+      </ul>
+      <div class="nota" style="margin-top:12px;">
+        <strong>Analogía:</strong> Es como un aula con candado de clave propia: no importa quién seas afuera,
+        dentro solo vale la clave que el aula conoce.
+      </div>
+    </div>
+
+    <!-- COMPARATIVA -->
+    <table style="margin-top:22px;">
+      <tr>
+        <th>Característica</th>
+        <th>Windows</th>
+        <th>SQL Server</th>
+      </tr>
+      <tr>
+        <td>¿Quién valida la contraseña?</td>
+        <td>Windows / Active Directory</td>
+        <td>SQL Server</td>
+      </tr>
+      <tr>
+        <td>¿Pide contraseña al conectar?</td>
+        <td>No (usa la sesión de Windows)</td>
+        <td>Sí, cada vez</td>
+      </tr>
+      <tr>
+        <td>Políticas de contraseña</td>
+        <td>Las del dominio</td>
+        <td>Opcionales (<code>CHECK_POLICY</code>)</td>
+      </tr>
+      <tr>
+        <td>Nivel de seguridad</td>
+        <td>Mayor</td>
+        <td>Menor (las credenciales viajan desde la aplicación)</td>
+      </tr>
+      <tr>
+        <td>Uso típico</td>
+        <td>Redes corporativas con dominio</td>
+        <td>Aplicaciones web, servicios externos</td>
+      </tr>
+    </table>
+
+    <div class="nota">
+      <strong>Antes de la práctica — habilitar el modo mixto:</strong> para poder conectarse con un login de SQL Server,
+      el servidor debe aceptar ambos modos. En SSMS: clic derecho sobre el servidor →
+      <strong>Propiedades</strong> → <strong>Seguridad</strong> → marcar
+      <strong>Modo de autenticación de SQL Server y de Windows</strong> → Aceptar.
+      Luego <strong>reiniciar el servicio</strong> de SQL Server (clic derecho sobre el servidor → Reiniciar).
+    </div>
+
+    <pre class="ejemplo"><span class="c">-- Comprobar el modo de autenticación actual del servidor</span>
+<span class="k">SELECT</span> <span class="k">CASE</span> <span class="t">SERVERPROPERTY</span>(<span class="s">'IsIntegratedSecurityOnly'</span>)
+         <span class="k">WHEN</span> 1 <span class="k">THEN</span> <span class="s">'Solo Windows'</span>
+         <span class="k">ELSE</span> <span class="s">'Mixto: Windows y SQL Server'</span>   <span class="c">-- necesario para la práctica</span>
+       <span class="k">END AS</span> modo_autenticacion;</pre>
+
+    <div class="nota alerta">
+      <strong>Sobre la cuenta <code>sa</code>:</strong> nunca debe usarse para conectar aplicaciones.
+      Es buena práctica asignarle una contraseña muy fuerte, o directamente deshabilitarla.
+      <span class="ejemplo-mini">// ALTER LOGIN sa DISABLE;</span>
+    </div>
+
+    <!-- ===================== SECCIÓN 6 ===================== -->
+    <h2 id="s6">6. Login vs Usuario: la diferencia más importante</h2>
+
+    <p>
+      Este es el concepto que más confunde al principio. En SQL Server, para que una persona lea una tabla
+      necesita <strong>dos identidades distintas</strong>, una en cada nivel:
+    </p>
+
+    <div class="card morado">
+      <div class="flujo">
+        <div class="paso" style="border-color:#7b1e1e;">
+          <strong style="color:#7b1e1e;">LOGIN</strong>
+          Nivel servidor<br>
+          <span style="color:#666;">“Puedes entrar al edificio”</span>
+        </div>
+        <div class="flecha">→</div>
+        <div class="paso" style="border-color:#6aa8c8;">
+          <strong style="color:#1a5c8a;">USUARIO</strong>
+          Nivel base de datos<br>
+          <span style="color:#666;">“Puedes entrar a esta oficina”</span>
+        </div>
+        <div class="flecha">→</div>
+        <div class="paso" style="border-color:#9a7bd1;">
+          <strong style="color:#5a3e8a;">ROL</strong>
+          Grupo de usuarios<br>
+          <span style="color:#666;">“Perteneces al área de ventas”</span>
+        </div>
+        <div class="flecha">→</div>
+        <div class="paso" style="border-color:#6bbf8a;">
+          <strong style="color:#2e7d32;">PERMISO</strong>
+          Sobre un objeto<br>
+          <span style="color:#666;">“Puedes abrir este archivador”</span>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <tr>
+        <th>Concepto</th>
+        <th>Login (inicio de sesión)</th>
+        <th>Usuario de base de datos</th>
+      </tr>
+      <tr>
+        <td>¿Dónde vive?</td>
+        <td>En el servidor (base <code>master</code>)</td>
+        <td>Dentro de cada base de datos</td>
+      </tr>
+      <tr>
+        <td>¿Qué permite?</td>
+        <td>Conectarse al servidor</td>
+        <td>Trabajar dentro de una base de datos concreta</td>
+      </tr>
+      <tr>
+        <td>¿Cuántos hay?</td>
+        <td>Uno por persona o aplicación</td>
+        <td>Uno por cada base de datos a la que ese login accede</td>
+      </tr>
+      <tr>
+        <td>Comando</td>
+        <td><code>CREATE LOGIN</code></td>
+        <td><code>CREATE USER ... FOR LOGIN ...</code></td>
+      </tr>
+      <tr>
+        <td>Vista del sistema</td>
+        <td><code>sys.server_principals</code></td>
+        <td><code>sys.database_principals</code></td>
+      </tr>
+    </table>
+
+    <pre class="ejemplo"><span class="c">-- 1) El login permite conectarse al SERVIDOR</span>
+<span class="k">CREATE LOGIN</span> UsuarioEjemplo <span class="k">WITH PASSWORD</span> = <span class="s">'ContraseñaSegura#1'</span>;
+
+<span class="c">-- 2) El usuario permite entrar a UNA base de datos (se crea estando dentro de ella)</span>
+<span class="k">CREATE USER</span> UsuarioEjemplo <span class="k">FOR LOGIN</span> UsuarioEjemplo;</pre>
+
+    <div class="nota">
+      <strong>Regla de oro:</strong> un login sin usuario puede conectarse al servidor, pero no puede abrir ninguna
+      base de datos (salvo las del sistema). Un usuario sin permisos puede entrar a la base de datos, pero no puede
+      leer ni modificar ninguna tabla.
+    </div>
+
+    <!-- ===================== SECCIÓN 7 ===================== -->
+    <h2 id="s7">7. Roles</h2>
+
+    <p>
+      Los <strong>roles</strong> agrupan entidades de seguridad para administrar permisos con facilidad.
+      Son como los grupos de Windows: en lugar de dar el mismo permiso a 30 usuarios uno por uno,
+      se le da al rol y se agrega a los 30 usuarios al rol.
+    </p>
+
+    <h2 class="verde">7.1 Roles fijos de servidor</h2>
+
+    <p>Su alcance es <strong>todo el servidor</strong>. Se asignan a <strong>logins</strong>.</p>
+
+    <table>
+      <tr><th>Rol</th><th>¿Qué pueden hacer sus miembros?</th></tr>
+      <tr><td><code>sysadmin</code></td><td>Cualquier actividad en el servidor. Es el máximo privilegio.</td></tr>
+      <tr><td><code>serveradmin</code></td><td>Cambiar opciones de configuración y apagar el servidor.</td></tr>
+      <tr><td><code>securityadmin</code></td><td>Administrar logins y sus permisos. Puede elevar privilegios: supervisar.</td></tr>
+      <tr><td><code>processadmin</code></td><td>Finalizar procesos que se ejecutan en el servidor.</td></tr>
+      <tr><td><code>setupadmin</code></td><td>Agregar y quitar servidores vinculados.</td></tr>
+      <tr><td><code>bulkadmin</code></td><td>Ejecutar la instrucción <code>BULK INSERT</code>.</td></tr>
+      <tr><td><code>diskadmin</code></td><td>Administrar archivos de disco.</td></tr>
+      <tr><td><code>dbcreator</code></td><td>Crear, modificar, eliminar y restaurar cualquier base de datos.</td></tr>
+      <tr><td><code>public</code></td><td>Todo login pertenece a <code>public</code>. Sus permisos los heredan todos.</td></tr>
+    </table>
+
+    <h2 class="azul" style="margin-top:30px;">7.2 Roles fijos de base de datos</h2>
+
+    <p>
+      Su alcance es <strong>una base de datos</strong>. Se asignan a <strong>usuarios</strong>.
+    </p>
+
+    <table>
+      <tr><th>Rol</th><th>¿Qué pueden hacer sus miembros?</th></tr>
+      <tr>
+        <td><code>db_owner</code></td>
+        <td>Todas las actividades de configuración y mantenimiento, incluso eliminar la base de datos.</td>
+      </tr>
+      <tr>
+        <td><code>db_securityadmin</code></td>
+        <td>Modificar la pertenencia a roles personalizados y administrar permisos.
+          Pueden elevar sus privilegios: <strong>se deben supervisar sus acciones</strong>.</td>
+      </tr>
+      <tr>
+        <td><code>db_accessadmin</code></td>
+        <td>Agregar o quitar acceso a la base de datos para logins y grupos de Windows y de SQL Server.</td>
+      </tr>
+      <tr>
+        <td><code>db_backupoperator</code></td>
+        <td>Crear copias de seguridad de la base de datos.</td>
+      </tr>
+      <tr>
+        <td><code>db_ddladmin</code></td>
+        <td>Ejecutar cualquier comando DDL (<code>CREATE</code>, <code>ALTER</code>, <code>DROP</code>).</td>
+      </tr>
+      <tr>
+        <td><code>db_datawriter</code></td>
+        <td>Agregar, eliminar o cambiar datos en <strong>todas</strong> las tablas de usuario.</td>
+      </tr>
+      <tr>
+        <td><code>db_datareader</code></td>
+        <td>Leer todos los datos de <strong>todas</strong> las tablas y vistas de usuario
+          (en cualquier esquema excepto <code>sys</code> e <code>INFORMATION_SCHEMA</code>).</td>
+      </tr>
+      <tr>
+        <td><code>db_denydatawriter</code></td>
+        <td><strong>No</strong> pueden agregar, modificar ni eliminar datos de tablas de usuario.</td>
+      </tr>
+      <tr>
+        <td><code>db_denydatareader</code></td>
+        <td><strong>No</strong> pueden leer datos de tablas ni vistas de usuario.</td>
+      </tr>
+      <tr>
+        <td><code>public</code></td>
+        <td>Todo usuario pertenece a <code>public</code>. Conviene no concederle permisos.</td>
+      </tr>
+    </table>
+
+    <div class="nota">
+      <strong>Para recordar:</strong> los roles <code>db_deny...</code> existen para <strong>bloquear</strong>.
+      Si un usuario está en <code>db_datareader</code> y en <code>db_denydatareader</code> al mismo tiempo,
+      <strong>no puede leer</strong>: la denegación siempre gana (ver sección 8).
+    </div>
+
+    <h2 class="morado">7.3 El usuario <code>dbo</code> no es lo mismo que el rol <code>db_owner</code></h2>
+
+    <div class="card morado">
+      <ul>
+        <li>
+          <code>dbo</code> (<em>database owner</em>) es una <strong>cuenta de usuario</strong> con permisos implícitos
+          para hacer todo en la base de datos. Los miembros del rol de servidor <code>sysadmin</code> se asignan
+          automáticamente a <code>dbo</code>.
+        </li>
+        <li>
+          <code>db_owner</code> es un <strong>rol</strong>. Ser miembro de <code>db_owner</code>
+          <strong>no</strong> convierte a nadie en el usuario <code>dbo</code>.
+        </li>
+        <li>
+          El alcance de <code>db_owner</code> es <strong>una base de datos</strong>; el de <code>sysadmin</code>
+          es <strong>todo el servidor</strong>.
+        </li>
+      </ul>
+      <span class="ejemplo-mini">// SELECT USER_NAME();  → si estás conectado como sysadmin, devuelve 'dbo'</span>
+    </div>
+
+    <h2 class="verde">7.4 Roles personalizados</h2>
+
+    <p>
+      Además de los roles fijos, se pueden crear roles propios que reflejen los puestos de la organización
+      (vendedor, cajero, auditor...). Es la forma <strong>recomendada</strong> de dar permisos.
+    </p>
+
+    <pre class="ejemplo"><span class="c">-- Crear el rol (dentro de la base de datos)</span>
+<span class="k">CREATE ROLE</span> RolEjemplo;
+
+<span class="c">-- Dar permisos AL ROL, no a cada usuario</span>
+<span class="k">GRANT SELECT ON</span> dbo.CLIENTE <span class="k">TO</span> RolEjemplo;
+
+<span class="c">-- Agregar un usuario al rol (sintaxis actual)</span>
+<span class="k">ALTER ROLE</span> RolEjemplo <span class="k">ADD MEMBER</span> UsuarioEjemplo;
+
+<span class="c">-- Sintaxis antigua, equivalente (seguirás viéndola en material y scripts heredados)</span>
+<span class="k">EXEC</span> sp_addrolemember <span class="s">'RolEjemplo'</span>, <span class="s">'UsuarioEjemplo'</span>;</pre>
+
+    <div class="nota">
+      <strong>Sintaxis antigua vs actual:</strong> <code>sp_addrolemember</code> y <code>sp_addsrvrolemember</code>
+      siguen funcionando, pero Microsoft los marca como obsoletos. En código nuevo usa
+      <code>ALTER ROLE ... ADD MEMBER</code> y <code>ALTER SERVER ROLE ... ADD MEMBER</code>.
+    </div>
+
+    <!-- ===================== SECCIÓN 8 ===================== -->
+    <h2 id="s8">8. Permisos: <code>GRANT</code>, <code>DENY</code> y <code>REVOKE</code></h2>
+
+    <p>
+      Un <strong>permiso</strong> es la autorización para realizar una acción concreta sobre un asegurable.
+      Se administran con tres instrucciones:
+    </p>
+
+    <table>
+      <tr>
+        <th>Instrucción</th>
+        <th>¿Qué hace?</th>
+        <th>Ejemplo</th>
+      </tr>
+      <tr>
+        <td><code>GRANT</code></td>
+        <td><strong>Concede</strong> el permiso.</td>
+        <td><code>GRANT SELECT ON dbo.CLIENTE TO UsuarioEjemplo;</code></td>
+      </tr>
+      <tr>
+        <td><code>DENY</code></td>
+        <td><strong>Prohíbe</strong> el permiso de forma explícita, aunque un rol lo conceda.</td>
+        <td><code>DENY DELETE ON dbo.CLIENTE TO UsuarioEjemplo;</code></td>
+      </tr>
+      <tr>
+        <td><code>REVOKE</code></td>
+        <td><strong>Quita</strong> un <code>GRANT</code> o un <code>DENY</code> dado antes. Vuelve al estado neutral.</td>
+        <td><code>REVOKE DELETE ON dbo.CLIENTE FROM UsuarioEjemplo;</code></td>
+      </tr>
+    </table>
+
+    <div class="card rojo" style="margin-top:22px;">
+      <strong>Regla de precedencia: <code>DENY</code> siempre gana</strong>
+      <p style="margin-bottom:0;">
+        Si un usuario recibe <code>GRANT SELECT</code> por un rol y <code>DENY SELECT</code> por otro lado,
+        <strong>no podrá leer</strong>. En cambio, <code>REVOKE</code> no prohíbe nada: solo borra lo que se había
+        concedido o denegado, y el usuario puede seguir teniendo el permiso a través de un rol.
+      </p>
+      <div class="nota" style="margin-top:12px;">
+        <strong>Analogía:</strong> <code>GRANT</code> es darle una llave, <code>DENY</code> es ponerle su nombre
+        en la lista negra del guardia (aunque tenga llave, no entra) y <code>REVOKE</code> es quitarle la llave o
+        borrarlo de la lista negra.
+      </div>
+    </div>
+
+    <h2 class="azul" style="margin-top:30px;">8.1 Principales permisos por asegurable</h2>
+
+    <table>
+      <tr>
+        <th>Asegurable</th>
+        <th>Permiso</th>
+        <th>Descripción</th>
+      </tr>
+      <tr><td rowspan="4"><strong>Servidor</strong></td><td><code>CONNECT SQL</code></td><td>Conectarse al servidor.</td></tr>
+      <tr><td><code>CREATE LOGIN</code></td><td>Crear un login. (En la práctica se concede como <code>ALTER ANY LOGIN</code>).</td></tr>
+      <tr><td><code>ALTER ANY LOGIN</code></td><td>Modificar cualquier login del servidor.</td></tr>
+      <tr><td><code>CONTROL SERVER</code></td><td>Control completo de administración del sistema.</td></tr>
+      <tr><td rowspan="2"><strong>Login</strong></td><td><code>ALTER</code></td><td>Modificar ese login.</td></tr>
+      <tr><td><code>IMPERSONATE</code></td><td>Suplantar (actuar como) ese login.</td></tr>
+      <tr><td rowspan="3"><strong>Base de datos</strong></td><td><code>CREATE TABLE</code></td><td>Crear tablas en la base de datos.</td></tr>
+      <tr><td><code>ALTER ANY USER</code></td><td>Modificar cualquier usuario de la base de datos.</td></tr>
+      <tr><td><code>CONTROL</code></td><td>Control completo de la base de datos.</td></tr>
+      <tr><td><strong>Usuario</strong></td><td><code>ALTER</code></td><td>Modificar ese usuario.</td></tr>
+      <tr><td rowspan="3"><strong>Esquema</strong></td><td><code>SELECT</code></td><td>Leer filas de cualquier objeto del esquema.</td></tr>
+      <tr><td><code>ALTER</code></td><td>Modificar cualquier objeto del esquema.</td></tr>
+      <tr><td><code>TAKE OWNERSHIP</code></td><td>Tomar la propiedad del esquema.</td></tr>
+      <tr><td rowspan="3"><strong>Tabla</strong></td><td><code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></td><td>Leer, insertar, modificar o eliminar filas.</td></tr>
+      <tr><td><code>ALTER</code></td><td>Modificar la estructura de la tabla.</td></tr>
+      <tr><td><code>CONTROL</code></td><td>Control total de la tabla.</td></tr>
+      <tr><td><strong>Procedimiento</strong></td><td><code>EXECUTE</code></td><td>Ejecutar el procedimiento almacenado.</td></tr>
+    </table>
+
+    <!-- ===================== SECCIÓN 9: PRÁCTICA ===================== -->
+    <h2 id="s9">9. Práctica paso a paso</h2>
+
+    <p>
+      Vamos a construir la base de datos <code>FinancieraDemoBD</code> y sobre ella crear logins, usuarios,
+      roles y permisos. Ejecuta los bloques en orden en SSMS, conectado con una cuenta administradora
+      (la tuya de Windows o <code>sa</code>).
+    </p>
+
+    <div class="nota">
+      <strong>¿Cómo probamos sin desconectarnos?</strong> Con <code>EXECUTE AS USER = '...'</code> SQL Server
+      ejecuta las siguientes instrucciones <strong>como si fueras ese usuario</strong>. Con <code>REVERT</code>
+      vuelves a ser tú. Así comprobamos cada permiso en la misma ventana.
+    </div>
+
+    <!-- ── PASO 1 ── -->
+    <h2 class="morado">Paso 1 — Crear la base de datos y sus tablas</h2>
+
+    <pre class="ejemplo"><span class="c">-- Crear solo si FinancieraDemoBD todavía no existe</span>
+<span class="k">CREATE DATABASE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+
+<span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+
+<span class="c">-- ① CLIENTE: datos de contacto (algunos serán sensibles: email, teléfono)</span>
+<span class="k">CREATE TABLE</span> CLIENTE (
+    id_cliente  <span class="t">INT</span> <span class="k">IDENTITY(1,1) PRIMARY KEY</span>,
+    nombre      <span class="t">VARCHAR</span>(100) <span class="k">NOT NULL</span>,
+    documento   <span class="t">VARCHAR</span>(15)  <span class="k">NOT NULL</span>,
+    email       <span class="t">VARCHAR</span>(150),
+    telefono    <span class="t">VARCHAR</span>(20)
+);
+<span class="k">GO</span>
+
+<span class="c">-- ② PROVEEDOR: empresas que abastecen a la financiera</span>
+<span class="k">CREATE TABLE</span> PROVEEDOR (
+    id_proveedor <span class="t">INT</span> <span class="k">IDENTITY(1,1) PRIMARY KEY</span>,
+    razon_social <span class="t">VARCHAR</span>(150) <span class="k">NOT NULL</span>,
+    ruc          <span class="t">VARCHAR</span>(15)  <span class="k">NOT NULL</span>,
+    telefono     <span class="t">VARCHAR</span>(20)
+);
+<span class="k">GO</span>
+
+<span class="c">-- ③ COLABORADOR: empleados; el sueldo es un dato confidencial</span>
+<span class="k">CREATE TABLE</span> COLABORADOR (
+    id_colaborador <span class="t">INT</span> <span class="k">IDENTITY(1,1) PRIMARY KEY</span>,
+    nombre         <span class="t">VARCHAR</span>(100)   <span class="k">NOT NULL</span>,
+    cargo          <span class="t">VARCHAR</span>(60)    <span class="k">NOT NULL</span>,
+    sueldo         <span class="t">DECIMAL</span>(10,2) <span class="k">NOT NULL</span>   <span class="c">-- solo RR.HH. debería verlo</span>
+);
+<span class="k">GO</span></pre>
+
+    <!-- ── PASO 2 ── -->
+    <h2 class="morado">Paso 2 — Insertar datos y crear los procedimientos</h2>
+
+    <pre class="ejemplo"><span class="k">INSERT INTO</span> CLIENTE (nombre, documento, email, telefono) <span class="k">VALUES</span>
+    (<span class="s">'Ana Torres'</span>,     <span class="s">'45879632'</span>, <span class="s">'ana@mail.com'</span>,    <span class="s">'987654321'</span>),
+    (<span class="s">'Luis Ramos'</span>,     <span class="s">'41236587'</span>, <span class="s">'luis@mail.com'</span>,   <span class="s">'912345678'</span>),
+    (<span class="s">'María López'</span>,    <span class="s">'47851236'</span>, <span class="s">'maria@mail.com'</span>,  <span class="s">'934567812'</span>),
+    (<span class="s">'Carlos Pérez'</span>,   <span class="s">'40125896'</span>, <span class="s">'carlos@mail.com'</span>, <span class="s">'956781234'</span>),
+    (<span class="s">'Sofía Martínez'</span>, <span class="s">'46987412'</span>, <span class="s">'sofia@mail.com'</span>,  <span class="s">'978123456'</span>);
+<span class="k">GO</span>
+
+<span class="k">INSERT INTO</span> PROVEEDOR (razon_social, ruc, telefono) <span class="k">VALUES</span>
+    (<span class="s">'Papelera Andina SAC'</span>,    <span class="s">'20123456789'</span>, <span class="s">'014567890'</span>),
+    (<span class="s">'TecnoServicios EIRL'</span>,    <span class="s">'20987654321'</span>, <span class="s">'012345678'</span>),
+    (<span class="s">'Seguridad Total SA'</span>,     <span class="s">'20456789123'</span>, <span class="s">'013456789'</span>);
+<span class="k">GO</span>
+
+<span class="k">INSERT INTO</span> COLABORADOR (nombre, cargo, sueldo) <span class="k">VALUES</span>
+    (<span class="s">'Pedro Gómez'</span>,    <span class="s">'Analista de créditos'</span>, 3500.00),
+    (<span class="s">'Laura Jiménez'</span>,  <span class="s">'Cajera'</span>,               2200.00),
+    (<span class="s">'Diego Herrera'</span>,  <span class="s">'Jefe de RR.HH.'</span>,       6800.00),
+    (<span class="s">'Valentina Cruz'</span>, <span class="s">'Asesora comercial'</span>,    2900.00);
+<span class="k">GO</span>
+
+<span class="c">-- Procedimientos que usará la aplicación (la seguridad se apoyará en ellos)</span>
+<span class="k">CREATE PROCEDURE</span> spListar_Clientes
+<span class="k">AS</span>
+<span class="k">BEGIN</span>
+    <span class="k">SET NOCOUNT ON</span>;
+    <span class="k">SELECT</span> id_cliente, nombre, email <span class="k">FROM</span> CLIENTE;   <span class="c">-- no devuelve documento ni teléfono</span>
+<span class="k">END</span>;
+<span class="k">GO</span>
+
+<span class="k">CREATE PROCEDURE</span> spInsertar_Cliente
+    @nombre <span class="t">VARCHAR</span>(100), @documento <span class="t">VARCHAR</span>(15), @email <span class="t">VARCHAR</span>(150)
+<span class="k">AS</span>
+<span class="k">BEGIN</span>
+    <span class="k">INSERT INTO</span> CLIENTE (nombre, documento, email) <span class="k">VALUES</span> (@nombre, @documento, @email);
+<span class="k">END</span>;
+<span class="k">GO</span>
+
+<span class="k">CREATE PROCEDURE</span> spListar_Proveedor
+<span class="k">AS</span>
+<span class="k">BEGIN</span>
+    <span class="k">SET NOCOUNT ON</span>;
+    <span class="k">SELECT</span> id_proveedor, razon_social, ruc <span class="k">FROM</span> PROVEEDOR;
+<span class="k">END</span>;
+<span class="k">GO</span>
+
+<span class="k">CREATE PROCEDURE</span> spInsertar_Proveedor
+    @razon_social <span class="t">VARCHAR</span>(150), @ruc <span class="t">VARCHAR</span>(15)
+<span class="k">AS</span>
+<span class="k">BEGIN</span>
+    <span class="k">INSERT INTO</span> PROVEEDOR (razon_social, ruc) <span class="k">VALUES</span> (@razon_social, @ruc);
+<span class="k">END</span>;
+<span class="k">GO</span>
+
+<span class="c">-- Comprobación: 5 clientes, 3 proveedores, 4 colaboradores</span>
+<span class="k">SELECT</span> * <span class="k">FROM</span> CLIENTE;
+<span class="k">SELECT</span> * <span class="k">FROM</span> PROVEEDOR;
+<span class="k">SELECT</span> * <span class="k">FROM</span> COLABORADOR;</pre>
+
+    <!-- ── PASO 3 ── -->
+    <h2 class="morado">Paso 3 — Crear el login (nivel servidor)</h2>
+
+    <p>
+      Los logins se crean desde la base <code>master</code>. Verificamos primero que no exista para que el script
+      pueda ejecutarse más de una vez sin error.
+    </p>
+
+    <pre class="ejemplo"><span class="k">USE</span> master;
+<span class="k">GO</span>
+
+<span class="c">-- Crear el login solo si todavía no existe</span>
+<span class="k">IF NOT EXISTS</span> (<span class="k">SELECT</span> name <span class="k">FROM</span> sys.server_principals <span class="k">WHERE</span> name = <span class="s">N'LoginFinanciera'</span>)
+    <span class="k">CREATE LOGIN</span> [LoginFinanciera]
+    <span class="k">WITH PASSWORD</span> = <span class="s">N'Protect2020'</span>,                <span class="c">-- contraseña (N = texto Unicode)</span>
+         <span class="k">DEFAULT_DATABASE</span> = [FinancieraDemoBD],   <span class="c">-- base que se abre al conectarse</span>
+         <span class="k">CHECK_POLICY</span> = <span class="k">ON</span>;                      <span class="c">-- exige las reglas de complejidad de Windows</span>
+<span class="k">GO</span>
+
+<span class="c">-- Comprobación: el login aparece como SQL_LOGIN</span>
+<span class="k">SELECT</span> name, type_desc, default_database_name, create_date
+<span class="k">FROM</span> sys.server_principals
+<span class="k">WHERE</span> name = <span class="s">'LoginFinanciera'</span>;</pre>
+
+    <div class="card azul">
+      <strong>Otras formas de crear logins:</strong>
+      <ul>
+        <li>Login de Windows: el nombre debe ser <code>DOMINIO\usuario</code> o <code>EQUIPO\usuario</code>, y no lleva contraseña.
+          <span class="ejemplo-mini">// CREATE LOGIN [MIPC\Alumno] FROM WINDOWS WITH DEFAULT_DATABASE = [FinancieraDemoBD];</span></li>
+        <li>Asignar un rol de servidor al login (con mucho cuidado: <code>dbcreator</code> permite crear y borrar bases de datos).
+          <span class="ejemplo-mini">// ALTER SERVER ROLE dbcreator ADD MEMBER [LoginFinanciera];</span>
+          <span class="ejemplo-mini">// Sintaxis antigua: EXEC sp_addsrvrolemember 'LoginFinanciera', 'dbcreator';</span></li>
+      </ul>
+    </div>
+
+    <!-- ── PASO 4 ── -->
+    <h2 class="morado">Paso 4 — Crear el usuario de base de datos</h2>
+
+    <pre class="ejemplo"><span class="k">USE</span> FinancieraDemoBD;   <span class="c">-- el usuario se crea DENTRO de la base de datos</span>
+<span class="k">GO</span>
+
+<span class="k">IF NOT EXISTS</span> (<span class="k">SELECT</span> name <span class="k">FROM</span> sys.database_principals <span class="k">WHERE</span> name = <span class="s">N'UsuarioBDFinanciera'</span>)
+    <span class="k">CREATE USER</span> [UsuarioBDFinanciera] <span class="k">FOR LOGIN</span> [LoginFinanciera];   <span class="c">-- enlaza usuario ↔ login</span>
+<span class="k">GO</span>
+
+<span class="c">-- Prueba: todavía NO tiene permisos sobre las tablas</span>
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioBDFinanciera'</span>;
+    <span class="k">SELECT</span> <span class="t">USER_NAME</span>() <span class="k">AS</span> usuario_actual;      <span class="c">-- UsuarioBDFinanciera</span>
+    <span class="k">SELECT</span> * <span class="k">FROM</span> CLIENTE;                      <span class="c">-- ERROR 229: permiso SELECT denegado</span>
+<span class="k">REVERT</span>;</pre>
+
+    <div class="nota">
+      <strong>Resultado esperado:</strong> el primer <code>SELECT</code> muestra el nombre del usuario y el segundo
+      falla con el error <strong>229</strong> (permiso denegado). Es correcto: el usuario existe, pero aún no se le ha
+      concedido nada. Si un error interrumpe el lote antes del <code>REVERT</code>, ejecuta <code>REVERT;</code> por separado.
+    </div>
+
+    <!-- ── PASO 5 ── -->
+    <h2 class="morado">Paso 5 — Asignar roles y conceder permisos</h2>
+
+    <pre class="ejemplo"><span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+
+<span class="c">-- ① Roles fijos: leer y escribir en TODAS las tablas</span>
+<span class="k">ALTER ROLE</span> db_datareader <span class="k">ADD MEMBER</span> [UsuarioBDFinanciera];
+<span class="k">ALTER ROLE</span> db_datawriter <span class="k">ADD MEMBER</span> [UsuarioBDFinanciera];
+<span class="c">-- Equivalente antiguo: EXEC sp_addrolemember N'db_datareader', N'UsuarioBDFinanciera';</span>
+<span class="k">GO</span>
+
+<span class="c">-- ② EXECUTE sin objeto: permite ejecutar TODOS los procedimientos de la base</span>
+<span class="k">GRANT EXECUTE TO</span> [UsuarioBDFinanciera];
+
+<span class="c">-- ③ O bien, permisos objeto por objeto (más controlado)</span>
+<span class="k">GRANT EXECUTE ON</span> spListar_Clientes    <span class="k">TO</span> [UsuarioBDFinanciera];
+<span class="k">GRANT EXECUTE ON</span> spInsertar_Cliente   <span class="k">TO</span> [UsuarioBDFinanciera];
+<span class="k">GRANT EXECUTE ON</span> spListar_Proveedor   <span class="k">TO</span> [UsuarioBDFinanciera];
+<span class="k">GRANT EXECUTE ON</span> spInsertar_Proveedor <span class="k">TO</span> [UsuarioBDFinanciera];
+<span class="k">GRANT SELECT, INSERT, UPDATE, DELETE ON</span> dbo.CLIENTE     <span class="k">TO</span> [UsuarioBDFinanciera];
+<span class="k">GRANT SELECT, INSERT, UPDATE, DELETE ON</span> dbo.PROVEEDOR   <span class="k">TO</span> [UsuarioBDFinanciera];
+<span class="k">GRANT SELECT, INSERT, UPDATE, DELETE ON</span> dbo.COLABORADOR <span class="k">TO</span> [UsuarioBDFinanciera];
+
+<span class="c">-- ④ Permiso especial: ALTER permite cambiar la ESTRUCTURA de la tabla → evaluar riesgos</span>
+<span class="k">GRANT ALTER ON</span> dbo.CLIENTE <span class="k">TO</span> [UsuarioBDFinanciera];
+<span class="k">GO</span>
+
+<span class="c">-- Prueba: ahora sí puede leer y ejecutar</span>
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioBDFinanciera'</span>;
+    <span class="k">SELECT</span> * <span class="k">FROM</span> CLIENTE;               <span class="c">-- OK</span>
+    <span class="k">EXEC</span> spListar_Proveedor;             <span class="c">-- OK</span>
+<span class="k">REVERT</span>;</pre>
+
+    <div class="nota alerta">
+      <strong>Atención:</strong> en este paso se muestran a propósito <strong>varias formas</strong> de dar permisos,
+      y el usuario termina con mucho más de lo necesario (roles + permisos explícitos + <code>ALTER</code>).
+      En un sistema real se elige <strong>una sola</strong> estrategia y se concede lo mínimo. El siguiente paso
+      muestra la forma recomendada.
+    </div>
+
+    <!-- ── PASO 6 ── -->
+    <h2 class="morado">Paso 6 — Mínimo privilegio: acceso solo a través de procedimientos</h2>
+
+    <p>
+      Un patrón muy usado en aplicaciones: el usuario de la aplicación <strong>no puede tocar las tablas</strong>
+      directamente; solo puede ejecutar procedimientos. Así la aplicación nunca ve columnas que no necesita.
+    </p>
+
+    <pre class="ejemplo"><span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+
+<span class="c">-- Usuario SIN login: no puede conectarse, pero sirve para probar permisos en clase</span>
+<span class="k">CREATE USER</span> UsuarioApp <span class="k">WITHOUT LOGIN</span>;
+
+<span class="c">-- Solo puede ejecutar el procedimiento de listado</span>
+<span class="k">GRANT EXECUTE ON</span> spListar_Clientes <span class="k">TO</span> UsuarioApp;
+<span class="k">GO</span>
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioApp'</span>;
+    <span class="k">EXEC</span> spListar_Clientes;     <span class="c">-- OK: devuelve id, nombre y email</span>
+<span class="k">REVERT</span>;
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioApp'</span>;
+    <span class="k">SELECT</span> * <span class="k">FROM</span> CLIENTE;      <span class="c">-- ERROR 229: no tiene SELECT sobre la tabla</span>
+<span class="k">REVERT</span>;</pre>
+
+    <div class="nota">
+      <strong>¿Por qué funciona el procedimiento si no tiene <code>SELECT</code> sobre la tabla?</strong>
+      Por el <strong>encadenamiento de propiedad</strong> (<em>ownership chaining</em>): el procedimiento y la tabla
+      tienen el mismo dueño (<code>dbo</code>), así que SQL Server solo verifica el permiso <code>EXECUTE</code>
+      sobre el procedimiento. Esto convierte a los procedimientos en una <strong>capa de seguridad</strong>.
+    </div>
+
+    <!-- ── PASO 7 ── -->
+    <h2 class="morado">Paso 7 — DENY y REVOKE en acción</h2>
+
+    <p>
+      <code>UsuarioBDFinanciera</code> puede leer <code>COLABORADOR</code> (por <code>db_datareader</code> y por el
+      <code>GRANT</code> del paso 5). Vamos a bloquearlo y después a deshacer el bloqueo.
+    </p>
+
+    <pre class="ejemplo"><span class="c">-- ① DENY: aunque los roles lo permitan, la denegación gana</span>
+<span class="k">DENY SELECT ON</span> dbo.COLABORADOR <span class="k">TO</span> [UsuarioBDFinanciera];
+<span class="k">GO</span>
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioBDFinanciera'</span>;
+    <span class="k">SELECT</span> * <span class="k">FROM</span> COLABORADOR;   <span class="c">-- ERROR 229: DENY tiene prioridad sobre db_datareader</span>
+<span class="k">REVERT</span>;
+<span class="k">GO</span>
+
+<span class="c">-- ② REVOKE: borra el DENY (y también el GRANT explícito del paso 5)</span>
+<span class="k">REVOKE SELECT ON</span> dbo.COLABORADOR <span class="k">FROM</span> [UsuarioBDFinanciera];
+<span class="k">GO</span>
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioBDFinanciera'</span>;
+    <span class="k">SELECT</span> * <span class="k">FROM</span> COLABORADOR;   <span class="c">-- OK otra vez: lo sigue permitiendo db_datareader</span>
+<span class="k">REVERT</span>;</pre>
+
+    <div class="nota">
+      <strong>Resultado:</strong> después del <code>REVOKE</code> el usuario vuelve a leer la tabla, aunque ya no tenga
+      ningún permiso explícito sobre ella. Esto demuestra que <code>REVOKE</code> no equivale a prohibir:
+      el permiso sigue llegando a través del rol.
+    </div>
+
+    <!-- ── PASO 8 ── -->
+    <h2 class="morado">Paso 8 — Rol personalizado con permisos por columna</h2>
+
+    <p>
+      Recursos Humanos necesita ver el sueldo; el área comercial solo necesita el nombre y el cargo.
+      Creamos un rol para cada caso.
+    </p>
+
+    <pre class="ejemplo"><span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+
+<span class="c">-- Rol comercial: clientes completos, colaboradores SIN sueldo</span>
+<span class="k">CREATE ROLE</span> RolVendedor;
+<span class="k">GRANT SELECT, INSERT ON</span> dbo.CLIENTE <span class="k">TO</span> RolVendedor;
+<span class="k">GRANT SELECT ON</span> dbo.COLABORADOR (id_colaborador, nombre, cargo) <span class="k">TO</span> RolVendedor;   <span class="c">-- permiso por columnas</span>
+
+<span class="c">-- Rol de RR.HH.: todo sobre COLABORADOR</span>
+<span class="k">CREATE ROLE</span> RolRRHH;
+<span class="k">GRANT SELECT, UPDATE ON</span> dbo.COLABORADOR <span class="k">TO</span> RolRRHH;
+
+<span class="c">-- Usuarios de prueba</span>
+<span class="k">CREATE USER</span> UsuarioVendedor <span class="k">WITHOUT LOGIN</span>;
+<span class="k">CREATE USER</span> UsuarioRRHH     <span class="k">WITHOUT LOGIN</span>;
+<span class="k">ALTER ROLE</span> RolVendedor <span class="k">ADD MEMBER</span> UsuarioVendedor;
+<span class="k">ALTER ROLE</span> RolRRHH     <span class="k">ADD MEMBER</span> UsuarioRRHH;
+<span class="k">GO</span>
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioVendedor'</span>;
+    <span class="k">SELECT</span> nombre, cargo <span class="k">FROM</span> COLABORADOR;   <span class="c">-- OK: columnas permitidas</span>
+<span class="k">REVERT</span>;
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioVendedor'</span>;
+    <span class="k">SELECT</span> nombre, sueldo <span class="k">FROM</span> COLABORADOR;  <span class="c">-- ERROR 230: permiso denegado en la columna sueldo</span>
+<span class="k">REVERT</span>;
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioRRHH'</span>;
+    <span class="k">SELECT</span> nombre, sueldo <span class="k">FROM</span> COLABORADOR;  <span class="c">-- OK</span>
+<span class="k">REVERT</span>;</pre>
+
+    <div class="nota">
+      <strong>Buena práctica:</strong> los permisos se dan a los <strong>roles</strong>; las personas solo se agregan
+      o se quitan de los roles. Cuando alguien cambia de puesto, basta con moverlo de rol.
+    </div>
+
+    <!-- ── PASO 9 ── -->
+    <h2 class="morado">Paso 9 — Consultar logins, usuarios, roles y permisos</h2>
+
+    <pre class="ejemplo"><span class="c">-- ① Logins del servidor (S = SQL, U = usuario Windows, G = grupo Windows)</span>
+<span class="k">SELECT</span> name, type_desc, default_database_name, is_disabled, create_date
+<span class="k">FROM</span> sys.server_principals
+<span class="k">WHERE</span> type <span class="k">IN</span> (<span class="s">'S'</span>, <span class="s">'U'</span>, <span class="s">'G'</span>)
+<span class="k">ORDER BY</span> name;
+
+<span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+
+<span class="c">-- ② Usuarios y roles de la base de datos actual</span>
+<span class="k">SELECT</span> name, type_desc, authentication_type_desc, create_date
+<span class="k">FROM</span> sys.database_principals
+<span class="k">WHERE</span> type <span class="k">IN</span> (<span class="s">'S'</span>, <span class="s">'U'</span>, <span class="s">'R'</span>) <span class="k">AND</span> principal_id &gt; 4   <span class="c">-- omite dbo, guest, sys, INFORMATION_SCHEMA</span>
+<span class="k">ORDER BY</span> type_desc, name;
+
+<span class="c">-- ③ ¿Quién pertenece a qué rol?</span>
+<span class="k">SELECT</span> r.name <span class="k">AS</span> rol, m.name <span class="k">AS</span> miembro
+<span class="k">FROM</span> sys.database_role_members rm
+<span class="k">JOIN</span> sys.database_principals r <span class="k">ON</span> rm.role_principal_id   = r.principal_id
+<span class="k">JOIN</span> sys.database_principals m <span class="k">ON</span> rm.member_principal_id = m.principal_id
+<span class="k">ORDER BY</span> rol, miembro;
+
+<span class="c">-- ④ Permisos explícitos (GRANT / DENY) de cada usuario o rol</span>
+<span class="k">SELECT</span> pr.name             <span class="k">AS</span> principal,
+       pe.state_desc        <span class="k">AS</span> estado,       <span class="c">-- GRANT o DENY</span>
+       pe.permission_name   <span class="k">AS</span> permiso,
+       pe.class_desc        <span class="k">AS</span> ambito,       <span class="c">-- DATABASE, OBJECT_OR_COLUMN, SCHEMA...</span>
+       <span class="t">OBJECT_NAME</span>(pe.major_id) <span class="k">AS</span> objeto
+<span class="k">FROM</span> sys.database_permissions pe
+<span class="k">JOIN</span> sys.database_principals pr <span class="k">ON</span> pe.grantee_principal_id = pr.principal_id
+<span class="k">WHERE</span> pr.name <span class="k">IN</span> (<span class="s">'UsuarioBDFinanciera'</span>, <span class="s">'UsuarioApp'</span>, <span class="s">'RolVendedor'</span>, <span class="s">'RolRRHH'</span>)
+<span class="k">ORDER BY</span> principal, objeto;
+
+<span class="c">-- ⑤ Permisos EFECTIVOS de un usuario sobre una tabla (incluye los heredados de roles)</span>
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioVendedor'</span>;
+    <span class="k">SELECT</span> subentity_name <span class="k">AS</span> columna, permission_name
+    <span class="k">FROM</span> <span class="t">fn_my_permissions</span>(<span class="s">'dbo.COLABORADOR'</span>, <span class="s">'OBJECT'</span>);
+<span class="k">REVERT</span>;</pre>
+
+    <div class="card azul">
+      <strong>Vistas antiguas que aún verás:</strong>
+      <ul>
+        <li><code>master..syslogins</code> — lista de logins. Su columna <code>password</code> siempre aparece en
+          <code>NULL</code>: las contraseñas se guardan cifradas (hash) y no se pueden leer.
+          <span class="ejemplo-mini">// SELECT sid, name, dbname, loginname FROM master..syslogins;</span></li>
+        <li><code>sysusers</code> — usuarios de la base actual.
+          <span class="ejemplo-mini">// SELECT uid, name, sid FROM sysusers WHERE islogin = 1;</span></li>
+      </ul>
+      Son vistas de compatibilidad; en código nuevo usa <code>sys.server_principals</code> y
+      <code>sys.database_principals</code>.
+    </div>
+
+    <!-- ===================== SECCIÓN 10 ===================== -->
+    <h2 id="s10">10. Implementación de políticas de contraseña</h2>
+
+    <p>
+      Los logins de SQL Server pueden heredar las <strong>directivas de contraseña de Windows</strong>
+      (longitud mínima, complejidad, caducidad y bloqueo por intentos fallidos).
+    </p>
+
+    <table>
+      <tr><th>Opción</th><th>¿Qué hace?</th></tr>
+      <tr><td><code>CHECK_POLICY = ON</code></td><td>Exige complejidad y aplica el bloqueo de cuenta tras varios intentos fallidos.</td></tr>
+      <tr><td><code>CHECK_EXPIRATION = ON</code></td><td>La contraseña caduca según la directiva de Windows. Requiere <code>CHECK_POLICY = ON</code>.</td></tr>
+      <tr><td><code>MUST_CHANGE</code></td><td>Obliga a cambiar la contraseña en el próximo inicio de sesión.</td></tr>
+    </table>
+
+    <pre class="ejemplo"><span class="k">USE</span> master;
+<span class="k">GO</span>
+
+<span class="c">-- Cambiar la contraseña y activar políticas (observa las comas entre opciones)</span>
+<span class="k">ALTER LOGIN</span> LoginFinanciera
+<span class="k">WITH PASSWORD</span> = <span class="s">N'Nueva#Clave2026'</span>,
+     <span class="k">CHECK_POLICY</span> = <span class="k">ON</span>,         <span class="c">-- complejidad + bloqueo</span>
+     <span class="k">CHECK_EXPIRATION</span> = <span class="k">ON</span>;     <span class="c">-- la contraseña caduca</span>
+<span class="k">GO</span>
+
+<span class="c">-- Login nuevo que debe cambiar su contraseña al entrar por primera vez</span>
+<span class="k">CREATE LOGIN</span> LoginPracticante
+<span class="k">WITH PASSWORD</span> = <span class="s">N'Temporal#2026'</span> <span class="k">MUST_CHANGE</span>,   <span class="c">-- MUST_CHANGE va pegado a la contraseña</span>
+     <span class="k">CHECK_POLICY</span> = <span class="k">ON</span>,
+     <span class="k">CHECK_EXPIRATION</span> = <span class="k">ON</span>;                         <span class="c">-- obligatorio si se usa MUST_CHANGE</span>
+<span class="k">GO</span>
+
+<span class="c">-- Comprobación: qué logins tienen las políticas activas</span>
+<span class="k">SELECT</span> name, is_policy_checked, is_expiration_checked,
+       <span class="t">LOGINPROPERTY</span>(name, <span class="s">'IsMustChange'</span>)     <span class="k">AS</span> debe_cambiar,
+       <span class="t">LOGINPROPERTY</span>(name, <span class="s">'DaysUntilExpiration'</span>) <span class="k">AS</span> dias_para_caducar
+<span class="k">FROM</span> sys.sql_logins
+<span class="k">WHERE</span> name <span class="k">IN</span> (<span class="s">'LoginFinanciera'</span>, <span class="s">'LoginPracticante'</span>);
+
+<span class="c">-- Deshabilitar un login sin borrarlo (por ejemplo, un empleado de vacaciones)</span>
+<span class="k">ALTER LOGIN</span> LoginPracticante <span class="k">DISABLE</span>;   <span class="c">-- ENABLE para reactivarlo</span></pre>
+
+    <div class="nota alerta">
+      <strong>Error frecuente:</strong> escribir las opciones sin coma
+      (<code>WITH PASSWORD = '...' CHECK_POLICY = ON</code>) produce un error de sintaxis.
+      Las opciones de <code>WITH</code> se separan siempre con comas; solo <code>MUST_CHANGE</code> va inmediatamente
+      después de la contraseña, sin coma.
+    </div>
+
+    <!-- ===================== SECCIÓN 11 ===================== -->
+    <h2 id="s11">11. Gestión de permisos a nivel de sistema</h2>
+
+    <p>
+      Los permisos de servidor garantizan que solo las personas autorizadas puedan <strong>administrar</strong>
+      el servidor. Se conceden desde <code>master</code> y siempre a un <strong>login</strong> (no a un usuario de base de datos).
+    </p>
+
+    <pre class="ejemplo"><span class="k">USE</span> master;
+<span class="k">GO</span>
+
+<span class="c">-- Permitir que el login cree y modifique otros logins</span>
+<span class="k">GRANT ALTER ANY LOGIN TO</span> [LoginFinanciera];
+
+<span class="c">-- Permitir ver el estado del servidor (sesiones, rendimiento) sin poder cambiar nada</span>
+<span class="k">GRANT VIEW SERVER STATE TO</span> [LoginFinanciera];
+<span class="k">GO</span>
+
+<span class="c">-- Comprobación: permisos de servidor del login</span>
+<span class="k">SELECT</span> pr.name, pe.state_desc, pe.permission_name
+<span class="k">FROM</span> sys.server_permissions pe
+<span class="k">JOIN</span> sys.server_principals pr <span class="k">ON</span> pe.grantee_principal_id = pr.principal_id
+<span class="k">WHERE</span> pr.name = <span class="s">'LoginFinanciera'</span>;
+
+<span class="c">-- Retirar el permiso cuando ya no se necesite</span>
+<span class="k">REVOKE ALTER ANY LOGIN FROM</span> [LoginFinanciera];</pre>
+
+    <div class="nota">
+      <strong>Para recordar:</strong> en la tabla del resultado verás también <code>CONNECT SQL</code>:
+      SQL Server lo concede automáticamente a cada login nuevo para que pueda conectarse.
+    </div>
+
+    <!-- ===================== SECCIÓN 12 ===================== -->
+    <h2 id="s12">12. Auditoría de eventos</h2>
+
+    <p>
+      La auditoría <strong>registra actividades</strong> del servidor o de la base de datos (quién se conectó,
+      quién leyó una tabla sensible, quién falló al iniciar sesión). Se configura en tres piezas:
+    </p>
+
+    <div class="card morado">
+      <div class="flujo">
+        <div class="paso" style="border-color:#7b1e1e;">
+          <strong style="color:#7b1e1e;">SERVER AUDIT</strong>
+          ¿Dónde se guarda?<br><span style="color:#666;">archivo, registro de Windows</span>
+        </div>
+        <div class="flecha">+</div>
+        <div class="paso" style="border-color:#6aa8c8;">
+          <strong style="color:#1a5c8a;">SERVER AUDIT SPECIFICATION</strong>
+          ¿Qué eventos del servidor?<br><span style="color:#666;">inicios de sesión</span>
+        </div>
+        <div class="flecha">+</div>
+        <div class="paso" style="border-color:#6bbf8a;">
+          <strong style="color:#2e7d32;">DATABASE AUDIT SPECIFICATION</strong>
+          ¿Qué acciones en la base?<br><span style="color:#666;">SELECT, UPDATE sobre una tabla</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="nota">
+      <strong>Antes de ejecutar:</strong> crea la carpeta <code>C:\Auditoria\</code> en el equipo del servidor.
+      La cuenta del servicio de SQL Server debe poder escribir en ella. Necesitas ser <code>sysadmin</code>
+      (o tener <code>ALTER ANY SERVER AUDIT</code>).
+    </div>
+
+    <pre class="ejemplo"><span class="k">USE</span> master;
+<span class="k">GO</span>
+
+<span class="c">-- ① El "contenedor": dónde se escriben los eventos</span>
+<span class="k">CREATE SERVER AUDIT</span> AuditoriaInicioSesion
+<span class="k">TO FILE</span> (<span class="k">FILEPATH</span> = <span class="s">'C:\Auditoria\'</span>, <span class="k">MAXSIZE</span> = 100 <span class="k">MB</span>);
+<span class="k">GO</span>
+
+<span class="c">-- ② Qué eventos de SERVIDOR se registran: inicios de sesión correctos y fallidos</span>
+<span class="k">CREATE SERVER AUDIT SPECIFICATION</span> EspecInicioSesion
+<span class="k">FOR SERVER AUDIT</span> AuditoriaInicioSesion
+    <span class="k">ADD</span> (FAILED_LOGIN_GROUP),
+    <span class="k">ADD</span> (SUCCESSFUL_LOGIN_GROUP)
+<span class="k">WITH</span> (<span class="k">STATE</span> = <span class="k">ON</span>);
+<span class="k">GO</span>
+
+<span class="c">-- ③ Activar la auditoría (se crea desactivada)</span>
+<span class="k">ALTER SERVER AUDIT</span> AuditoriaInicioSesion <span class="k">WITH</span> (<span class="k">STATE</span> = <span class="k">ON</span>);
+<span class="k">GO</span>
+
+<span class="c">-- ④ Qué acciones de BASE DE DATOS se registran: quién consulta o modifica COLABORADOR</span>
+<span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+<span class="k">CREATE DATABASE AUDIT SPECIFICATION</span> EspecColaborador
+<span class="k">FOR SERVER AUDIT</span> AuditoriaInicioSesion
+    <span class="k">ADD</span> (<span class="k">SELECT</span>, <span class="k">UPDATE ON</span> dbo.COLABORADOR <span class="k">BY</span> public)   <span class="c">-- public = cualquier usuario</span>
+<span class="k">WITH</span> (<span class="k">STATE</span> = <span class="k">ON</span>);
+<span class="k">GO</span>
+
+<span class="c">-- Prueba: generar un evento auditable</span>
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioRRHH'</span>;
+    <span class="k">SELECT</span> nombre, sueldo <span class="k">FROM</span> COLABORADOR;
+<span class="k">REVERT</span>;
+
+<span class="c">-- Leer lo que quedó registrado en el archivo de auditoría</span>
+<span class="k">SELECT</span> event_time, action_id, succeeded,
+       server_principal_name, database_principal_name, object_name, statement
+<span class="k">FROM</span> sys.<span class="t">fn_get_audit_file</span>(<span class="s">'C:\Auditoria\*.sqlaudit'</span>, <span class="k">DEFAULT</span>, <span class="k">DEFAULT</span>)
+<span class="k">ORDER BY</span> event_time <span class="k">DESC</span>;</pre>
+
+    <div class="nota">
+      <strong>Resultado:</strong> verás filas con <code>action_id = 'SL'</code> (SELECT) sobre <code>COLABORADOR</code>
+      y el usuario que la ejecutó. Si te desconectas y vuelves a conectarte con <code>LoginFinanciera</code>,
+      aparecerán filas <code>LGIS</code> (inicio de sesión correcto); un intento con contraseña errónea genera
+      <code>LGIF</code> (fallido).
+    </div>
+
+    <div class="nota alerta">
+      <strong>Importante:</strong> <code>CREATE SERVER AUDIT</code> solo crea el destino. Sin una
+      <strong>especificación</strong> que diga qué eventos capturar, la auditoría queda activa pero
+      <strong>no registra nada</strong>.
+    </div>
+
+    <!-- ===================== SECCIÓN 13 ===================== -->
+    <h2 id="s13">13. Control de acceso a datos sensibles</h2>
+
+    <p>
+      Los permisos deciden <strong>quién</strong> accede a una tabla; para proteger además
+      <strong>el contenido</strong> de columnas sensibles existen dos técnicas complementarias:
+    </p>
+
+    <table>
+      <tr>
+        <th>Técnica</th>
+        <th>¿Qué hace?</th>
+        <th>¿El dato está cifrado?</th>
+        <th>Dificultad</th>
+      </tr>
+      <tr>
+        <td><strong>Enmascaramiento dinámico</strong> (<em>Dynamic Data Masking</em>)</td>
+        <td>Muestra el dato oculto (<code>aXXX@XXXX.com</code>) a quien no tiene permiso <code>UNMASK</code>.</td>
+        <td>No: solo se oculta al mostrarlo</td>
+        <td>Baja — ideal para practicar</td>
+      </tr>
+      <tr>
+        <td><strong>Always Encrypted</strong></td>
+        <td>El dato viaja y se guarda cifrado; solo la aplicación cliente con la llave puede leerlo.</td>
+        <td>Sí: ni el administrador lo ve</td>
+        <td>Alta — requiere llaves y configurar el cliente</td>
+      </tr>
+    </table>
+
+    <h2 class="verde">13.1 Enmascaramiento dinámico de datos</h2>
+
+    <pre class="ejemplo"><span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+
+<span class="c">-- Ocultar email (formato de correo) y teléfono (muestra solo los 3 últimos dígitos)</span>
+<span class="k">ALTER TABLE</span> CLIENTE <span class="k">ALTER COLUMN</span> email
+    <span class="k">ADD MASKED WITH</span> (<span class="k">FUNCTION</span> = <span class="s">'email()'</span>);
+<span class="k">ALTER TABLE</span> CLIENTE <span class="k">ALTER COLUMN</span> telefono
+    <span class="k">ADD MASKED WITH</span> (<span class="k">FUNCTION</span> = <span class="s">'partial(0,"XXX-XXX-",3)'</span>);
+
+<span class="c">-- Ocultar el sueldo (los números se muestran como 0)</span>
+<span class="k">ALTER TABLE</span> COLABORADOR <span class="k">ALTER COLUMN</span> sueldo
+    <span class="k">ADD MASKED WITH</span> (<span class="k">FUNCTION</span> = <span class="s">'default()'</span>);
+<span class="k">GO</span>
+
+<span class="c">-- Prueba 1: el vendedor ve los datos enmascarados</span>
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioVendedor'</span>;
+    <span class="k">SELECT</span> nombre, email, telefono <span class="k">FROM</span> CLIENTE;   <span class="c">-- aXXX@XXXX.com | XXX-XXX-321</span>
+<span class="k">REVERT</span>;
+
+<span class="c">-- Prueba 2: RR.HH. necesita ver el sueldo real → permiso UNMASK</span>
+<span class="k">GRANT UNMASK TO</span> RolRRHH;
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioRRHH'</span>;
+    <span class="k">SELECT</span> nombre, sueldo <span class="k">FROM</span> COLABORADOR;        <span class="c">-- valores reales</span>
+<span class="k">REVERT</span>;
+
+<span class="c">-- Ver qué columnas están enmascaradas</span>
+<span class="k">SELECT</span> <span class="t">OBJECT_NAME</span>(object_id) <span class="k">AS</span> tabla, name <span class="k">AS</span> columna, masking_function
+<span class="k">FROM</span> sys.masked_columns;</pre>
+
+    <div class="nota">
+      <strong>Para recordar:</strong> los usuarios con <code>db_owner</code> o <code>sysadmin</code> siempre ven los
+      datos reales. Por eso, al probar como administrador sin <code>EXECUTE AS</code>, no notarás ningún cambio.
+    </div>
+
+    <h2 class="morado">13.2 Always Encrypted (demostrativo)</h2>
+
+    <p>
+      Always Encrypted cifra la columna con una <strong>llave de cifrado de columna</strong> (CEK) protegida a su vez
+      por una <strong>llave maestra de columna</strong> (CMK) que vive fuera de SQL Server (por ejemplo, en el
+      almacén de certificados de Windows). Las llaves se crean más fácilmente con el asistente de SSMS:
+      clic derecho sobre la tabla → <strong>Cifrar columnas...</strong>
+    </p>
+
+    <pre class="ejemplo"><span class="c">-- Requiere que la llave LlaveEncriptacion ya exista (creada con el asistente de SSMS)</span>
+<span class="k">ALTER TABLE</span> dbo.COLABORADOR
+<span class="k">ADD</span> numero_cuenta <span class="t">VARCHAR</span>(30)
+    <span class="k">COLLATE</span> Latin1_General_BIN2                          <span class="c">-- obligatorio para cifrado determinista de texto</span>
+    <span class="k">ENCRYPTED WITH</span> (
+        <span class="k">COLUMN_ENCRYPTION_KEY</span> = LlaveEncriptacion,
+        <span class="k">ENCRYPTION_TYPE</span> = <span class="k">DETERMINISTIC</span>,                 <span class="c">-- mismo valor → mismo cifrado (permite WHERE =)</span>
+        <span class="k">ALGORITHM</span> = <span class="s">'AEAD_AES_256_CBC_HMAC_SHA_256'</span>    <span class="c">-- el algoritmo va entre comillas</span>
+    ) <span class="k">NULL</span>;</pre>
+
+    <div class="nota">
+      <strong>Determinista vs aleatorio:</strong> <code>DETERMINISTIC</code> genera siempre el mismo valor cifrado para el
+      mismo dato, lo que permite búsquedas por igualdad, pero puede revelar patrones. <code>RANDOMIZED</code> es más
+      seguro, pero no permite buscar ni agrupar por esa columna.
+    </div>
+
+    <!-- ===================== SECCIÓN 14 ===================== -->
+    <h2 id="s14">14. Limpieza del entorno</h2>
+
+    <p>
+      Al terminar la práctica conviene eliminar lo creado. El orden importa: primero lo que depende de otra cosa.
+    </p>
+
+    <pre class="ejemplo"><span class="c">-- ① Auditoría de base de datos: desactivar y eliminar</span>
+<span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+<span class="k">ALTER DATABASE AUDIT SPECIFICATION</span> EspecColaborador <span class="k">WITH</span> (<span class="k">STATE</span> = <span class="k">OFF</span>);
+<span class="k">DROP DATABASE AUDIT SPECIFICATION</span> EspecColaborador;
+<span class="k">GO</span>
+
+<span class="c">-- ② Auditoría de servidor: especificación primero, auditoría después</span>
+<span class="k">USE</span> master;
+<span class="k">GO</span>
+<span class="k">ALTER SERVER AUDIT SPECIFICATION</span> EspecInicioSesion <span class="k">WITH</span> (<span class="k">STATE</span> = <span class="k">OFF</span>);
+<span class="k">DROP SERVER AUDIT SPECIFICATION</span> EspecInicioSesion;
+<span class="k">ALTER SERVER AUDIT</span> AuditoriaInicioSesion <span class="k">WITH</span> (<span class="k">STATE</span> = <span class="k">OFF</span>);
+<span class="k">DROP SERVER AUDIT</span> AuditoriaInicioSesion;
+<span class="k">GO</span>
+
+<span class="c">-- ③ Usuarios (dentro de la base) ANTES que los logins</span>
+<span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+<span class="k">DROP USER IF EXISTS</span> UsuarioBDFinanciera;
+<span class="k">DROP USER IF EXISTS</span> UsuarioApp;
+<span class="k">DROP USER IF EXISTS</span> UsuarioVendedor;
+<span class="k">DROP USER IF EXISTS</span> UsuarioRRHH;
+<span class="k">DROP ROLE IF EXISTS</span> RolVendedor;     <span class="c">-- un rol solo se elimina si ya no tiene miembros</span>
+<span class="k">DROP ROLE IF EXISTS</span> RolRRHH;
+<span class="k">GO</span>
+
+<span class="c">-- ④ Logins (en master)</span>
+<span class="k">USE</span> master;
+<span class="k">GO</span>
+<span class="k">IF EXISTS</span> (<span class="k">SELECT</span> 1 <span class="k">FROM</span> sys.server_principals <span class="k">WHERE</span> name = <span class="s">'LoginFinanciera'</span>)
+    <span class="k">DROP LOGIN</span> LoginFinanciera;
+<span class="k">IF EXISTS</span> (<span class="k">SELECT</span> 1 <span class="k">FROM</span> sys.server_principals <span class="k">WHERE</span> name = <span class="s">'LoginPracticante'</span>)
+    <span class="k">DROP LOGIN</span> LoginPracticante;
+<span class="k">GO</span></pre>
+
+    <div class="nota">
+      <strong>¿Por qué el usuario antes que el login?</strong> SQL Server permite borrar un login aunque tenga usuarios
+      enlazados, pero esos usuarios quedan <strong>huérfanos</strong> (sin login asociado) dentro de cada base de datos.
+      Borrar primero el usuario evita dejar restos. La base <code>FinancieraDemoBD</code> no se elimina:
+      se usará en los ejercicios.
+    </div>
+
+    <!-- ===================== SECCIÓN 15 ===================== -->
+    <h2 id="s15">15. Resumen de comandos</h2>
+
+    <table>
+      <tr>
+        <th>Objetivo</th>
+        <th>Comando</th>
+        <th>Nivel</th>
+      </tr>
+      <tr><td>Crear inicio de sesión</td><td><code>CREATE LOGIN ... WITH PASSWORD = '...'</code></td><td>Servidor</td></tr>
+      <tr><td>Login de Windows</td><td><code>CREATE LOGIN [DOMINIO\usuario] FROM WINDOWS</code></td><td>Servidor</td></tr>
+      <tr><td>Rol de servidor a un login</td><td><code>ALTER SERVER ROLE rol ADD MEMBER login</code></td><td>Servidor</td></tr>
+      <tr><td>Políticas de contraseña</td><td><code>ALTER LOGIN ... WITH CHECK_POLICY = ON, CHECK_EXPIRATION = ON</code></td><td>Servidor</td></tr>
+      <tr><td>Crear usuario</td><td><code>CREATE USER usuario FOR LOGIN login</code></td><td>Base de datos</td></tr>
+      <tr><td>Crear rol</td><td><code>CREATE ROLE rol</code></td><td>Base de datos</td></tr>
+      <tr><td>Agregar usuario a rol</td><td><code>ALTER ROLE rol ADD MEMBER usuario</code></td><td>Base de datos</td></tr>
+      <tr><td>Conceder permiso</td><td><code>GRANT SELECT ON tabla TO usuario</code></td><td>Objeto</td></tr>
+      <tr><td>Prohibir permiso</td><td><code>DENY DELETE ON tabla TO usuario</code></td><td>Objeto</td></tr>
+      <tr><td>Quitar GRANT o DENY</td><td><code>REVOKE SELECT ON tabla FROM usuario</code></td><td>Objeto</td></tr>
+      <tr><td>Probar como otro usuario</td><td><code>EXECUTE AS USER = '...'</code> … <code>REVERT</code></td><td>Sesión</td></tr>
+      <tr><td>Auditar eventos</td><td><code>CREATE SERVER AUDIT</code> + <code>... AUDIT SPECIFICATION</code></td><td>Servidor / BD</td></tr>
+      <tr><td>Enmascarar columna</td><td><code>ALTER COLUMN ... ADD MASKED WITH (FUNCTION = '...')</code></td><td>Columna</td></tr>
+    </table>
+
+    <div class="nota" style="margin-top:28px;">
+      <strong>Las tres reglas de la sesión:</strong><br>
+      &bull; Login para entrar al <strong>servidor</strong>; usuario para entrar a la <strong>base de datos</strong>.<br>
+      &bull; Los permisos se dan a <strong>roles</strong>, y las personas se agregan a los roles.<br>
+      &bull; <code>DENY</code> siempre gana; <code>REVOKE</code> solo borra lo que se había dado o negado.
+    </div>
+
+    <!-- ===================== SECCIÓN 16: EJERCICIOS ===================== -->
+    <h2 id="s16">16. Ejercicios prácticos para clase</h2>
+
+    <p>
+      Los ejercicios usan la base de datos <code>FinancieraDemoBD</code> de la sección 9 (tablas
+      <code>CLIENTE</code>, <code>PROVEEDOR</code> y <code>COLABORADOR</code>, y sus procedimientos).
+      Cada ejercicio incluye el enunciado, pistas y una solución oculta para revisar al final.
+    </p>
+
+    <div class="nota">
+      <strong>Recomendación:</strong> resuelve primero sin abrir la solución. Comprueba cada permiso con
+      <code>EXECUTE AS USER</code> / <code>REVERT</code> y consulta las vistas del Paso 9 para ver qué quedó configurado.
+    </div>
+
+    <!-- EJERCICIO 1 -->
+    <h2 class="verde">Ejercicio 1 — Login y usuario para el cajero</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear el login <code>LoginCajero</code> (autenticación SQL Server, con política de contraseña) y su usuario
+        <code>UsuarioCajero</code> en <code>FinancieraDemoBD</code>. El cajero solo puede <strong>leer</strong>
+        la tabla <code>CLIENTE</code> y <strong>ejecutar</strong> <code>spInsertar_Cliente</code>.
+        Comprobar que <strong>no puede eliminar</strong> clientes.
+      </p>
+      <strong>Tablas involucradas:</strong> <code>CLIENTE</code>
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>El login se crea en <code>master</code>; el usuario, en <code>FinancieraDemoBD</code>.</li>
+        <li>Usa <code>IF NOT EXISTS</code> con <code>sys.server_principals</code> y <code>sys.database_principals</code>.</li>
+        <li>Dos <code>GRANT</code>: uno de <code>SELECT</code> sobre la tabla y otro de <code>EXECUTE</code> sobre el procedimiento.</li>
+        <li>Prueba un <code>DELETE</code> dentro de <code>EXECUTE AS USER</code>: debe fallar.</li>
+      </ul>
+    </div>
+
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <pre class="ejemplo"><span class="k">USE</span> master;
+<span class="k">GO</span>
+<span class="k">IF NOT EXISTS</span> (<span class="k">SELECT</span> 1 <span class="k">FROM</span> sys.server_principals <span class="k">WHERE</span> name = <span class="s">N'LoginCajero'</span>)
+    <span class="k">CREATE LOGIN</span> LoginCajero <span class="k">WITH PASSWORD</span> = <span class="s">N'Cajero#2026'</span>,
+                             <span class="k">DEFAULT_DATABASE</span> = FinancieraDemoBD,
+                             <span class="k">CHECK_POLICY</span> = <span class="k">ON</span>;
+<span class="k">GO</span>
+
+<span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+<span class="k">IF NOT EXISTS</span> (<span class="k">SELECT</span> 1 <span class="k">FROM</span> sys.database_principals <span class="k">WHERE</span> name = <span class="s">N'UsuarioCajero'</span>)
+    <span class="k">CREATE USER</span> UsuarioCajero <span class="k">FOR LOGIN</span> LoginCajero;
+
+<span class="k">GRANT SELECT ON</span> dbo.CLIENTE <span class="k">TO</span> UsuarioCajero;              <span class="c">-- solo lectura de la tabla</span>
+<span class="k">GRANT EXECUTE ON</span> spInsertar_Cliente <span class="k">TO</span> UsuarioCajero;        <span class="c">-- inserta solo vía procedimiento</span>
+<span class="k">GO</span>
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioCajero'</span>;
+    <span class="k">SELECT</span> * <span class="k">FROM</span> CLIENTE;                                              <span class="c">-- OK</span>
+    <span class="k">EXEC</span> spInsertar_Cliente <span class="s">'Pedro Gómez'</span>, <span class="s">'43215678'</span>, <span class="s">'pedro@mail.com'</span>; <span class="c">-- OK</span>
+<span class="k">REVERT</span>;
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioCajero'</span>;
+    <span class="k">DELETE FROM</span> CLIENTE <span class="k">WHERE</span> nombre = <span class="s">'Pedro Gómez'</span>;              <span class="c">-- ERROR 229</span>
+<span class="k">REVERT</span>;</pre>
+    </details>
+
+    <!-- EJERCICIO 2 -->
+    <h2 class="verde">Ejercicio 2 — Rol auditor de solo lectura sin datos salariales</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear el rol <code>RolAuditor</code> que pueda <strong>leer</strong> <code>CLIENTE</code> y
+        <code>PROVEEDOR</code> completos, y de <code>COLABORADOR</code> solo <code>nombre</code> y <code>cargo</code>.
+        Crear el usuario <code>UsuarioAuditor</code> sin login, agregarlo al rol y comprobar que no puede ver
+        <code>sueldo</code> ni modificar ninguna tabla.
+      </p>
+      <strong>Tablas involucradas:</strong> <code>CLIENTE</code>, <code>PROVEEDOR</code> y <code>COLABORADOR</code>
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li><code>CREATE ROLE</code> y luego los <code>GRANT</code> al rol, no al usuario.</li>
+        <li>Permiso por columnas: <code>GRANT SELECT ON tabla (col1, col2) TO rol</code>.</li>
+        <li><code>CREATE USER ... WITHOUT LOGIN</code> y <code>ALTER ROLE ... ADD MEMBER</code>.</li>
+        <li>Verifica con <code>fn_my_permissions('dbo.COLABORADOR', 'OBJECT')</code>.</li>
+      </ul>
+    </div>
+
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <pre class="ejemplo"><span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+<span class="k">CREATE ROLE</span> RolAuditor;
+<span class="k">GRANT SELECT ON</span> dbo.CLIENTE   <span class="k">TO</span> RolAuditor;
+<span class="k">GRANT SELECT ON</span> dbo.PROVEEDOR <span class="k">TO</span> RolAuditor;
+<span class="k">GRANT SELECT ON</span> dbo.COLABORADOR (nombre, cargo) <span class="k">TO</span> RolAuditor;   <span class="c">-- sin sueldo</span>
+
+<span class="k">CREATE USER</span> UsuarioAuditor <span class="k">WITHOUT LOGIN</span>;
+<span class="k">ALTER ROLE</span> RolAuditor <span class="k">ADD MEMBER</span> UsuarioAuditor;
+<span class="k">GO</span>
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioAuditor'</span>;
+    <span class="k">SELECT</span> nombre, cargo <span class="k">FROM</span> COLABORADOR;                          <span class="c">-- OK</span>
+    <span class="k">SELECT</span> subentity_name, permission_name
+    <span class="k">FROM</span> <span class="t">fn_my_permissions</span>(<span class="s">'dbo.COLABORADOR'</span>, <span class="s">'OBJECT'</span>);           <span class="c">-- solo nombre y cargo</span>
+<span class="k">REVERT</span>;
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioAuditor'</span>;
+    <span class="k">SELECT</span> sueldo <span class="k">FROM</span> COLABORADOR;                                 <span class="c">-- ERROR 230</span>
+<span class="k">REVERT</span>;
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioAuditor'</span>;
+    <span class="k">UPDATE</span> PROVEEDOR <span class="k">SET</span> telefono = <span class="s">'000'</span> <span class="k">WHERE</span> id_proveedor = 1;  <span class="c">-- ERROR 229</span>
+<span class="k">REVERT</span>;</pre>
+    </details>
+
+    <!-- EJERCICIO 3 -->
+    <h2 class="verde">Ejercicio 3 — DENY sobre un rol fijo</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear el usuario <code>UsuarioOperador</code> (sin login) como miembro de <code>db_datareader</code> y
+        <code>db_datawriter</code>. La empresa decide que <strong>no puede eliminar proveedores</strong>,
+        pero sí debe seguir eliminando otros registros. Aplicarlo, comprobarlo y luego deshacer la restricción.
+      </p>
+      <strong>Tablas involucradas:</strong> <code>PROVEEDOR</code> y <code>CLIENTE</code>
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>No se puede “quitar” un permiso de un rol fijo para una sola tabla con <code>REVOKE</code>: hay que usar <code>DENY</code>.</li>
+        <li>Para comprobar el <code>DELETE</code> sin perder datos, envuélvelo en una transacción con <code>ROLLBACK</code>.</li>
+        <li>Para deshacer: <code>REVOKE DELETE ON ... FROM ...</code>.</li>
+      </ul>
+    </div>
+
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <pre class="ejemplo"><span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+<span class="k">CREATE USER</span> UsuarioOperador <span class="k">WITHOUT LOGIN</span>;
+<span class="k">ALTER ROLE</span> db_datareader <span class="k">ADD MEMBER</span> UsuarioOperador;
+<span class="k">ALTER ROLE</span> db_datawriter <span class="k">ADD MEMBER</span> UsuarioOperador;
+
+<span class="k">DENY DELETE ON</span> dbo.PROVEEDOR <span class="k">TO</span> UsuarioOperador;   <span class="c">-- gana sobre db_datawriter</span>
+<span class="k">GO</span>
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioOperador'</span>;
+    <span class="k">DELETE FROM</span> PROVEEDOR <span class="k">WHERE</span> id_proveedor = 3;      <span class="c">-- ERROR 229</span>
+<span class="k">REVERT</span>;
+
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioOperador'</span>;
+    <span class="k">BEGIN TRANSACTION</span>;
+        <span class="k">DELETE FROM</span> CLIENTE <span class="k">WHERE</span> id_cliente = 5;      <span class="c">-- OK: en CLIENTE no hay DENY</span>
+    <span class="k">ROLLBACK</span>;                                         <span class="c">-- deshace el borrado de prueba</span>
+<span class="k">REVERT</span>;
+
+<span class="c">-- Quitar la restricción: vuelve a valer db_datawriter</span>
+<span class="k">REVOKE DELETE ON</span> dbo.PROVEEDOR <span class="k">FROM</span> UsuarioOperador;</pre>
+    </details>
+
+    <!-- EJERCICIO 4 -->
+    <h2 class="verde">Ejercicio 4 — Política de contraseñas para practicantes</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Crear el login <code>LoginPracticante2</code> con una contraseña temporal que el practicante
+        <strong>deba cambiar al primer ingreso</strong>, con verificación de complejidad y caducidad.
+        Luego consultar <code>sys.sql_logins</code> para comprobar la configuración y
+        <strong>deshabilitar</strong> el login al terminar las prácticas.
+      </p>
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li><code>MUST_CHANGE</code> va justo después de la contraseña y exige <code>CHECK_EXPIRATION = ON</code>.</li>
+        <li>Columnas útiles: <code>is_policy_checked</code>, <code>is_expiration_checked</code>, <code>is_disabled</code>.</li>
+        <li><code>LOGINPROPERTY(name, 'IsMustChange')</code> devuelve 1 si debe cambiarla.</li>
+      </ul>
+    </div>
+
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <pre class="ejemplo"><span class="k">USE</span> master;
+<span class="k">GO</span>
+<span class="k">CREATE LOGIN</span> LoginPracticante2
+<span class="k">WITH PASSWORD</span> = <span class="s">N'Temporal#2026'</span> <span class="k">MUST_CHANGE</span>,
+     <span class="k">CHECK_POLICY</span> = <span class="k">ON</span>,
+     <span class="k">CHECK_EXPIRATION</span> = <span class="k">ON</span>;
+<span class="k">GO</span>
+
+<span class="k">SELECT</span> name, is_policy_checked, is_expiration_checked, is_disabled,
+       <span class="t">LOGINPROPERTY</span>(name, <span class="s">'IsMustChange'</span>) <span class="k">AS</span> debe_cambiar   <span class="c">-- 1</span>
+<span class="k">FROM</span> sys.sql_logins
+<span class="k">WHERE</span> name = <span class="s">'LoginPracticante2'</span>;
+
+<span class="c">-- Fin de prácticas</span>
+<span class="k">ALTER LOGIN</span> LoginPracticante2 <span class="k">DISABLE</span>;
+<span class="k">SELECT</span> name, is_disabled <span class="k">FROM</span> sys.sql_logins <span class="k">WHERE</span> name = <span class="s">'LoginPracticante2'</span>;   <span class="c">-- 1</span></pre>
+    </details>
+
+    <!-- EJERCICIO 5 -->
+    <h2 class="verde">Ejercicio 5 — Proteger el documento de los proveedores y auditar su lectura</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>
+        Enmascarar la columna <code>ruc</code> de <code>PROVEEDOR</code> para que solo se vean los
+        <strong>4 últimos dígitos</strong>. El rol <code>RolAuditor</code> del ejercicio 2 debe ver el valor enmascarado,
+        y un nuevo rol <code>RolCompras</code> debe ver el valor real. Además, registrar en una auditoría cada
+        <code>SELECT</code> que se haga sobre <code>PROVEEDOR</code>.
+      </p>
+      <strong>Tablas involucradas:</strong> <code>PROVEEDOR</code>
+    </div>
+
+    <div class="card morado" style="margin-top:12px;">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Función de máscara: <code>partial(0,"XXXXXXX",4)</code>.</li>
+        <li><code>UNMASK</code> se puede conceder a un rol (en SQL Server 2022 también por columna).</li>
+        <li>Necesitas un <code>SERVER AUDIT</code> activo y una <code>DATABASE AUDIT SPECIFICATION</code> con <code>SELECT ON dbo.PROVEEDOR BY public</code>.</li>
+        <li>Lee el resultado con <code>sys.fn_get_audit_file</code>.</li>
+      </ul>
+    </div>
+
+    <details class="solucion">
+      <summary>Ver solución</summary>
+      <pre class="ejemplo"><span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+<span class="c">-- ① Máscara: muestra XXXXXXX6789</span>
+<span class="k">ALTER TABLE</span> PROVEEDOR <span class="k">ALTER COLUMN</span> ruc
+    <span class="k">ADD MASKED WITH</span> (<span class="k">FUNCTION</span> = <span class="s">'partial(0,"XXXXXXX",4)'</span>);
+
+<span class="c">-- ② Rol que ve el dato real</span>
+<span class="k">CREATE ROLE</span> RolCompras;
+<span class="k">GRANT SELECT ON</span> dbo.PROVEEDOR <span class="k">TO</span> RolCompras;
+<span class="k">GRANT UNMASK TO</span> RolCompras;
+<span class="k">CREATE USER</span> UsuarioCompras <span class="k">WITHOUT LOGIN</span>;
+<span class="k">ALTER ROLE</span> RolCompras <span class="k">ADD MEMBER</span> UsuarioCompras;
+<span class="k">GO</span>
+
+<span class="c">-- ③ Auditoría (destino en el servidor + especificación en la base)</span>
+<span class="k">USE</span> master;
+<span class="k">GO</span>
+<span class="k">CREATE SERVER AUDIT</span> AuditoriaProveedores
+<span class="k">TO FILE</span> (<span class="k">FILEPATH</span> = <span class="s">'C:\Auditoria\'</span>, <span class="k">MAXSIZE</span> = 50 <span class="k">MB</span>);
+<span class="k">ALTER SERVER AUDIT</span> AuditoriaProveedores <span class="k">WITH</span> (<span class="k">STATE</span> = <span class="k">ON</span>);
+<span class="k">GO</span>
+<span class="k">USE</span> FinancieraDemoBD;
+<span class="k">GO</span>
+<span class="k">CREATE DATABASE AUDIT SPECIFICATION</span> EspecProveedores
+<span class="k">FOR SERVER AUDIT</span> AuditoriaProveedores
+    <span class="k">ADD</span> (<span class="k">SELECT ON</span> dbo.PROVEEDOR <span class="k">BY</span> public)
+<span class="k">WITH</span> (<span class="k">STATE</span> = <span class="k">ON</span>);
+<span class="k">GO</span>
+
+<span class="c">-- ④ Pruebas</span>
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioAuditor'</span>;
+    <span class="k">SELECT</span> razon_social, ruc <span class="k">FROM</span> PROVEEDOR;    <span class="c">-- XXXXXXX6789</span>
+<span class="k">REVERT</span>;
+<span class="k">EXECUTE AS USER</span> = <span class="s">'UsuarioCompras'</span>;
+    <span class="k">SELECT</span> razon_social, ruc <span class="k">FROM</span> PROVEEDOR;    <span class="c">-- 20123456789</span>
+<span class="k">REVERT</span>;
+
+<span class="k">SELECT</span> event_time, database_principal_name, object_name, statement
+<span class="k">FROM</span> sys.<span class="t">fn_get_audit_file</span>(<span class="s">'C:\Auditoria\AuditoriaProveedores*.sqlaudit'</span>, <span class="k">DEFAULT</span>, <span class="k">DEFAULT</span>)
+<span class="k">ORDER BY</span> event_time <span class="k">DESC</span>;</pre>
+    </details>
+
+    <!-- RESUMEN DE EJERCICIOS -->
+    <div class="nota" style="margin-top:28px;">
+      <strong>Resumen de los 5 ejercicios:</strong>
+      <table style="margin-top:10px;">
+        <tr>
+          <th>#</th>
+          <th>Objeto principal</th>
+          <th>Instrucciones clave</th>
+          <th>Concepto practicado</th>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>Login + usuario</td>
+          <td><code>CREATE LOGIN</code>, <code>CREATE USER</code>, <code>GRANT</code></td>
+          <td>Mínimo privilegio</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Rol personalizado</td>
+          <td><code>CREATE ROLE</code>, <code>GRANT</code> por columnas</td>
+          <td>Permisos a roles y protección de columnas</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>Rol fijo</td>
+          <td><code>DENY</code>, <code>REVOKE</code></td>
+          <td>Precedencia de <code>DENY</code></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Login</td>
+          <td><code>MUST_CHANGE</code>, <code>CHECK_POLICY</code>, <code>DISABLE</code></td>
+          <td>Políticas de contraseña</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Columna + auditoría</td>
+          <td><code>MASKED WITH</code>, <code>UNMASK</code>, <code>SERVER AUDIT</code></td>
+          <td>Datos sensibles y trazabilidad</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="footer">
+      Guía de Gestión de Seguridad y Acceso - SQL Server
+    </div>
+
+  </div>
+
+</body>
+</html>
