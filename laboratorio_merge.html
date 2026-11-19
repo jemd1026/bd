@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laboratorio: Sentencia MERGE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f8fb;
+      color: #2b2b2b;
+      margin: 0;
+      padding: 0;
+      line-height: 1.6;
+    }
+
+    .contenedor {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #ffffff;
+      padding: 35px;
+      border-radius: 18px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      color: #7b1e1e;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      color: #666;
+      font-size: 18px;
+      margin-bottom: 35px;
+    }
+
+    h2 {
+      color: #7b1e1e;
+      border-left: 6px solid #b85c5c;
+      padding-left: 12px;
+      margin-top: 35px;
+    }
+
+    h2.verde  { color: #2e7d32; border-left-color: #6bbf8a; margin-top: 30px; }
+    h2.morado { color: #5a3e8a; border-left-color: #9a7bd1; margin-top: 28px; }
+
+    .card {
+      background: #fdf6f3;
+      border-left: 5px solid #d68b7c;
+      padding: 18px 22px;
+      border-radius: 12px;
+      margin: 18px 0;
+    }
+
+    .card.azul   { background: #eef7fb; border-left-color: #6aa8c8; }
+    .card.verde  { background: #eefbf3; border-left-color: #6bbf8a; }
+    .card.morado { background: #f5f0fb; border-left-color: #9a7bd1; }
+    .card.rojo   { background: #fdf0f0; border-left-color: #c0524a; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      background: white;
+    }
+
+    th {
+      background: #7b1e1e;
+      color: white;
+      padding: 12px;
+    }
+
+    td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) {
+      background: #f9f9f9;
+    }
+
+    code {
+      background: #f1f1f1;
+      padding: 3px 6px;
+      border-radius: 5px;
+      color: #7b1e1e;
+      font-weight: bold;
+    }
+
+    pre.ejemplo {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 18px;
+      border-radius: 10px;
+      overflow-x: auto;
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      line-height: 1.9;
+      margin: 14px 0;
+      white-space: pre;
+    }
+
+    .k { color: #a6e22e; }   /* palabras clave */
+    .t { color: #66d9e8; }   /* tipos de datos y funciones */
+    .s { color: #e6db74; }   /* cadenas */
+    .c { color: #75715e; }   /* comentarios */
+    .ph { color: #fd971f; font-weight: 500; }   /* parte que el alumno debe reemplazar */
+
+    .nota {
+      background: #fff8e8;
+      border: 1px solid #f0d58c;
+      padding: 15px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .nota.alerta {
+      background: #fdf0f0;
+      border-color: #e3a9a3;
+    }
+
+    .ejemplo-mini {
+      font-family: 'Fira Code', monospace;
+      font-size: 13.5px;
+      color: #1a5c8a;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* Lista de evidencias */
+    ul.evidencias {
+      list-style: none;
+      padding-left: 0;
+      margin: 10px 0 0 0;
+    }
+
+    ul.evidencias li {
+      margin: 8px 0;
+      padding-left: 66px;
+      position: relative;
+    }
+
+    ul.evidencias li .id {
+      position: absolute;
+      left: 0;
+      top: 1px;
+      background: #7b1e1e;
+      color: white;
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .pasos { counter-reset: paso; list-style: none; padding-left: 0; }
+    .pasos > li { counter-increment: paso; margin: 10px 0; padding-left: 38px; position: relative; }
+    .pasos > li::before {
+      content: counter(paso);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #9a7bd1;
+      color: white;
+      font-weight: bold;
+      text-align: center;
+      line-height: 26px;
+      font-size: 14px;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      color: #777;
+      font-size: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .contenedor { margin: 0; padding: 20px 16px; border-radius: 0; }
+      td, th { padding: 8px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="contenedor">
+
+    <h1>Laboratorio: La sentencia MERGE</h1>
+    <p class="subtitulo">Gestión de Datos e Información · Trabajo en casa</p>
+
+    <!-- ===================== INDICACIONES ===================== -->
+    <h2>1. Indicaciones generales</h2>
+
+    <div class="card azul">
+      <p><strong>Objetivo:</strong> usar MERGE para sincronizar tablas, hacer upserts, depurar cargas de datos con
+        errores y mantener tablas de resumen, aplicando las buenas prácticas vistas en clase.</p>
+      <ul>
+        <li><strong>Modalidad:</strong> individual.</li>
+        <li><strong>Escenario:</strong> el sistema académico de una universidad (estudiantes, cursos y notas).
+          La base de datos se crea con el script de la sección 3.</li>
+        <li><strong>Material de apoyo:</strong> la <a href="merge.html">guía de MERGE</a>.</li>
+        <li><strong>Herramientas:</strong> SQL Server (Express o Developer) y SQL Server Management Studio (SSMS).</li>
+        <li><strong>Orden:</strong> resuelve los ejercicios <strong>en orden</strong>; cada uno parte del resultado del anterior.</li>
+        <li><strong>Entrega:</strong> un script <code>.sql</code> y un informe <code>.pdf</code> con las evidencias (sección 5).</li>
+      </ul>
+    </div>
+
+    <div class="nota alerta">
+      <strong>Regla de personalización (obligatoria):</strong> reemplaza <code>APELLIDO</code> por
+      <strong>tu primer apellido en mayúsculas, sin tildes ni espacios</strong> (por ejemplo, <code>LabMERGE_PEREZ</code>,
+      <code>spRegistrarNota_PEREZ</code>). En los bloques de código, lo que debes reemplazar aparece en
+      <span class="ph" style="background:#272822; padding:2px 6px; border-radius:4px;">naranja</span>.
+      Además, en el ejercicio 1 te agregarás <strong>a ti mismo</strong> como estudiante. Un ejercicio con nombres sin
+      personalizar no se califica.
+    </div>
+
+    <!-- ===================== CONSULTA DE IDENTIFICACIÓN ===================== -->
+    <h2>2. Consulta de identificación</h2>
+
+    <p>
+      Ejecútala <strong>al inicio de cada ejercicio</strong> y haz que aparezca en la primera captura de ese ejercicio.
+    </p>
+
+    <pre class="ejemplo"><span class="k">SELECT</span> <span class="s">'<span class="ph">APELLIDO Nombre</span>'</span>                  <span class="k">AS</span> estudiante,
+       @@SERVERNAME                        <span class="k">AS</span> servidor,       <span class="c">-- nombre de tu equipo / instancia</span>
+       <span class="t">SUSER_SNAME</span>()                       <span class="k">AS</span> login_actual,
+       <span class="t">DB_NAME</span>()                           <span class="k">AS</span> base_actual,    <span class="c">-- debe ser LabMERGE_APELLIDO</span>
+       <span class="t">SERVERPROPERTY</span>(<span class="s">'ProductVersion'</span>)    <span class="k">AS</span> version_sql,
+       <span class="t">SYSDATETIME</span>()                       <span class="k">AS</span> fecha_hora;</pre>
+
+    <!-- ===================== PREPARACIÓN ===================== -->
+    <h2>3. Script de preparación</h2>
+
+    <p>
+      Crea la base de datos y carga los datos iniciales. Si te equivocas en algún ejercicio, puedes volver a ejecutar
+      este script completo para empezar de cero (se pierde todo lo avanzado).
+    </p>
+
+    <pre class="ejemplo"><span class="k">IF</span> <span class="t">DB_ID</span>(<span class="s">'LabMERGE_<span class="ph">APELLIDO</span>'</span>) <span class="k">IS NULL</span>
+    <span class="k">CREATE DATABASE</span> LabMERGE_<span class="ph">APELLIDO</span>;
+<span class="k">GO</span>
+<span class="k">USE</span> LabMERGE_<span class="ph">APELLIDO</span>;
+<span class="k">GO</span>
+
+<span class="c">-- Si se repite la preparación, se eliminan las tablas (primero las que dependen de otras)</span>
+<span class="k">DROP TABLE IF EXISTS</span> LogSincronizacion, ResumenCurso_Copia, ResumenCurso,
+                     Nota_Carga_Curso2, Nota_Carga, Nota, Curso, Estudiante_Carga, Estudiante;
+<span class="k">GO</span>
+
+<span class="c">-- ① Padrón oficial de estudiantes (DESTINO del ejercicio 1)</span>
+<span class="k">CREATE TABLE</span> Estudiante (
+    codigo    <span class="t">CHAR</span>(8)      <span class="k">PRIMARY KEY</span>,
+    nombres   <span class="t">VARCHAR</span>(60)  <span class="k">NOT NULL</span>,
+    apellidos <span class="t">VARCHAR</span>(60)  <span class="k">NOT NULL</span>,
+    email     <span class="t">VARCHAR</span>(100) <span class="k">NULL</span>,                        <span class="c">-- admite NULL (¡ojo al comparar!)</span>
+    carrera   <span class="t">VARCHAR</span>(40)  <span class="k">NOT NULL</span>,
+    estado    <span class="t">CHAR</span>(1)      <span class="k">NOT NULL DEFAULT</span> <span class="s">'A'</span>
+              <span class="k">CHECK</span> (estado <span class="k">IN</span> (<span class="s">'A'</span>, <span class="s">'I'</span>))              <span class="c">-- A = activo, I = inactivo</span>
+);
+
+<span class="c">-- ② Archivo que envía Admisión cada ciclo (ORIGEN del ejercicio 1, sin clave primaria)</span>
+<span class="k">CREATE TABLE</span> Estudiante_Carga (
+    codigo    <span class="t">CHAR</span>(8)      <span class="k">NOT NULL</span>,
+    nombres   <span class="t">VARCHAR</span>(60)  <span class="k">NOT NULL</span>,
+    apellidos <span class="t">VARCHAR</span>(60)  <span class="k">NOT NULL</span>,
+    email     <span class="t">VARCHAR</span>(100) <span class="k">NULL</span>,
+    carrera   <span class="t">VARCHAR</span>(40)  <span class="k">NOT NULL</span>
+);
+
+<span class="c">-- ③ Cursos</span>
+<span class="k">CREATE TABLE</span> Curso (
+    id_curso <span class="t">INT</span>         <span class="k">PRIMARY KEY</span>,
+    nombre   <span class="t">VARCHAR</span>(60) <span class="k">NOT NULL</span>,
+    creditos <span class="t">INT</span>         <span class="k">NOT NULL</span>
+);
+
+<span class="c">-- ④ Notas oficiales (una por estudiante y curso)</span>
+<span class="k">CREATE TABLE</span> Nota (
+    codigo         <span class="t">CHAR</span>(8)      <span class="k">NOT NULL REFERENCES</span> Estudiante(codigo),
+    id_curso       <span class="t">INT</span>          <span class="k">NOT NULL REFERENCES</span> Curso(id_curso),
+    nota           <span class="t">DECIMAL</span>(4,2) <span class="k">NOT NULL CHECK</span> (nota <span class="k">BETWEEN</span> 0 <span class="k">AND</span> 20),
+    fecha_registro <span class="t">DATETIME2</span>    <span class="k">NOT NULL DEFAULT</span> <span class="t">SYSDATETIME</span>(),
+    <span class="k">PRIMARY KEY</span> (codigo, id_curso)
+);
+
+<span class="c">-- ⑤ Carga masiva de notas desde un Excel (ORIGEN del ejercicio 3, puede traer errores)</span>
+<span class="k">CREATE TABLE</span> Nota_Carga (
+    id_carga <span class="t">INT</span> <span class="k">IDENTITY(1,1) PRIMARY KEY</span>,             <span class="c">-- orden de llegada de cada fila</span>
+    codigo   <span class="t">CHAR</span>(8),
+    id_curso <span class="t">INT</span>,
+    nota     <span class="t">DECIMAL</span>(4,2)
+);
+
+<span class="c">-- ⑥ Lista completa del curso 2 que envía su docente (ORIGEN del ejercicio 4)</span>
+<span class="k">CREATE TABLE</span> Nota_Carga_Curso2 (
+    codigo <span class="t">CHAR</span>(8),
+    nota   <span class="t">DECIMAL</span>(4,2)
+);
+
+<span class="c">-- ⑦ Resumen por curso, calculado hace tiempo (DESTINO del ejercicio 5)</span>
+<span class="k">CREATE TABLE</span> ResumenCurso (
+    id_curso      <span class="t">INT</span> <span class="k">PRIMARY KEY</span>,
+    cantidad      <span class="t">INT</span>,
+    promedio      <span class="t">DECIMAL</span>(4,2),
+    aprobados     <span class="t">INT</span>,
+    fecha_calculo <span class="t">DATETIME2</span>
+);
+
+<span class="c">-- ⑧ Bitácora de sincronizaciones (recibe OUTPUT INTO: sin FK, CHECK ni triggers)</span>
+<span class="k">CREATE TABLE</span> LogSincronizacion (
+    id_log        <span class="t">INT</span> <span class="k">IDENTITY(1,1) PRIMARY KEY</span>,
+    proceso       <span class="t">VARCHAR</span>(30),
+    accion        <span class="t">NVARCHAR</span>(10),
+    clave         <span class="t">VARCHAR</span>(30),
+    valor_antes   <span class="t">VARCHAR</span>(200),
+    valor_despues <span class="t">VARCHAR</span>(200),
+    usuario       <span class="t">VARCHAR</span>(100) <span class="k">DEFAULT</span> <span class="t">SUSER_SNAME</span>(),
+    fecha         <span class="t">DATETIME2</span>    <span class="k">DEFAULT</span> <span class="t">SYSDATETIME</span>()
+);
+<span class="k">GO</span>
+
+<span class="c">-- ===================== DATOS INICIALES =====================</span>
+<span class="k">INSERT INTO</span> Estudiante (codigo, nombres, apellidos, email, carrera, estado) <span class="k">VALUES</span>
+    (<span class="s">'20240001'</span>, <span class="s">'Ana'</span>,    <span class="s">'Torres Ríos'</span>,     <span class="s">'ana@correo.edu'</span>,    <span class="s">'Sistemas'</span>,   <span class="s">'A'</span>),
+    (<span class="s">'20240002'</span>, <span class="s">'Luis'</span>,   <span class="s">'Ramos Vega'</span>,      <span class="s">'luis@correo.edu'</span>,   <span class="s">'Sistemas'</span>,   <span class="s">'A'</span>),
+    (<span class="s">'20240003'</span>, <span class="s">'María'</span>,  <span class="s">'López Silva'</span>,     <span class="k">NULL</span>,                <span class="s">'Industrial'</span>, <span class="s">'A'</span>),
+    (<span class="s">'20240004'</span>, <span class="s">'Carlos'</span>, <span class="s">'Pérez Luna'</span>,      <span class="s">'carlos@correo.edu'</span>, <span class="s">'Sistemas'</span>,   <span class="s">'A'</span>),
+    (<span class="s">'20240005'</span>, <span class="s">'Sofía'</span>,  <span class="s">'Martínez Paz'</span>,    <span class="s">'sofia@correo.edu'</span>,  <span class="s">'Civil'</span>,      <span class="s">'A'</span>),
+    (<span class="s">'20240006'</span>, <span class="s">'Pedro'</span>,  <span class="s">'Gómez Ruiz'</span>,      <span class="s">'pedro@correo.edu'</span>,  <span class="s">'Civil'</span>,      <span class="s">'I'</span>),
+    (<span class="s">'20240007'</span>, <span class="s">'Laura'</span>,  <span class="s">'Jiménez Soto'</span>,    <span class="s">'laura@correo.edu'</span>,  <span class="s">'Sistemas'</span>,   <span class="s">'A'</span>),
+    (<span class="s">'20240008'</span>, <span class="s">'Diego'</span>,  <span class="s">'Herrera Campos'</span>,  <span class="s">'diego@correo.edu'</span>,  <span class="s">'Industrial'</span>, <span class="s">'A'</span>);
+
+<span class="k">INSERT INTO</span> Estudiante_Carga (codigo, nombres, apellidos, email, carrera) <span class="k">VALUES</span>
+    (<span class="s">'20240001'</span>, <span class="s">'Ana'</span>,       <span class="s">'Torres Ríos'</span>,    <span class="s">'ana@correo.edu'</span>,        <span class="s">'Sistemas'</span>),
+    (<span class="s">'20240002'</span>, <span class="s">'Luis'</span>,      <span class="s">'Ramos Vega'</span>,     <span class="s">'luis.ramos@correo.edu'</span>, <span class="s">'Sistemas'</span>),
+    (<span class="s">'20240003'</span>, <span class="s">'María'</span>,     <span class="s">'López Silva'</span>,    <span class="s">'maria@correo.edu'</span>,      <span class="s">'Industrial'</span>),
+    (<span class="s">'20240004'</span>, <span class="s">'Carlos'</span>,    <span class="s">'Pérez Luna'</span>,     <span class="s">'carlos@correo.edu'</span>,     <span class="s">'Industrial'</span>),
+    (<span class="s">'20240006'</span>, <span class="s">'Pedro'</span>,     <span class="s">'Gómez Ruiz'</span>,     <span class="s">'pedro@correo.edu'</span>,      <span class="s">'Civil'</span>),
+    (<span class="s">'20240008'</span>, <span class="s">'Diego'</span>,     <span class="s">'Herrera Campos'</span>, <span class="s">'diego@correo.edu'</span>,      <span class="s">'Industrial'</span>),
+    (<span class="s">'20240009'</span>, <span class="s">'Valentina'</span>, <span class="s">'Cruz Mora'</span>,      <span class="k">NULL</span>,                    <span class="s">'Civil'</span>),
+    (<span class="s">'20240010'</span>, <span class="s">'Andrés'</span>,    <span class="s">'Molina Rojas'</span>,   <span class="s">'andres@correo.edu'</span>,     <span class="s">'Sistemas'</span>);
+
+<span class="k">INSERT INTO</span> Curso (id_curso, nombre, creditos) <span class="k">VALUES</span>
+    (1, <span class="s">'Base de Datos I'</span>, 4), (2, <span class="s">'Gestión de Datos'</span>, 4), (3, <span class="s">'Programación'</span>, 3);
+
+<span class="k">INSERT INTO</span> Nota (codigo, id_curso, nota) <span class="k">VALUES</span>
+    (<span class="s">'20240001'</span>, 1, 15), (<span class="s">'20240002'</span>, 1, 12), (<span class="s">'20240003'</span>, 1,  8), (<span class="s">'20240004'</span>, 1, 17),
+    (<span class="s">'20240001'</span>, 2, 14), (<span class="s">'20240002'</span>, 2, 10), (<span class="s">'20240003'</span>, 2, 16), (<span class="s">'20240004'</span>, 2, 11),
+    (<span class="s">'20240008'</span>, 2, 13),
+    (<span class="s">'20240001'</span>, 3, 18), (<span class="s">'20240004'</span>, 3,  9), (<span class="s">'20240008'</span>, 3, 12);
+
+<span class="k">INSERT INTO</span> Nota_Carga (codigo, id_curso, nota) <span class="k">VALUES</span>
+    (<span class="s">'20240001'</span>, 1, 16), (<span class="s">'20240002'</span>, 1, 12), (<span class="s">'20240003'</span>, 1, 11),
+    (<span class="s">'20240003'</span>, 1, 13), (<span class="s">'20240008'</span>, 1, 10), (<span class="s">'20240006'</span>, 2, 15),
+    (<span class="s">'20240099'</span>, 1, 15), (<span class="s">'20240004'</span>, 3, 25), (<span class="s">'20240004'</span>, 4, 14);
+
+<span class="k">INSERT INTO</span> Nota_Carga_Curso2 (codigo, nota) <span class="k">VALUES</span>
+    (<span class="s">'20240001'</span>, 14), (<span class="s">'20240002'</span>, 11), (<span class="s">'20240003'</span>, 16),
+    (<span class="s">'20240006'</span>, 15), (<span class="s">'20240008'</span>, 15);
+
+<span class="k">INSERT INTO</span> ResumenCurso (id_curso, cantidad, promedio, aprobados, fecha_calculo) <span class="k">VALUES</span>
+    (1, 3, 11.67, 2, <span class="s">'2025-03-01'</span>),
+    (2, 5, 12.80, 4, <span class="s">'2025-03-01'</span>),
+    (9, 10, 13.00, 8, <span class="s">'2025-03-01'</span>);            <span class="c">-- curso que ya no existe</span>
+<span class="k">GO</span>
+
+<span class="c">-- Comprobación</span>
+<span class="k">SELECT</span> <span class="s">'Estudiante'</span> <span class="k">AS</span> tabla, <span class="t">COUNT</span>(*) <span class="k">AS</span> filas <span class="k">FROM</span> Estudiante
+<span class="k">UNION ALL SELECT</span> <span class="s">'Estudiante_Carga'</span>, <span class="t">COUNT</span>(*) <span class="k">FROM</span> Estudiante_Carga
+<span class="k">UNION ALL SELECT</span> <span class="s">'Nota'</span>,             <span class="t">COUNT</span>(*) <span class="k">FROM</span> Nota
+<span class="k">UNION ALL SELECT</span> <span class="s">'Nota_Carga'</span>,       <span class="t">COUNT</span>(*) <span class="k">FROM</span> Nota_Carga
+<span class="k">UNION ALL SELECT</span> <span class="s">'ResumenCurso'</span>,     <span class="t">COUNT</span>(*) <span class="k">FROM</span> ResumenCurso;   <span class="c">-- 8, 8, 12, 9, 3</span></pre>
+
+    <!-- ===================== EJERCICIOS ===================== -->
+    <h2>4. Ejercicios</h2>
+
+    <!-- ═══════════ EJERCICIO 1 ═══════════ -->
+    <h2 class="verde">Ejercicio 1 — Sincronizar el padrón de estudiantes con baja lógica</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>Admisión envía el padrón del nuevo ciclo en <code>Estudiante_Carga</code>. Hay que dejar <code>Estudiante</code> al día, pero
+        <strong>nunca se borra</strong> un estudiante (tiene notas asociadas): quien no llega en el padrón pasa a inactivo.</p>
+      <ol class="pasos">
+        <li>Agrega a <code>Estudiante_Carga</code> una fila <strong>con tus datos reales</strong> (nombres, apellidos,
+          tu carrera) y el código <code>20249999</code>.</li>
+        <li><strong>Antes</strong> de sincronizar, escribe una consulta con <code>FULL OUTER JOIN</code> que muestre, para cada
+          código, la acción que debería aplicarse: <em>INSERT</em>, <em>UPDATE</em>, <em>REACTIVAR</em>, <em>DESACTIVAR</em> o <em>sin cambios</em>.</li>
+        <li>Escribe un MERGE que:
+          <ul>
+            <li>actualice nombres, apellidos, email y carrera <strong>solo si algo cambió</strong>, tomando en cuenta que
+              <code>email</code> puede ser <code>NULL</code>;</li>
+            <li>reactive (<code>estado = 'A'</code>) a quien estaba inactivo y volvió a aparecer;</li>
+            <li>inserte a los nuevos con <code>estado = 'A'</code>;</li>
+            <li>marque como inactivo (<code>estado = 'I'</code>) a quien no vino en el padrón y estaba activo;</li>
+            <li>registre cada acción en <code>LogSincronizacion</code> con <code>proceso = 'PADRON'</code>,
+              la clave (código) y el estado/email antes y después.</li>
+          </ul>
+        </li>
+      </ol>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Comparación segura con <code>NULL</code>: <code>WHEN MATCHED AND EXISTS (SELECT ... EXCEPT SELECT ...)</code> (guía, sección 9.2).
+          Si incluyes <code>estado</code> en la comparación, la reactivación queda resuelta en la misma cláusula.</li>
+        <li>En <code>WHEN NOT MATCHED BY SOURCE</code> se puede usar <code>UPDATE</code> con una condición <code>AND</code>.</li>
+        <li><code>OUTPUT</code> admite constantes y expresiones:
+          <span class="ejemplo-mini">// OUTPUT 'PADRON', $action, COALESCE(inserted.codigo, deleted.codigo), CONCAT(deleted.estado, ' | ', deleted.email), ... INTO LogSincronizacion (...)</span></li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E1.1</span> Consulta de identificación + resultado de tu consulta de predicción (<code>FULL OUTER JOIN</code>), donde se vea tu fila <code>20249999</code>.</li>
+        <li><span class="id">E1.2</span> El MERGE ejecutado y el mensaje de filas afectadas.</li>
+        <li><span class="id">E1.3</span> <code>Estudiante</code> después del MERGE y las filas de <code>LogSincronizacion</code> del proceso <code>PADRON</code>.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> si hubieras comparado con
+        <code>destino.email &lt;&gt; origen.email</code>, ¿qué habría pasado con María López (20240003)? ¿Y por qué aquí no se
+        puede usar <code>DELETE</code>?</p>
+    </div>
+
+    <!-- ═══════════ EJERCICIO 2 ═══════════ -->
+    <h2 class="verde">Ejercicio 2 — Registro de notas con un procedimiento upsert</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>Los docentes registran notas una por una desde la aplicación, sin saber si la nota ya existe.</p>
+      <ol class="pasos">
+        <li>Crea <code>spRegistrarNota_APELLIDO</code> con los parámetros <code>@codigo</code>, <code>@id_curso</code> y <code>@nota</code>, que:
+          <ul>
+            <li>rechace con un error propio las notas fuera del rango 0–20;</li>
+            <li>con un solo MERGE, inserte la nota si no existe o la actualice (con su <code>fecha_registro</code>) si existe
+              <strong>y es distinta</strong>;</li>
+            <li>sea seguro si dos docentes guardan la misma nota al mismo tiempo;</li>
+            <li>registre la acción en <code>LogSincronizacion</code> con <code>proceso = 'NOTA_INDIVIDUAL'</code>, la clave
+              <code>codigo-curso</code> y la nota antes y después.</li>
+          </ul>
+        </li>
+        <li>Pruébalo con <strong>tu código 20249999</strong>: registra tu nota en el curso 2, corrígela, vuelve a enviar el mismo valor
+          y finalmente intenta registrar un 25.</li>
+      </ol>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Validación: <code>IF @nota NOT BETWEEN 0 AND 20 THROW 50001, '...', 1;</code></li>
+        <li>Origen de una sola fila: <code>USING (SELECT @codigo AS codigo, @id_curso AS id_curso, @nota AS nota) AS origen</code>.</li>
+        <li>Concurrencia: <code>MERGE INTO Nota WITH (HOLDLOCK) AS destino</code> (guía, sección 10.2).</li>
+        <li>Clave compuesta en el <code>ON</code>: compara <code>codigo</code> <strong>y</strong> <code>id_curso</code>.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E2.1</span> Código completo del procedimiento en el editor de SSMS.</li>
+        <li><span class="id">E2.2</span> Las 4 pruebas con su resultado: inserción, corrección, mismo valor (sin cambios) y el error de la nota 25.</li>
+        <li><span class="id">E2.3</span> Filas de <code>LogSincronizacion</code> del proceso <code>NOTA_INDIVIDUAL</code>.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> ¿qué podría pasar sin <code>HOLDLOCK</code> si dos docentes registran
+        al mismo tiempo la primera nota del mismo estudiante en el mismo curso?</p>
+    </div>
+
+    <!-- ═══════════ EJERCICIO 3 ═══════════ -->
+    <h2 class="verde">Ejercicio 3 — Carga masiva de notas con datos sucios</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>Un docente subió un Excel a <code>Nota_Carga</code>. El archivo trae problemas: filas repetidas para el mismo
+        estudiante y curso, estudiantes o cursos que no existen y notas fuera de rango.</p>
+      <ol class="pasos">
+        <li>Ejecuta primero un MERGE <strong>ingenuo</strong> de <code>Nota_Carga</code> hacia <code>Nota</code>
+          (insertar o actualizar, sin depurar nada) y registra el error que se produce.</li>
+        <li>Escribe una consulta de <strong>rechazados</strong> que liste las filas de <code>Nota_Carga</code> que no deben cargarse,
+          con una columna <code>motivo</code> (“estudiante no existe”, “curso no existe”, “nota fuera de rango”, “duplicado descartado”).</li>
+        <li>Escribe el MERGE <strong>corregido</strong>: de cada par estudiante–curso repetido conserva solo la <strong>última</strong>
+          fila cargada, descarta las filas inválidas, actualiza solo si la nota cambió e inserta las nuevas.
+          Muestra con <code>OUTPUT</code> lo que hizo.</li>
+      </ol>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>“La última fila cargada” es la de mayor <code>id_carga</code>:
+          <code>ROW_NUMBER() OVER (PARTITION BY codigo, id_curso ORDER BY id_carga DESC)</code>.</li>
+        <li>Valida la existencia con <code>EXISTS (SELECT 1 FROM Estudiante ...)</code> y <code>EXISTS (SELECT 1 FROM Curso ...)</code>.</li>
+        <li>Una CTE puede ir antes del MERGE: <code>WITH origen_limpio AS (...) MERGE INTO Nota ...</code> (guía, sección 12.2).</li>
+        <li>Si el MERGE ingenuo no da el error que esperas, lee el mensaje con atención: puede fallar por otra regla de la tabla.
+          Explica en el informe cuál fue.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E3.1</span> Consulta de identificación + el MERGE ingenuo con su mensaje de error.</li>
+        <li><span class="id">E3.2</span> Resultado de la consulta de rechazados con la columna <code>motivo</code>.</li>
+        <li><span class="id">E3.3</span> <code>OUTPUT</code> del MERGE corregido y las notas del curso 1 después de la carga.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> ¿por qué conservaste la última fila y no la primera o la nota más alta?
+        ¿Qué riesgo tiene escoger mal ese criterio?</p>
+    </div>
+
+    <!-- ═══════════ EJERCICIO 4 ═══════════ -->
+    <h2 class="verde">Ejercicio 4 — Origen parcial: la lista de un solo curso</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p>La docente de <em>Gestión de Datos</em> (curso 2) envía en <code>Nota_Carga_Curso2</code> la lista
+        <strong>completa y definitiva</strong> de su curso: quien no aparece se retiró y su nota debe eliminarse.
+        Las notas de los demás cursos <strong>no deben tocarse</strong>.</p>
+      <ol class="pasos">
+        <li>Muestra la cantidad de notas por curso <strong>antes</strong> de sincronizar.</li>
+        <li>Dentro de <code>BEGIN TRANSACTION</code>, ejecuta una versión <strong>ingenua</strong> cuyo destino sea toda la tabla
+          <code>Nota</code> con <code>WHEN NOT MATCHED BY SOURCE THEN DELETE</code>. Observa con <code>OUTPUT</code> cuántas
+          notas eliminaría y deshaz con <code>ROLLBACK</code>.</li>
+        <li>Escribe la versión <strong>correcta</strong>, que limite el destino al curso 2, actualice las notas que cambiaron,
+          inserte las nuevas y elimine las de los retirados.</li>
+        <li>Muestra la cantidad de notas por curso <strong>después</strong>.</li>
+      </ol>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Limitar el destino con una CTE: <code>WITH notas_curso2 AS (SELECT * FROM Nota WHERE id_curso = 2) MERGE INTO notas_curso2 ...</code>
+          (guía, sección 12.3).</li>
+        <li>El origen no trae <code>id_curso</code>: en el <code>INSERT</code> debes escribir el <code>2</code> de forma explícita.</li>
+        <li>No filtres el curso dentro del <code>ON</code>: revisa por qué en la nota de la sección 12.3 de la guía.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E4.1</span> Consulta de identificación + cantidad de notas por curso antes.</li>
+        <li><span class="id">E4.2</span> <code>OUTPUT</code> de la versión ingenua (cuántos <code>DELETE</code> habría hecho) y el <code>ROLLBACK</code>.</li>
+        <li><span class="id">E4.3</span> <code>OUTPUT</code> de la versión correcta y la cantidad de notas por curso después.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> en un sistema real, ¿qué consecuencias habría tenido ejecutar la versión
+        ingenua sin transacción? Propón una medida para que no vuelva a ocurrir.</p>
+    </div>
+
+    <!-- ═══════════ EJERCICIO 5 ═══════════ -->
+    <h2 class="verde">Ejercicio 5 — Tabla de resumen: MERGE vs sentencias separadas</h2>
+
+    <div class="card verde">
+      <strong>Enunciado:</strong>
+      <p><code>ResumenCurso</code> está desactualizada: le falta un curso, tiene datos viejos y contiene un curso que ya no existe.
+        Debe quedar con, por cada curso que tenga notas: cantidad de notas, promedio y cantidad de aprobados (nota ≥ 11).</p>
+      <ol class="pasos">
+        <li>Guarda una copia del estado actual: <code>SELECT * INTO ResumenCurso_Copia FROM ResumenCurso;</code></li>
+        <li>Actualiza <code>ResumenCurso</code> con <strong>un solo MERGE</strong> cuyo origen sea una consulta agrupada sobre
+          <code>Nota</code>. La <code>fecha_calculo</code> debe quedar con la fecha y hora actuales.</li>
+        <li>Actualiza <code>ResumenCurso_Copia</code> con el mismo resultado, pero usando <strong><code>UPDATE</code>,
+          <code>INSERT</code> y <code>DELETE</code> separados</strong> dentro de una transacción.</li>
+        <li>Demuestra con una consulta que ambas tablas quedaron <strong>idénticas</strong> (sin contar <code>fecha_calculo</code>).</li>
+      </ol>
+    </div>
+
+    <div class="card morado">
+      <strong>Pistas:</strong>
+      <ul>
+        <li>Origen agrupado:
+          <span class="ejemplo-mini">// SELECT id_curso, COUNT(*), CAST(AVG(nota) AS DECIMAL(4,2)), SUM(CASE WHEN nota &gt;= 11 THEN 1 ELSE 0 END) FROM Nota GROUP BY id_curso</span></li>
+        <li>Para no repetir la consulta agrupada en las tres sentencias, guárdala antes en una tabla temporal <code>#resumen</code>.</li>
+        <li>Dos tablas son idénticas si <code>A EXCEPT B</code> y <code>B EXCEPT A</code> devuelven 0 filas.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <strong>Evidencias:</strong>
+      <ul class="evidencias">
+        <li><span class="id">E5.1</span> Consulta de identificación + <code>ResumenCurso</code> antes y después del MERGE.</li>
+        <li><span class="id">E5.2</span> La versión con sentencias separadas ejecutada y sus mensajes de filas afectadas.</li>
+        <li><span class="id">E5.3</span> La consulta de comparación devolviendo 0 filas.</li>
+      </ul>
+      <p style="margin-bottom:0;"><strong>Pregunta:</strong> después de escribir ambas versiones, ¿cuál preferirías mantener en un
+        sistema real y por qué? Menciona al menos una ventaja de cada una.</p>
+    </div>
+
+    <!-- ===================== ENTREGA ===================== -->
+    <h2>5. ¿Cómo entregar las evidencias?</h2>
+
+    <h2 class="morado">5.1 Archivos que debes subir</h2>
+
+    <table>
+      <tr>
+        <th>Archivo</th>
+        <th>Nombre</th>
+        <th>Contenido</th>
+      </tr>
+      <tr>
+        <td><strong>Script SQL</strong></td>
+        <td><code>LAB_MERGE_APELLIDO_Nombre.sql</code></td>
+        <td>El script de preparación seguido del código de los 5 ejercicios, en orden, separado por comentarios
+          (<code>-- EJERCICIO 1</code>, <code>-- EJERCICIO 2</code>…) y con un comentario explicativo en cada instrucción importante.</td>
+      </tr>
+      <tr>
+        <td><strong>Informe</strong></td>
+        <td><code>LAB_MERGE_APELLIDO_Nombre.pdf</code></td>
+        <td>Carátula, las capturas numeradas (E1.1, E1.2…) y las respuestas a las 5 preguntas.</td>
+      </tr>
+    </table>
+
+    <div class="nota">
+      <strong>Si la plataforma solo acepta un archivo:</strong> comprime ambos en
+      <code>LAB_MERGE_APELLIDO_Nombre.zip</code> y sube el ZIP.
+    </div>
+
+    <h2 class="morado">5.2 Estructura del informe PDF</h2>
+
+    <div class="card azul">
+      <ol>
+        <li><strong>Carátula:</strong> universidad, curso, nombre completo, código de estudiante y fecha.</li>
+        <li><strong>Una sección por ejercicio</strong> con:
+          <ul>
+            <li>las capturas en el orden de la lista de evidencias, cada una con su código como título
+              (por ejemplo, <em>“E3.2 — Filas rechazadas de la carga”</em>) y una línea que explique qué se ve;</li>
+            <li>la respuesta a la pregunta del ejercicio, con tus palabras (3 a 6 líneas).</li>
+          </ul>
+        </li>
+        <li><strong>Conclusiones:</strong> qué aprendiste y qué dificultades tuviste (máximo media página).</li>
+      </ol>
+    </div>
+
+    <h2 class="morado">5.3 Cómo deben ser las capturas</h2>
+
+    <div class="card">
+      <ul>
+        <li>Usa <strong>Windows + Shift + S</strong> (Recortes) y pega la imagen en tu documento.</li>
+        <li>Cada captura debe mostrar a la vez:
+          <ul>
+            <li>la <strong>instrucción</strong> ejecutada en el editor;</li>
+            <li>el panel de <strong>Resultados</strong> o <strong>Mensajes</strong>, según corresponda;</li>
+            <li>la <strong>barra de estado</strong> de SSMS (abajo: servidor, login y base de datos <code>LabMERGE_APELLIDO</code>);</li>
+            <li>la <strong>fecha y hora</strong> de Windows o la columna <code>fecha_hora</code> de la consulta de identificación.</li>
+          </ul>
+        </li>
+        <li>Si el resultado es largo, puedes usar dos capturas seguidas con el mismo código (E3.3a, E3.3b).</li>
+        <li>El texto debe ser legible: no recortes demasiado pequeño ni uses fotos tomadas con el celular.</li>
+      </ul>
+    </div>
+
+    <h2 class="morado">5.4 Subida a la plataforma</h2>
+
+    <ol class="pasos">
+      <li>Ingresa al curso en la plataforma de la universidad y abre la tarea <strong>“Laboratorio — Sentencia MERGE”</strong>.</li>
+      <li>Adjunta el <code>.sql</code> y el <code>.pdf</code> (o el <code>.zip</code>).</li>
+      <li>Antes de enviar, revisa la lista de verificación de abajo.</li>
+      <li>Pulsa <strong>Enviar</strong> y comprueba que la tarea aparezca como <em>entregada</em>. Guarda la confirmación.</li>
+    </ol>
+
+    <div class="card rojo">
+      <strong>Lista de verificación antes de enviar:</strong>
+      <ul>
+        <li>☐ La base de datos y los objetos que creé llevan mi apellido.</li>
+        <li>☐ Mi fila con el código <code>20249999</code> aparece en los ejercicios 1 y 2.</li>
+        <li>☐ La consulta de identificación aparece al inicio de cada ejercicio.</li>
+        <li>☐ Están las 15 evidencias (E1.1 a E5.3), numeradas y en orden.</li>
+        <li>☐ El script <code>.sql</code> se ejecuta de principio a fin (salvo los errores que el enunciado pide provocar).</li>
+        <li>☐ Respondí las 5 preguntas con mis palabras.</li>
+        <li>☐ Los archivos tienen el nombre <code>LAB_MERGE_APELLIDO_Nombre</code>.</li>
+      </ul>
+    </div>
+
+    <!-- ===================== RÚBRICA ===================== -->
+    <h2>6. Rúbrica de evaluación</h2>
+
+    <table>
+      <tr>
+        <th>Criterio (por ejercicio)</th>
+        <th>Logrado</th>
+        <th>En proceso</th>
+        <th>No logrado</th>
+      </tr>
+      <tr>
+        <td><strong>Script</strong> correcto y comentado</td>
+        <td>1.5 — cumple todo lo pedido sin errores</td>
+        <td>0.75 — cumple parcialmente o con errores menores</td>
+        <td>0 — no funciona o falta</td>
+      </tr>
+      <tr>
+        <td><strong>Evidencias</strong> completas y legibles</td>
+        <td>1.5 — todas, con los elementos de 5.3</td>
+        <td>0.75 — faltan algunas o no se leen bien</td>
+        <td>0 — no presenta</td>
+      </tr>
+      <tr>
+        <td><strong>Respuesta</strong> a la pregunta</td>
+        <td>1 — correcta y con sus palabras</td>
+        <td>0.5 — incompleta</td>
+        <td>0 — no responde o es copiada</td>
+      </tr>
+    </table>
+
+    <p>
+      Cada ejercicio vale <strong>4 puntos</strong>; los 5 ejercicios suman <strong>20 puntos</strong>.
+    </p>
+
+    <div class="nota alerta">
+      <strong>Integridad académica:</strong> las capturas sin nombres personalizados, sin tu fila <code>20249999</code>, con el mismo
+      nombre de servidor que otro compañero o con fecha anterior a la publicación del laboratorio no se califican, y el caso se revisa con el docente.
+    </div>
+
+    <!-- ===================== LIMPIEZA ===================== -->
+    <h2>7. Después de recibir tu nota (opcional)</h2>
+
+    <p>
+      Todo el laboratorio vive en su propia base de datos. Para eliminarlo, conéctate a <code>master</code> y ejecuta
+      <code>DROP DATABASE LabMERGE_APELLIDO;</code> (verifica antes el nombre: borra la base completa).
+    </p>
+
+    <div class="footer">
+      Laboratorio de la sentencia MERGE - SQL Server
+    </div>
+
+  </div>
+
+</body>
+</html>
